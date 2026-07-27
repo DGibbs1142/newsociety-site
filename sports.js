@@ -1,7 +1,8 @@
-// Populates the Sports drops-grid with live scores/schedules from ESPN's public
+// Populates the Sports page with live scores/schedules from ESPN's public
 // scoreboard API (no key needed) instead of generic news headlines — real games,
 // not articles about games. Combines multiple leagues so there's always enough
-// to show even when one league is between seasons.
+// to show even when one league is between seasons. Games currently in progress
+// get their own "live now" strip above the general drops grid.
 
 const LEAGUES = [
   { path: 'basketball/nba', label: 'NBA' },
@@ -53,34 +54,44 @@ function pickBalanced(pool, count){
   return picked;
 }
 
-function renderGames(events){
-  const grid = document.getElementById('newsGrid');
-  const title = document.getElementById('newsSectionTitle');
+function gameCard(event, { live = false } = {}){
+  const card = document.createElement('a');
+  card.className = 'drop-card';
+  card.href = event.links?.[0]?.href || '#';
+  card.target = '_blank';
+  card.rel = 'noopener';
+
+  const status = document.createElement('span');
+  status.className = 'drop-status mono';
+  if(live) status.append(Object.assign(document.createElement('span'), { className: 'live-dot' }));
+  status.append(document.createTextNode(`${event.leagueLabel} · ${event.status?.type?.shortDetail || event.status?.type?.description || ''}`));
+
+  const h4 = document.createElement('h4');
+  h4.textContent = event.name || 'Untitled Matchup';
+
+  const p = document.createElement('p');
+  p.textContent = describeGame(event);
+
+  card.append(status, h4, p);
+  return card;
+}
+
+function renderGames(events, gridId, titleId, liveTitleText){
+  const grid = document.getElementById(gridId);
+  const title = document.getElementById(titleId);
   if(!grid) return;
 
   grid.innerHTML = '';
-  events.forEach(event => {
-    const card = document.createElement('a');
-    card.className = 'drop-card';
-    card.href = event.links?.[0]?.href || '#';
-    card.target = '_blank';
-    card.rel = 'noopener';
+  events.forEach(event => grid.appendChild(gameCard(event, { live: event.status?.type?.state === 'in' })));
+  if(title) title.textContent = liveTitleText;
+}
 
-    const status = document.createElement('span');
-    status.className = 'drop-status mono';
-    status.textContent = `${event.leagueLabel} · ${event.status?.type?.description || ''}`;
-
-    const h4 = document.createElement('h4');
-    h4.textContent = event.name || 'Untitled Matchup';
-
-    const p = document.createElement('p');
-    p.textContent = describeGame(event);
-
-    card.append(status, h4, p);
-    grid.appendChild(card);
-  });
-
-  if(title) title.textContent = 'Live from the scoreboard.';
+function renderEmptyLive(){
+  const grid = document.getElementById('liveScoresGrid');
+  const title = document.getElementById('liveScoresTitle');
+  if(title) title.textContent = 'Nothing live right now.';
+  if(!grid) return;
+  grid.innerHTML = '<div class="drop-card"><span class="drop-status mono">Standing by</span><h4>No games in progress</h4><p>Check the latest drops below for what\'s scheduled and what just wrapped.</p></div>';
 }
 
 const DEMO_GAMES = [
@@ -90,9 +101,11 @@ const DEMO_GAMES = [
 ];
 
 function renderError(message){
-  renderGames(DEMO_GAMES);
-  const title = document.getElementById('newsSectionTitle');
-  if(title) title.textContent = 'Live from the scoreboard. (demo preview)';
+  renderGames(DEMO_GAMES, 'newsGrid', 'newsSectionTitle', 'Live from the scoreboard. (demo preview)');
+  const liveTitle = document.getElementById('liveScoresTitle');
+  const liveGrid = document.getElementById('liveScoresGrid');
+  if(liveTitle) liveTitle.textContent = 'Live now. (demo preview)';
+  if(liveGrid) liveGrid.innerHTML = '';
   console.warn('Sports feed error, showing demo content:', message);
 }
 
@@ -101,8 +114,17 @@ async function loadSports(){
     const results = await Promise.all(LEAGUES.map(fetchLeague));
     const pool = results.flat();
     if(!pool.length) throw new Error('No games returned');
-    const picked = pickBalanced(pool, 6);
-    renderGames(picked);
+
+    const liveGames = pool.filter(e => e.status?.type?.state === 'in');
+    const rest = pool.filter(e => e.status?.type?.state !== 'in');
+
+    if(liveGames.length){
+      renderGames(pickBalanced(liveGames, 6), 'liveScoresGrid', 'liveScoresTitle', 'Live right now.');
+    }else{
+      renderEmptyLive();
+    }
+
+    renderGames(pickBalanced(rest, 6), 'newsGrid', 'newsSectionTitle', 'Live from the scoreboard.');
   }catch(err){
     renderError(err.message);
   }

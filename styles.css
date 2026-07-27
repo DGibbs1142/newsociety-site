@@ -196,10 +196,11 @@ nav.links a.current{ color:var(--text); }
   gap:10px;
   margin-bottom:28px;
 }
-.eyebrow .live-dot{
+.live-dot{
   width:6px; height:6px;
   background:var(--live);
   border-radius:50%;
+  display:inline-block;
   animation:pulse 1.6s ease-in-out infinite;
 }
 @keyframes pulse{
