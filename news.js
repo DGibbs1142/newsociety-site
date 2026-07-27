@@ -1,7 +1,13 @@
-// Populates the Current Events drops-grid with live headlines from TheNewsAPI (thenewsapi.com).
+// Populates a page's drops-grid with live headlines from TheNewsAPI (thenewsapi.com).
 // Requires NEWS_API_KEY to be defined (see config.local.js / config.example.js).
+// The #newsGrid element's data-category attribute picks the TheNewsAPI category
+// (e.g. "sports", "entertainment") — omit it for general top headlines.
 
-const NEWS_ENDPOINT = "https://api.thenewsapi.com/v1/news/top?locale=us&limit=6";
+function newsEndpointFor(category){
+  const base = 'https://api.thenewsapi.com/v1/news/top?limit=6';
+  if(!category) return `${base}&locale=us`;
+  return `${base}&categories=${category}`;
+}
 
 function timeAgo(dateStr){
   const diffMs = Date.now() - new Date(dateStr).getTime();
@@ -56,12 +62,15 @@ function renderError(message){
 }
 
 async function loadNews(){
+  const grid = document.getElementById('newsGrid');
+  const category = grid?.dataset.category || '';
+
   if(typeof NEWS_API_KEY === 'undefined'){
     renderError('No API key configured — copy config.example.js to config.local.js and add your TheNewsAPI key.');
     return;
   }
   try{
-    const res = await fetch(`${NEWS_ENDPOINT}&api_token=${NEWS_API_KEY}`);
+    const res = await fetch(`${newsEndpointFor(category)}&api_token=${NEWS_API_KEY}`);
     if(!res.ok) throw new Error(`${res.status} ${res.statusText}`);
     const data = await res.json();
     if(!data.data || !data.data.length) throw new Error('No articles returned');
