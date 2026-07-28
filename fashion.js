@@ -1,9 +1,9 @@
-// Populates the Fashion drops-grid with live fashion news from TheNewsAPI,
-// filtered to a "fashion" keyword search rather than a generic category
-// (TheNewsAPI has no dedicated fashion category). Same free-tier 3-per-request
-// cap as the other TheNewsAPI-backed pages, so two pages are combined for 6.
+// Populates the Fashion drops-grid with live fashion news from GNews.io,
+// filtered to a "fashion" keyword search. GNews returns up to 10 results per
+// request on the free tier, so — unlike the old TheNewsAPI integration —
+// no multi-page-per-page fan-out is needed here.
 
-const FASHION_ENDPOINT = 'https://api.thenewsapi.com/v1/news/all?limit=6&language=en&search=fashion';
+const FASHION_ENDPOINT = 'https://gnews.io/api/v4/search?q=fashion&lang=en&max=10';
 
 function timeAgo(dateStr){
   const diffMs = Date.now() - new Date(dateStr).getTime();
@@ -14,6 +14,19 @@ function timeAgo(dateStr){
   return `${Math.round(hours / 24)}d ago`;
 }
 
+function mapGNewsArticle(article){
+  return {
+    title: article.title,
+    body: article.content || article.description || '',
+    shortBody: article.description || '',
+    status: `${article.source?.name || 'Wire'} · ${timeAgo(article.publishedAt)}`,
+    source: article.source?.name || 'Wire',
+    url: article.url,
+    publishedAt: article.publishedAt,
+    imageUrl: article.image
+  };
+}
+
 function renderArticles(articles){
   const grid = document.getElementById('newsGrid');
   const title = document.getElementById('newsSectionTitle');
@@ -22,25 +35,19 @@ function renderArticles(articles){
   grid.innerHTML = '';
   const { from, pillar } = currentPillarInfo();
   articles.forEach(article => {
-    const statusText = `${article.source || 'Wire'} · ${timeAgo(article.published_at)}`;
     const card = document.createElement('a');
     card.className = 'drop-card';
-    card.href = buildDetailLink({
-      title: article.title, body: article.snippet || article.description, status: statusText,
-      source: article.source, url: article.url, from, pillar,
-      categories: (article.categories || []).join(', '), publishedAt: article.published_at,
-      imageUrl: article.image_url
-    });
+    card.href = buildDetailLink({ ...article, from, pillar });
 
     const status = document.createElement('span');
     status.className = 'drop-status mono';
-    status.textContent = statusText;
+    status.textContent = article.status;
 
     const h4 = document.createElement('h4');
     h4.textContent = article.title || 'Untitled';
 
     const p = document.createElement('p');
-    p.textContent = article.description || '';
+    p.textContent = article.shortBody || article.body || '';
 
     card.append(status, h4, p);
     grid.appendChild(card);
@@ -50,12 +57,12 @@ function renderArticles(articles){
 }
 
 const DEMO_ARTICLES = [
-  { source:'Demo Wire', published_at:new Date().toISOString(), title:'Sample Headline — Live Feed Coming Soon', description:'This is placeholder content shown because the live feed is unavailable.', url:'#' },
-  { source:'Demo Wire', published_at:new Date().toISOString(), title:'Another Sample Story For Layout Preview', description:'Six cards fill this grid in the live version, pulled fresh from the news API.', url:'#' },
-  { source:'Demo Wire', published_at:new Date().toISOString(), title:'Third Placeholder Drop', description:'Card layout, spacing, and typography match the rest of the site.', url:'#' },
-  { source:'Demo Wire', published_at:new Date().toISOString(), title:'Fourth Placeholder Drop', description:'This grid always shows six cards, live or demo, so the layout never looks broken.', url:'#' },
-  { source:'Demo Wire', published_at:new Date().toISOString(), title:'Fifth Placeholder Drop', description:'Once the feed reconnects, these get replaced with real fashion headlines.', url:'#' },
-  { source:'Demo Wire', published_at:new Date().toISOString(), title:'Sixth Placeholder Drop', description:'Check back shortly, or try the search below once the live feed is back.', url:'#' }
+  { source:'Demo Wire', status: 'Demo Wire · now', publishedAt:new Date().toISOString(), title:'Sample Headline — Live Feed Coming Soon', body:'This is placeholder content shown because the live feed is unavailable.', shortBody:'This is placeholder content shown because the live feed is unavailable.', url:'#' },
+  { source:'Demo Wire', status: 'Demo Wire · now', publishedAt:new Date().toISOString(), title:'Another Sample Story For Layout Preview', body:'Six cards fill this grid in the live version, pulled fresh from GNews.', shortBody:'Six cards fill this grid in the live version, pulled fresh from GNews.', url:'#' },
+  { source:'Demo Wire', status: 'Demo Wire · now', publishedAt:new Date().toISOString(), title:'Third Placeholder Drop', body:'Card layout, spacing, and typography match the rest of the site.', shortBody:'Card layout, spacing, and typography match the rest of the site.', url:'#' },
+  { source:'Demo Wire', status: 'Demo Wire · now', publishedAt:new Date().toISOString(), title:'Fourth Placeholder Drop', body:'This grid always shows six cards, live or demo, so the layout never looks broken.', shortBody:'This grid always shows six cards, live or demo, so the layout never looks broken.', url:'#' },
+  { source:'Demo Wire', status: 'Demo Wire · now', publishedAt:new Date().toISOString(), title:'Fifth Placeholder Drop', body:'Once the feed reconnects, these get replaced with real fashion headlines.', shortBody:'Once the feed reconnects, these get replaced with real fashion headlines.', url:'#' },
+  { source:'Demo Wire', status: 'Demo Wire · now', publishedAt:new Date().toISOString(), title:'Sixth Placeholder Drop', body:'Check back shortly, or try the search below once the live feed is back.', shortBody:'Check back shortly, or try the search below once the live feed is back.', url:'#' }
 ];
 
 function renderError(message){
@@ -66,19 +73,16 @@ function renderError(message){
 }
 
 async function loadFashion(){
-  if(typeof NEWS_API_KEY === 'undefined'){
-    renderError('No API key configured — copy config.example.js to config.local.js and add your TheNewsAPI key.');
+  if(typeof GNEWS_API_KEY === 'undefined'){
+    renderError('No API key configured — copy config.example.js to config.local.js and add your GNews.io key.');
     return;
   }
   try{
-    const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
-    const pages = await Promise.all([1, 2, 3].map(async page => {
-      const res = await fetch(`${FASHION_ENDPOINT}&page=${page}&published_after=${weekAgo}&api_token=${NEWS_API_KEY}`);
-      if(!res.ok) return [];
-      const data = await res.json();
-      return data.data || [];
-    }));
-    const articles = pages.flat().filter(a => a.description && a.description.length > 20);
+    const res = await fetch(`${FASHION_ENDPOINT}&apikey=${GNEWS_API_KEY}`);
+    if(res.status === 403 || res.status === 429) throw new Error('GNews usage limit reached');
+    if(!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+    const data = await res.json();
+    const articles = (data.articles || []).map(mapGNewsArticle);
     if(!articles.length) throw new Error('No articles returned');
     renderArticles(articles.slice(0, 6));
   }catch(err){
@@ -86,29 +90,13 @@ async function loadFashion(){
   }
 }
 
-// Free tier caps each request at 3 results, so one "page" of the search
-// widget fetches 4 underlying TheNewsAPI pages in parallel (~12 results).
 async function fetchFashionSearchPage(query, page){
-  if(typeof NEWS_API_KEY === 'undefined') return [];
-  const startApiPage = (page - 1) * 4 + 1;
-  const subPages = await Promise.all([0, 1, 2, 3].map(async i => {
-    const apiPage = startApiPage + i;
-    const res = await fetch(`https://api.thenewsapi.com/v1/news/all?search=${encodeURIComponent(query)}&language=en&limit=3&page=${apiPage}&api_token=${NEWS_API_KEY}`);
-    if(res.status === 402 || res.status === 429) throw new Error('TheNewsAPI usage limit reached — try again later');
-    if(!res.ok) return [];
-    const data = await res.json();
-    return data.data || [];
-  }));
-  return subPages.flat()
-    .filter(a => a.description && a.description.length > 20)
-    .map(article => ({
-      title: article.title,
-      body: article.snippet || article.description,
-      status: `${article.source || 'Wire'} · ${timeAgo(article.published_at)}`,
-      source: article.source, url: article.url,
-      categories: (article.categories || []).join(', '), publishedAt: article.published_at,
-      imageUrl: article.image_url
-    }));
+  if(typeof GNEWS_API_KEY === 'undefined') return [];
+  const res = await fetch(`https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=10&page=${page}&apikey=${GNEWS_API_KEY}`);
+  if(res.status === 403 || res.status === 429) throw new Error('GNews usage limit reached — try again later');
+  if(!res.ok) return [];
+  const data = await res.json();
+  return (data.articles || []).map(mapGNewsArticle);
 }
 
 if(document.getElementById('newsGrid')){

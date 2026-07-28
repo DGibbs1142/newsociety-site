@@ -5,7 +5,7 @@
 // and the grid balances across whichever sources are available.
 
 const TMDB_ENDPOINT = 'https://api.themoviedb.org/3/trending/all/day';
-const NEWS_ENDPOINT = 'https://api.thenewsapi.com/v1/news/all?limit=3&language=en&search=celebrity';
+const NEWS_ENDPOINT = 'https://gnews.io/api/v4/top-headlines?category=entertainment&lang=en&country=us&max=4';
 const YOUTUBE_ENDPOINT = 'https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&videoCategoryId=24&regionCode=US&maxResults=4';
 const GIPHY_ENDPOINT = 'https://api.giphy.com/v1/gifs/trending?limit=4&rating=pg-13';
 
@@ -44,21 +44,19 @@ async function fetchTitles(){
 }
 
 async function fetchCelebrityNews(){
-  if(typeof NEWS_API_KEY === 'undefined') return [];
+  if(typeof GNEWS_API_KEY === 'undefined') return [];
   try{
-    const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
-    const res = await fetch(`${NEWS_ENDPOINT}&published_after=${weekAgo}&api_token=${NEWS_API_KEY}`);
+    const res = await fetch(`${NEWS_ENDPOINT}&apikey=${GNEWS_API_KEY}`);
     if(!res.ok) return [];
     const data = await res.json();
-    return (data.data || []).map(article => ({
-      status: `${article.source || 'Wire'} · ${timeAgo(article.published_at)}`,
+    return (data.articles || []).map(article => ({
+      status: `${article.source?.name || 'Wire'} · ${timeAgo(article.publishedAt)}`,
       heading: article.title || 'Untitled',
-      body: article.snippet || article.description || '',
-      source: article.source || 'Wire',
+      body: article.description || article.content || '',
+      source: article.source?.name || 'Wire',
       url: article.url,
-      categories: (article.categories || []).join(', '),
-      publishedAt: article.published_at,
-      imageUrl: article.image_url
+      publishedAt: article.publishedAt,
+      imageUrl: article.image
     }));
   }catch{ return []; }
 }
