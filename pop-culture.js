@@ -55,7 +55,10 @@ async function fetchCelebrityNews(){
       heading: article.title || 'Untitled',
       body: article.snippet || article.description || '',
       source: article.source || 'Wire',
-      url: article.url
+      url: article.url,
+      categories: (article.categories || []).join(', '),
+      publishedAt: article.published_at,
+      imageUrl: article.image_url
     }));
   }catch{ return []; }
 }
@@ -117,7 +120,8 @@ function renderCards(cards){
     el.href = buildDetailLink({
       title: card.heading, body: card.body, status: card.status,
       source: card.source, url: card.url, from, pillar,
-      tmdbId: card.tmdbId, mediaType: card.mediaType
+      tmdbId: card.tmdbId, mediaType: card.mediaType,
+      categories: card.categories, publishedAt: card.publishedAt, imageUrl: card.imageUrl
     });
 
     const status = document.createElement('span');

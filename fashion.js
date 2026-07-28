@@ -27,7 +27,9 @@ function renderArticles(articles){
     card.className = 'drop-card';
     card.href = buildDetailLink({
       title: article.title, body: article.snippet || article.description, status: statusText,
-      source: article.source, url: article.url, from, pillar
+      source: article.source, url: article.url, from, pillar,
+      categories: (article.categories || []).join(', '), publishedAt: article.published_at,
+      imageUrl: article.image_url
     });
 
     const status = document.createElement('span');

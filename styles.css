@@ -351,6 +351,9 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
 @media (max-width:720px){
   .pillars-grid{ grid-template-columns:1fr; }
 }
+.pillars-grid > .pillar:nth-child(odd):last-child{
+  grid-column:1 / -1;
+}
 .pillar{
   background:var(--bg);
   padding:44px 38px;

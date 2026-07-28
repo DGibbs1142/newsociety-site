@@ -25,6 +25,9 @@ const espnLeague = params.get('espnLeague');
 const tmdbId = params.get('tmdbId');
 const mediaType = params.get('mediaType');
 const anilistId = params.get('anilistId');
+const categories = params.get('categories');
+const publishedAt = params.get('publishedAt');
+const imageUrl = params.get('imageUrl');
 
 function renderBase(){
   document.title = `${title} — NewSociety`;
@@ -212,11 +215,37 @@ async function renderAnimeBreakdown(){
   }
 }
 
+// --- News/Fashion articles: framed as our own rundown (category, exact
+// publish time, lead image) instead of just a snippet + link. No live
+// re-fetch needed — TheNewsAPI already gave us everything via the card. ---
+function renderNewsBreakdown(){
+  if(!categories && !publishedAt && !imageUrl) return;
+
+  let html = '<div class="section-label">// the breakdown</div><div class="breakdown-heading">NewSociety Rundown</div>';
+
+  if(imageUrl){
+    html += `<img src="${escapeHtml(imageUrl)}" alt="" style="width:100%; max-width:640px; border:1px solid var(--line); margin-bottom:24px; display:block;" onerror="this.remove()">`;
+  }
+
+  const publishedDisplay = publishedAt
+    ? new Date(publishedAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
+    : '';
+
+  html += '<div class="fact-grid">';
+  if(categories) html += `<div class="fact-cell"><div class="label">Category</div><div class="value">${escapeHtml(categories)}</div></div>`;
+  if(publishedDisplay) html += `<div class="fact-cell"><div class="label">Published</div><div class="value">${escapeHtml(publishedDisplay)}</div></div>`;
+  if(source) html += `<div class="fact-cell"><div class="label">Outlet</div><div class="value">${escapeHtml(source)}</div></div>`;
+  html += '</div>';
+
+  document.getElementById('detailBreakdown').innerHTML = html;
+}
+
 if(title){
   renderBase();
   if(espnId && espnPath) renderSportsBreakdown();
   else if(tmdbId && mediaType) renderTitleBreakdown();
   else if(anilistId) renderAnimeBreakdown();
+  else renderNewsBreakdown();
 }else{
   document.getElementById('detailTitle').textContent = "Nothing to show here.";
   document.getElementById('detailStatus').textContent = '';
