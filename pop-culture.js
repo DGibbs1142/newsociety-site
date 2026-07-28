@@ -1,70 +1,154 @@
-// Populates the Pop Culture drops-grid with trending movies/TV from TMDB
-// (themoviedb.org) instead of generic entertainment-category news — real
-// titles people are watching/talking about, not just articles that mention them.
-// Requires TMDB_API_KEY to be defined (see config.local.js / config.example.js).
+// Populates the Pop Culture drops-grid from multiple sources so it's not just
+// movies/TV: trending titles (TMDB), celebrity/industry news (TheNewsAPI),
+// viral videos (YouTube Data API), and trending GIFs/memes (Giphy). The last
+// two are optional — if their keys aren't set, those sources are just skipped
+// and the grid balances across whichever sources are available.
 
 const TMDB_ENDPOINT = 'https://api.themoviedb.org/3/trending/all/day';
+const NEWS_ENDPOINT = 'https://api.thenewsapi.com/v1/news/all?limit=3&language=en&search=celebrity';
+const YOUTUBE_ENDPOINT = 'https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&videoCategoryId=24&regionCode=US&maxResults=4';
+const GIPHY_ENDPOINT = 'https://api.giphy.com/v1/gifs/trending?limit=4&rating=pg-13';
 
 function yearOf(item){
   const date = item.release_date || item.first_air_date;
   return date ? date.slice(0, 4) : '—';
 }
 
-function renderTitles(items){
+function timeAgo(dateStr){
+  const diffMs = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.round(diffMs / 60000);
+  if(mins < 60) return `${mins}m ago`;
+  const hours = Math.round(mins / 60);
+  if(hours < 24) return `${hours}h ago`;
+  return `${Math.round(hours / 24)}d ago`;
+}
+
+// --- Each fetcher returns a flat array of normalized cards: { status, heading, body, url } ---
+
+async function fetchTitles(){
+  if(typeof TMDB_API_KEY === 'undefined') return [];
+  try{
+    const res = await fetch(`${TMDB_ENDPOINT}?api_key=${TMDB_API_KEY}`);
+    if(!res.ok) return [];
+    const data = await res.json();
+    return (data.results || []).slice(0, 4).map(item => ({
+      status: `${item.media_type === 'tv' ? 'TV' : 'Movie'} · ${yearOf(item)} · ${item.vote_average ? item.vote_average.toFixed(1) + '/10' : 'Unrated'}`,
+      heading: item.title || item.name || 'Untitled',
+      body: item.overview || '',
+      url: `https://www.themoviedb.org/${item.media_type}/${item.id}`
+    }));
+  }catch{ return []; }
+}
+
+async function fetchCelebrityNews(){
+  if(typeof NEWS_API_KEY === 'undefined') return [];
+  try{
+    const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
+    const res = await fetch(`${NEWS_ENDPOINT}&published_after=${weekAgo}&api_token=${NEWS_API_KEY}`);
+    if(!res.ok) return [];
+    const data = await res.json();
+    return (data.data || []).map(article => ({
+      status: `${article.source || 'Wire'} · ${timeAgo(article.published_at)}`,
+      heading: article.title || 'Untitled',
+      body: article.description || '',
+      url: article.url
+    }));
+  }catch{ return []; }
+}
+
+async function fetchTrendingVideos(){
+  if(typeof YOUTUBE_API_KEY === 'undefined') return [];
+  try{
+    const res = await fetch(`${YOUTUBE_ENDPOINT}&key=${YOUTUBE_API_KEY}`);
+    if(!res.ok) return [];
+    const data = await res.json();
+    return (data.items || []).slice(0, 4).map(video => ({
+      status: `YouTube · ${Number(video.statistics?.viewCount || 0).toLocaleString()} views`,
+      heading: video.snippet?.title || 'Untitled',
+      body: video.snippet?.description || '',
+      url: `https://www.youtube.com/watch?v=${video.id}`
+    }));
+  }catch{ return []; }
+}
+
+async function fetchTrendingGifs(){
+  if(typeof GIPHY_API_KEY === 'undefined') return [];
+  try{
+    const res = await fetch(`${GIPHY_ENDPOINT}&api_key=${GIPHY_API_KEY}`);
+    if(!res.ok) return [];
+    const data = await res.json();
+    return (data.data || []).slice(0, 4).map(gif => ({
+      status: 'Giphy · Trending',
+      heading: gif.title || 'Untitled GIF',
+      body: `Trending reaction from ${gif.username || 'the community'}.`,
+      url: gif.url
+    }));
+  }catch{ return []; }
+}
+
+function pickBalanced(buckets, count){
+  const lists = buckets.filter(b => b.length).map(b => [...b]);
+  const picked = [];
+  let i = 0;
+  while(picked.length < count && lists.some(l => l.length)){
+    const list = lists[i % lists.length];
+    if(list.length) picked.push(list.shift());
+    i++;
+  }
+  return picked;
+}
+
+function renderCards(cards){
   const grid = document.getElementById('newsGrid');
   const title = document.getElementById('newsSectionTitle');
   if(!grid) return;
 
   grid.innerHTML = '';
-  items.forEach(item => {
-    const card = document.createElement('a');
-    card.className = 'drop-card';
-    card.href = `https://www.themoviedb.org/${item.media_type}/${item.id}`;
-    card.target = '_blank';
-    card.rel = 'noopener';
+  cards.forEach(card => {
+    const el = document.createElement('a');
+    el.className = 'drop-card';
+    el.href = card.url || '#';
+    el.target = '_blank';
+    el.rel = 'noopener';
 
     const status = document.createElement('span');
     status.className = 'drop-status mono';
-    const rating = item.vote_average ? `${item.vote_average.toFixed(1)}/10` : 'Unrated';
-    status.textContent = `${item.media_type === 'tv' ? 'TV' : 'Movie'} · ${yearOf(item)} · ${rating}`;
+    status.textContent = card.status;
 
     const h4 = document.createElement('h4');
-    h4.textContent = item.title || item.name || 'Untitled';
+    h4.textContent = card.heading;
 
     const p = document.createElement('p');
-    p.textContent = item.overview || '';
+    p.textContent = card.body;
 
-    card.append(status, h4, p);
-    grid.appendChild(card);
+    el.append(status, h4, p);
+    grid.appendChild(el);
   });
 
   if(title) title.textContent = 'Live from the wire.';
 }
 
-const DEMO_TITLES = [
-  { media_type: 'movie', title: 'Sample Trending Movie', release_date: '2026-01-01', vote_average: 7.8, overview: 'Placeholder content shown because the live feed is unavailable.', id: 0 },
-  { media_type: 'tv', name: 'Sample Trending Show', first_air_date: '2025-01-01', vote_average: 8.2, overview: 'Six cards fill this grid in the live version, pulled fresh from TMDB trending.', id: 0 },
-  { media_type: 'movie', title: 'Sample Third Pick', release_date: '2024-01-01', vote_average: 6.9, overview: 'Card layout, spacing, and typography match the rest of the site.', id: 0 }
+const DEMO_CARDS = [
+  { status: 'Movie · 2026 · 7.8/10', heading: 'Sample Trending Movie', body: 'Placeholder content shown because the live feed is unavailable.', url: '#' },
+  { status: 'Deadline.com · 2h ago', heading: 'Sample Celebrity Headline', body: 'Six cards fill this grid in the live version, mixing trending titles, celebrity news, and more.', url: '#' },
+  { status: 'YouTube · 1.2M views', heading: 'Sample Viral Video', body: 'Card layout, spacing, and typography match the rest of the site.', url: '#' }
 ];
 
 function renderError(message){
-  renderTitles(DEMO_TITLES);
+  renderCards(DEMO_CARDS);
   const title = document.getElementById('newsSectionTitle');
   if(title) title.textContent = 'Live from the wire. (demo preview)';
   console.warn('Pop Culture feed error, showing demo content:', message);
 }
 
 async function loadPopCulture(){
-  if(typeof TMDB_API_KEY === 'undefined'){
-    renderError('No API key configured — copy config.example.js to config.local.js and add your TMDB key.');
-    return;
-  }
   try{
-    const res = await fetch(`${TMDB_ENDPOINT}?api_key=${TMDB_API_KEY}`);
-    if(!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-    const data = await res.json();
-    if(!data.results || !data.results.length) throw new Error('No titles returned');
-    renderTitles(data.results.slice(0, 6));
+    const [titles, news, videos, gifs] = await Promise.all([
+      fetchTitles(), fetchCelebrityNews(), fetchTrendingVideos(), fetchTrendingGifs()
+    ]);
+    const combined = pickBalanced([titles, news, videos, gifs], 6);
+    if(!combined.length) throw new Error('No pop culture content returned');
+    renderCards(combined);
   }catch(err){
     renderError(err.message);
   }
