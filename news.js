@@ -91,6 +91,35 @@ async function loadNews(){
   }
 }
 
+// Free tier caps each request at 3 results, so one "page" of the search
+// widget fetches 4 underlying TheNewsAPI pages in parallel (~12 results).
+async function fetchNewsSearchPage(query, page){
+  if(typeof NEWS_API_KEY === 'undefined') return [];
+  const startApiPage = (page - 1) * 4 + 1;
+  const subPages = await Promise.all([0, 1, 2, 3].map(async i => {
+    const apiPage = startApiPage + i;
+    const res = await fetch(`https://api.thenewsapi.com/v1/news/all?search=${encodeURIComponent(query)}&language=en&limit=3&page=${apiPage}&api_token=${NEWS_API_KEY}`);
+    if(res.status === 402 || res.status === 429) throw new Error('TheNewsAPI usage limit reached — try again later');
+    if(!res.ok) return [];
+    const data = await res.json();
+    return data.data || [];
+  }));
+  return subPages.flat()
+    .filter(a => a.description && a.description.length > 20)
+    .map(article => ({
+      title: article.title,
+      body: article.snippet || article.description,
+      status: `${article.source || 'Wire'} · ${timeAgo(article.published_at)}`,
+      source: article.source, url: article.url,
+      categories: (article.categories || []).join(', '), publishedAt: article.published_at,
+      imageUrl: article.image_url
+    }));
+}
+
 if(document.getElementById('newsGrid')){
   loadNews();
+  initSearchWidget({
+    formId: 'searchForm', inputId: 'searchInput', gridId: 'searchResultsGrid',
+    statusId: 'searchStatus', moreBtnId: 'searchMoreBtn', fetchPage: fetchNewsSearchPage
+  });
 }

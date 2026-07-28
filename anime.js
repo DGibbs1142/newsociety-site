@@ -107,6 +107,39 @@ async function loadAnime(){
   }
 }
 
+const SEARCH_QUERY = `
+query($s:String,$p:Int){
+  Page(page:$p, perPage:10){
+    media(search:$s, type:ANIME){
+      id title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl
+    }
+  }
+}`;
+
+async function fetchAnimeSearchPage(query, page){
+  const res = await fetch(ANILIST_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query: SEARCH_QUERY, variables: { s: query, p: page } })
+  });
+  if(!res.ok) throw new Error(`${res.status}`);
+  const { data, errors } = await res.json();
+  if(errors) throw new Error(errors[0]?.message || 'AniList search error');
+  return (data.Page.media || []).map(anime => {
+    const score = anime.averageScore ? `${anime.averageScore}/100` : 'Unrated';
+    return {
+      title: anime.title.english || anime.title.romaji || 'Untitled',
+      body: cleanSynopsis(anime.description),
+      status: `${anime.seasonYear || '—'} · ${score}`,
+      source: 'AniList', url: anime.siteUrl, anilistId: anime.id
+    };
+  });
+}
+
 if(document.getElementById('newsGrid')){
   loadAnime();
+  initSearchWidget({
+    formId: 'searchForm', inputId: 'searchInput', gridId: 'searchResultsGrid',
+    statusId: 'searchStatus', moreBtnId: 'searchMoreBtn', fetchPage: fetchAnimeSearchPage
+  });
 }

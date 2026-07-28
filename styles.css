@@ -258,7 +258,8 @@ h1.hero-title .accent-word{ color:var(--accent); }
   align-items:center;
 }
 .search-form select,
-.search-form input[type="date"]{
+.search-form input[type="date"],
+.search-form input[type="text"]{
   font-family:'JetBrains Mono',monospace;
   font-size:13px;
   color:var(--text);
@@ -268,8 +269,13 @@ h1.hero-title .accent-word{ color:var(--accent); }
   padding:13px 16px;
   outline:none;
 }
+.search-form input[type="text"]{
+  flex:1;
+  min-width:200px;
+}
 .search-form select:focus,
-.search-form input[type="date"]:focus{
+.search-form input[type="date"]:focus,
+.search-form input[type="text"]:focus{
   border-color:var(--accent);
 }
 .search-status{
@@ -277,6 +283,11 @@ h1.hero-title .accent-word{ color:var(--accent); }
   font-size:12px;
   color:var(--text-dim);
   margin-bottom:24px;
+}
+.search-more{
+  margin-top:32px;
+  display:flex;
+  justify-content:center;
 }
 
 /* ---------- PAGE HERO (pillar sub-pages) ---------- */

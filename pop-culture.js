@@ -167,6 +167,27 @@ async function loadPopCulture(){
   }
 }
 
+async function fetchTitleSearchPage(query, page){
+  if(typeof TMDB_API_KEY === 'undefined') return [];
+  const res = await fetch(`https://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(query)}&page=${page}&api_key=${TMDB_API_KEY}`);
+  if(!res.ok) throw new Error(`${res.status}`);
+  const data = await res.json();
+  return (data.results || [])
+    .filter(item => item.media_type === 'movie' || item.media_type === 'tv')
+    .map(item => ({
+      title: item.title || item.name || 'Untitled',
+      body: item.overview || '',
+      status: `${item.media_type === 'tv' ? 'TV' : 'Movie'} · ${yearOf(item)} · ${item.vote_average ? item.vote_average.toFixed(1) + '/10' : 'Unrated'}`,
+      source: 'TMDB', url: `https://www.themoviedb.org/${item.media_type}/${item.id}`,
+      tmdbId: item.id, mediaType: item.media_type
+    }));
+}
+
 if(document.getElementById('newsGrid')){
   loadPopCulture();
+  initSearchWidget({
+    formId: 'searchForm', inputId: 'searchInput', gridId: 'searchResultsGrid',
+    statusId: 'searchStatus', moreBtnId: 'searchMoreBtn', fetchPage: fetchTitleSearchPage,
+    resultsPerPage: 10
+  });
 }
