@@ -249,6 +249,36 @@ h1.hero-title .accent-word{ color:var(--accent); }
 }
 .btn-ghost:hover{ border-color:var(--text-muted); }
 
+/* ---------- SEARCH FORM (sports date/league browser) ---------- */
+.search-form{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:40px;
+  align-items:center;
+}
+.search-form select,
+.search-form input[type="date"]{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  color:var(--text);
+  background:var(--bg-elevated);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:13px 16px;
+  outline:none;
+}
+.search-form select:focus,
+.search-form input[type="date"]:focus{
+  border-color:var(--accent);
+}
+.search-status{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--text-dim);
+  margin-bottom:24px;
+}
+
 /* ---------- PAGE HERO (pillar sub-pages) ---------- */
 .page-hero{
   padding:80px 0 70px;

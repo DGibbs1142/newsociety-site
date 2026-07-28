@@ -60,6 +60,38 @@ function breakdownLoading(text){
     `<p class="mono" style="color:var(--text-dim); font-size:12px; letter-spacing:0.04em;">${escapeHtml(text)}</p>`;
 }
 
+// Individual player stat lines from ESPN's boxscore.players (batting/pitching,
+// passing/rushing, etc. — whatever groups that sport has). Generic across
+// sports since it just renders whatever labels/stats ESPN provides. Empty for
+// games that haven't started yet (no boxscore.players exists).
+function renderPlayerStats(playersData, competitors){
+  if(!playersData || !playersData.length) return '';
+  const teamNameFor = (teamId) => {
+    const c = competitors?.find(c => c.team?.id === teamId);
+    return c?.team?.abbreviation || c?.team?.shortDisplayName || '';
+  };
+
+  let html = '';
+  playersData.forEach(teamBlock => {
+    const teamName = teamBlock.team?.abbreviation || teamNameFor(teamBlock.team?.id) || teamBlock.team?.displayName || '';
+    (teamBlock.statistics || []).forEach(group => {
+      if(!group.athletes?.length || !group.labels?.length) return;
+      const groupName = (group.type || group.name || 'stats').replace(/^\w/, c => c.toUpperCase());
+      html += `<div class="section-label" style="margin-top:32px;">// ${escapeHtml(teamName)} · ${escapeHtml(groupName)}</div>`;
+      const cols = `1.6fr repeat(${group.labels.length}, minmax(38px, 1fr))`;
+      html += '<div class="linescore-table" style="margin-top:12px;">';
+      html += `<div class="linescore-row header" style="grid-template-columns:${cols}"><div>Player</div>${group.labels.map(l => `<div>${escapeHtml(l)}</div>`).join('')}</div>`;
+      group.athletes.slice(0, 6).forEach(a => {
+        const name = a.athlete?.shortName || a.athlete?.displayName || '';
+        const cells = (a.stats || []).map(s => `<div>${escapeHtml(s)}</div>`).join('');
+        html += `<div class="linescore-row" style="grid-template-columns:${cols}"><div>${escapeHtml(name)}</div>${cells}</div>`;
+      });
+      html += '</div>';
+    });
+  });
+  return html;
+}
+
 // --- Sports: real box score / game info from ESPN, framed as our own live report ---
 async function renderSportsBreakdown(){
   breakdownLoading('Pulling the box score…');
@@ -98,6 +130,8 @@ async function renderSportsBreakdown(){
     if(broadcast) html += `<div class="fact-cell"><div class="label">Broadcast</div><div class="value">${escapeHtml(broadcast)}</div></div>`;
     if(espnLeague) html += `<div class="fact-cell"><div class="label">League</div><div class="value">${escapeHtml(espnLeague)}</div></div>`;
     html += '</div>';
+
+    html += renderPlayerStats(data.boxscore?.players, competitors);
 
     document.getElementById('detailBreakdown').innerHTML = html;
   }catch(err){

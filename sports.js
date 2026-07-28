@@ -136,6 +136,47 @@ async function loadSports(){
   }
 }
 
+function initGameSearch(){
+  const form = document.getElementById('gameSearchForm');
+  if(!form) return;
+
+  const dateInput = document.getElementById('searchDate');
+  dateInput.value = new Date().toISOString().slice(0, 10);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const leagueSelect = document.getElementById('searchLeague');
+    const league = leagueSelect.value;
+    const leagueLabel = leagueSelect.selectedOptions[0].textContent;
+    const dateStr = dateInput.value.replaceAll('-', '');
+    const status = document.getElementById('searchStatus');
+    const grid = document.getElementById('searchResultsGrid');
+
+    status.textContent = 'Searching…';
+    grid.style.display = 'none';
+    grid.innerHTML = '';
+
+    try{
+      const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${league}/scoreboard?dates=${dateStr}`);
+      if(!res.ok) throw new Error(`${res.status}`);
+      const data = await res.json();
+      const events = (data.events || []).map(ev => ({ ...ev, leagueLabel, leaguePath: league }));
+
+      if(!events.length){
+        status.textContent = `No ${leagueLabel} games found on that date.`;
+        return;
+      }
+      status.textContent = `${events.length} game${events.length === 1 ? '' : 's'} found.`;
+      grid.style.display = '';
+      events.forEach(ev => grid.appendChild(gameCard(ev, { live: ev.status?.type?.state === 'in' })));
+    }catch(err){
+      status.textContent = 'Search failed — try again.';
+      console.warn('Game search error:', err.message);
+    }
+  });
+}
+
 if(document.getElementById('newsGrid')){
   loadSports();
+  initGameSearch();
 }
