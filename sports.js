@@ -79,6 +79,12 @@ function gameCard(event, { live = false } = {}){
   p.textContent = summary;
 
   card.append(status, h4, p);
+
+  const comp = event.competitions?.[0];
+  const away = comp?.competitors?.find(c => c.homeAway === 'away');
+  const home = comp?.competitors?.find(c => c.homeAway === 'home');
+  attachMatchupLogos(card, away?.team?.logo, home?.team?.logo);
+
   return card;
 }
 
@@ -210,7 +216,8 @@ async function fetchSportsKeywordSearch(query){
       title: item.displayName || 'Untitled',
       body: [item.description, item.subtitle].filter(Boolean).join(' · '),
       status: [item.description, item.subtitle].filter(Boolean).join(' · ') || 'ESPN',
-      source: 'ESPN', url: item.link?.web || ''
+      source: 'ESPN', url: item.link?.web || '',
+      imageUrl: item.image?.default || ''
     };
     if(leaguePath && uidMatch){
       card.espnLeaguePath = leaguePath;

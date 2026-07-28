@@ -38,7 +38,8 @@ async function fetchTitles(){
       source: 'TMDB',
       url: `https://www.themoviedb.org/${item.media_type}/${item.id}`,
       tmdbId: item.id,
-      mediaType: item.media_type
+      mediaType: item.media_type,
+      imageUrl: item.poster_path ? `https://image.tmdb.org/t/p/w342${item.poster_path}` : ''
     }));
   }catch{ return []; }
 }
@@ -73,7 +74,8 @@ async function fetchTrendingVideos(){
       heading: video.snippet?.title || 'Untitled',
       body: video.snippet?.description || '',
       source: 'YouTube',
-      url: `https://www.youtube.com/watch?v=${video.id}`
+      url: `https://www.youtube.com/watch?v=${video.id}`,
+      imageUrl: video.snippet?.thumbnails?.high?.url || video.snippet?.thumbnails?.medium?.url || ''
     }));
   }catch{ return []; }
 }
@@ -89,7 +91,8 @@ async function fetchTrendingGifs(){
       heading: gif.title || 'Untitled GIF',
       body: `Trending reaction from ${gif.username || 'the community'}.`,
       source: 'Giphy',
-      url: gif.url
+      url: gif.url,
+      imageUrl: gif.images?.fixed_width?.url || ''
     }));
   }catch{ return []; }
 }
@@ -135,6 +138,7 @@ function renderCards(cards){
     p.textContent = card.body;
 
     el.append(status, h4, p);
+    attachCardImage(el, card.imageUrl);
     grid.appendChild(el);
   });
 
@@ -182,7 +186,8 @@ async function fetchTitleSearchPage(query, page){
       body: item.overview || '',
       status: `${item.media_type === 'tv' ? 'TV' : 'Movie'} · ${yearOf(item)} · ${item.vote_average ? item.vote_average.toFixed(1) + '/10' : 'Unrated'}`,
       source: 'TMDB', url: `https://www.themoviedb.org/${item.media_type}/${item.id}`,
-      tmdbId: item.id, mediaType: item.media_type
+      tmdbId: item.id, mediaType: item.media_type,
+      imageUrl: item.poster_path ? `https://image.tmdb.org/t/p/w342${item.poster_path}` : ''
     }));
 }
 

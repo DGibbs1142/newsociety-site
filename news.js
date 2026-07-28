@@ -50,6 +50,7 @@ function renderArticles(articles){
     p.textContent = article.shortBody || article.body || '';
 
     card.append(status, h4, p);
+    attachCardImage(card, article.imageUrl);
     grid.appendChild(card);
   });
 

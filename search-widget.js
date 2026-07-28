@@ -34,6 +34,7 @@ function initSearchWidget({ formId, inputId, gridId, statusId, moreBtnId, fetchP
     p.textContent = card.body || '';
 
     el.append(statusEl, h4, p);
+    attachCardImage(el, card.imageUrl);
     grid.appendChild(el);
   }
 

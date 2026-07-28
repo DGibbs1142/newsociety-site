@@ -10,17 +10,17 @@ const ANIME_QUERY = `
 query($cp:Int,$up:Int,$tp:Int){
   classics: Page(page:$cp, perPage:2){
     media(type:ANIME, format:TV, sort:SCORE_DESC, startDate_lesser:20100101){
-      id title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl
+      id title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl coverImage{ large }
     }
   }
   underrated: Page(page:$up, perPage:2){
     media(type:ANIME, format:TV, sort:POPULARITY_DESC, popularity_lesser:60000, averageScore_greater:70){
-      id title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl
+      id title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl coverImage{ large }
     }
   }
   trending: Page(page:$tp, perPage:2){
     media(type:ANIME, sort:TRENDING_DESC){
-      id title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl
+      id title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl coverImage{ large }
     }
   }
 }`;
@@ -67,6 +67,7 @@ function renderAnime(mediaList){
     p.textContent = synopsis;
 
     card.append(status, h4, p);
+    attachCardImage(card, anime.coverImage?.large);
     grid.appendChild(card);
   });
 
@@ -111,7 +112,7 @@ const SEARCH_QUERY = `
 query($s:String,$p:Int){
   Page(page:$p, perPage:10){
     media(search:$s, type:ANIME){
-      id title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl
+      id title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl coverImage{ large }
     }
   }
 }`;
@@ -131,7 +132,8 @@ async function fetchAnimeSearchPage(query, page){
       title: anime.title.english || anime.title.romaji || 'Untitled',
       body: cleanSynopsis(anime.description),
       status: `${anime.seasonYear || '—'} · ${score}`,
-      source: 'AniList', url: anime.siteUrl, anilistId: anime.id
+      source: 'AniList', url: anime.siteUrl, anilistId: anime.id,
+      imageUrl: anime.coverImage?.large
     };
   });
 }

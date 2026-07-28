@@ -22,3 +22,44 @@ function buildDetailLink(data){
   });
   return `detail.html?${params.toString()}`;
 }
+
+// Prepends a media image to a drop-card (inserted first regardless of when
+// called, since it uses insertBefore). Silently removes itself if the image
+// fails to load — better than a broken-image icon on a live feed.
+function attachCardImage(card, imageUrl){
+  if(!imageUrl) return;
+  const media = document.createElement('div');
+  media.className = 'drop-card-media';
+  const img = document.createElement('img');
+  img.src = imageUrl;
+  img.alt = '';
+  img.loading = 'lazy';
+  img.onerror = () => media.remove();
+  media.appendChild(img);
+  card.insertBefore(media, card.firstChild);
+}
+
+// Sports-only variant: two team logos side by side with "@" between them,
+// used instead of a single photo since a game card represents two teams.
+function attachMatchupLogos(card, awayLogo, homeLogo){
+  if(!awayLogo && !homeLogo) return;
+  const media = document.createElement('div');
+  media.className = 'drop-card-matchup';
+  if(awayLogo){
+    const img = document.createElement('img');
+    img.src = awayLogo; img.alt = ''; img.loading = 'lazy';
+    img.onerror = () => img.remove();
+    media.appendChild(img);
+  }
+  const vs = document.createElement('span');
+  vs.className = 'vs';
+  vs.textContent = '@';
+  media.appendChild(vs);
+  if(homeLogo){
+    const img = document.createElement('img');
+    img.src = homeLogo; img.alt = ''; img.loading = 'lazy';
+    img.onerror = () => img.remove();
+    media.appendChild(img);
+  }
+  card.insertBefore(media, card.firstChild);
+}
