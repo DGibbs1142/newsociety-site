@@ -176,7 +176,29 @@ function initGameSearch(){
   });
 }
 
+// ESPN's search endpoint doesn't actually paginate (page=2 returns the same
+// results as page=1), so this fetches one larger batch and the shared widget
+// is configured with a resultsPerPage high enough that "Load More" never shows.
+async function fetchSportsKeywordSearch(query){
+  const res = await fetch(`https://site.api.espn.com/apis/search/v2?query=${encodeURIComponent(query)}&type=player,team&limit=10`);
+  if(!res.ok) throw new Error(`${res.status}`);
+  const data = await res.json();
+  const items = (data.results || []).flatMap(r => r.contents || []);
+  return items.map(item => ({
+    title: item.displayName || 'Untitled',
+    body: [item.description, item.subtitle].filter(Boolean).join(' · '),
+    status: [item.description, item.subtitle].filter(Boolean).join(' · ') || 'ESPN',
+    source: 'ESPN', url: item.link?.web || ''
+  }));
+}
+
 if(document.getElementById('newsGrid')){
   loadSports();
   initGameSearch();
+  initSearchWidget({
+    formId: 'keywordSearchForm', inputId: 'keywordSearchInput', gridId: 'keywordSearchResultsGrid',
+    statusId: 'keywordSearchStatus', moreBtnId: null,
+    fetchPage: (query, page) => page === 1 ? fetchSportsKeywordSearch(query) : [],
+    resultsPerPage: 999
+  });
 }

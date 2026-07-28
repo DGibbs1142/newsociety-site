@@ -87,6 +87,23 @@
   <div class="wrap">
     <div class="section-head reveal">
       <div>
+        <div class="section-label">// search teams &amp; players</div>
+        <h2 class="section-title display">Any team, any player.</h2>
+      </div>
+    </div>
+    <form class="search-form reveal" id="keywordSearchForm">
+      <input type="text" id="keywordSearchInput" placeholder="Search by team or player name…" required>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+    <p class="search-status mono" id="keywordSearchStatus"></p>
+    <div class="drops-grid reveal" id="keywordSearchResultsGrid" style="display:none;"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
         <div class="section-label">// browse by date</div>
         <h2 class="section-title display">Any game, any day.</h2>
       </div>
@@ -134,6 +151,7 @@
 </footer>
 
 <script src="detail-link.js"></script>
+<script src="search-widget.js"></script>
 <script src="sports.js"></script>
 <script src="site.js"></script>
 
