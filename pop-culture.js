@@ -144,7 +144,10 @@ function renderCards(cards){
 const DEMO_CARDS = [
   { status: 'Movie · 2026 · 7.8/10', heading: 'Sample Trending Movie', body: 'Placeholder content shown because the live feed is unavailable.', url: '#' },
   { status: 'Deadline.com · 2h ago', heading: 'Sample Celebrity Headline', body: 'Six cards fill this grid in the live version, mixing trending titles, celebrity news, and more.', url: '#' },
-  { status: 'YouTube · 1.2M views', heading: 'Sample Viral Video', body: 'Card layout, spacing, and typography match the rest of the site.', url: '#' }
+  { status: 'YouTube · 1.2M views', heading: 'Sample Viral Video', body: 'Card layout, spacing, and typography match the rest of the site.', url: '#' },
+  { status: 'Giphy · Trending', heading: 'Sample Trending GIF', body: 'This grid always shows six cards, live or demo, so the layout never looks broken.', url: '#' },
+  { status: 'TV · 2026 · 8.1/10', heading: 'Sample Trending Show', body: 'Once the feed reconnects, these get replaced with real trending content.', url: '#' },
+  { status: 'Wire.com · 4h ago', heading: 'Sample Pop Culture Headline', body: 'Check back shortly, or try the search below once the live feed is back.', url: '#' }
 ];
 
 function renderError(message){

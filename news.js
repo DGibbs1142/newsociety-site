@@ -57,8 +57,11 @@ function renderArticles(articles){
 
 const DEMO_ARTICLES = [
   { source:'Demo Wire', published_at:new Date().toISOString(), title:'Sample Headline — Live Feed Coming Soon', description:'This is placeholder content shown because the live feed is unavailable.', url:'#' },
-  { source:'Demo Wire', published_at:new Date().toISOString(), title:'Another Sample Story For Layout Preview', description:'Six cards fill this grid in the live version, pulled fresh from TheNewsAPI.', url:'#' },
-  { source:'Demo Wire', published_at:new Date().toISOString(), title:'Third Placeholder Drop', description:'Card layout, spacing, and typography match the rest of the site.', url:'#' }
+  { source:'Demo Wire', published_at:new Date().toISOString(), title:'Another Sample Story For Layout Preview', description:'Six cards fill this grid in the live version, pulled fresh from the news API.', url:'#' },
+  { source:'Demo Wire', published_at:new Date().toISOString(), title:'Third Placeholder Drop', description:'Card layout, spacing, and typography match the rest of the site.', url:'#' },
+  { source:'Demo Wire', published_at:new Date().toISOString(), title:'Fourth Placeholder Drop', description:'This grid always shows six cards, live or demo, so the layout never looks broken.', url:'#' },
+  { source:'Demo Wire', published_at:new Date().toISOString(), title:'Fifth Placeholder Drop', description:'Once the feed reconnects, these get replaced with real headlines.', url:'#' },
+  { source:'Demo Wire', published_at:new Date().toISOString(), title:'Sixth Placeholder Drop', description:'Check back shortly, or try the search below once the live feed is back.', url:'#' }
 ];
 
 function renderError(message){
