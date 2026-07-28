@@ -459,13 +459,16 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   color:var(--text);
 }
 
-/* ---------- DROPS GRID (pillar sub-pages) ---------- */
+/* ---------- DROPS GRID (pillar sub-pages) ----------
+   Borders live on each card (not a background-through-gap trick on the
+   container) so a grid with a variable, not-always-divisible item count
+   (live games, search results) never leaves an empty "phantom" cell
+   showing through — there's no cell unless there's a card. */
 .drops-grid{
   display:grid;
   grid-template-columns:repeat(3, 1fr);
-  gap:1px;
-  background:var(--line);
-  border:1px solid var(--line);
+  border-top:1px solid var(--line);
+  border-left:1px solid var(--line);
 }
 @media (max-width:900px){
   .drops-grid{ grid-template-columns:repeat(2, 1fr); }
@@ -480,6 +483,8 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   flex-direction:column;
   gap:14px;
   min-height:180px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
 }
 .drop-status{
   font-family:'JetBrains Mono',monospace;
