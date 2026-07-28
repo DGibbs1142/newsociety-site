@@ -33,7 +33,6 @@ function attachCardImage(card, imageUrl){
   const img = document.createElement('img');
   img.src = imageUrl;
   img.alt = '';
-  img.loading = 'lazy';
   img.onerror = () => media.remove();
   media.appendChild(img);
   card.insertBefore(media, card.firstChild);
@@ -47,7 +46,7 @@ function attachMatchupLogos(card, awayLogo, homeLogo){
   media.className = 'drop-card-matchup';
   if(awayLogo){
     const img = document.createElement('img');
-    img.src = awayLogo; img.alt = ''; img.loading = 'lazy';
+    img.src = awayLogo; img.alt = '';
     img.onerror = () => img.remove();
     media.appendChild(img);
   }
@@ -57,7 +56,7 @@ function attachMatchupLogos(card, awayLogo, homeLogo){
   media.appendChild(vs);
   if(homeLogo){
     const img = document.createElement('img');
-    img.src = homeLogo; img.alt = ''; img.loading = 'lazy';
+    img.src = homeLogo; img.alt = '';
     img.onerror = () => img.remove();
     media.appendChild(img);
   }
