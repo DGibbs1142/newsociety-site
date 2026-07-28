@@ -99,6 +99,25 @@ function renderPlayerStats(playersData, competitors){
   return html;
 }
 
+// Recent play-by-play from ESPN's plays array — most recent first, scoring
+// plays highlighted. Present on live and just-finished games; absent (empty
+// string) for games that haven't started, which is fine, it's just skipped.
+function renderPlayByPlay(plays){
+  if(!plays || !plays.length) return '';
+  const recent = plays.filter(p => p.text).slice(-12).reverse();
+  if(!recent.length) return '';
+
+  let html = '<div class="section-label" style="margin-top:32px;">// play by play</div>';
+  html += '<div class="play-feed" style="margin-top:12px;">';
+  recent.forEach(p => {
+    const period = p.period?.displayValue || '';
+    const scoreLine = p.scoringPlay ? ` (${p.awayScore}–${p.homeScore})` : '';
+    html += `<div class="play-row${p.scoringPlay ? ' scoring' : ''}"><div class="period">${escapeHtml(period)}</div><div>${escapeHtml(p.text)}${escapeHtml(scoreLine)}</div></div>`;
+  });
+  html += '</div>';
+  return html;
+}
+
 // --- Sports: real box score / game info from ESPN, framed as our own live report ---
 async function renderSportsBreakdown(){
   breakdownLoading('Pulling the box score…');
@@ -122,6 +141,8 @@ async function renderSportsBreakdown(){
       });
       html += '</div>';
     }
+
+    html += renderPlayByPlay(data.plays);
 
     const venue = data.gameInfo?.venue?.fullName;
     const city = data.gameInfo?.venue?.address?.city;

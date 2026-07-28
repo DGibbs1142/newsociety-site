@@ -470,6 +470,32 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   color:var(--text);
 }
 
+.play-feed{
+  border:1px solid var(--line);
+  margin-bottom:32px;
+}
+.play-row{
+  display:flex;
+  gap:16px;
+  padding:14px 18px;
+  border-bottom:1px solid var(--line-soft);
+  font-size:14px;
+  line-height:1.5;
+}
+.play-row:last-child{ border-bottom:none; }
+.play-row .period{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  white-space:nowrap;
+  padding-top:2px;
+  min-width:78px;
+}
+.play-row.scoring{ background:var(--accent-soft); }
+.play-row.scoring .period{ color:var(--accent); }
+
 /* ---------- DROPS GRID (pillar sub-pages) ----------
    Borders live on each card (not a background-through-gap trick on the
    container) so a grid with a variable, not-always-divisible item count
