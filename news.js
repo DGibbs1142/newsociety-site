@@ -3,8 +3,10 @@
 // The #newsGrid element's data-category attribute picks the TheNewsAPI category
 // (e.g. "sports", "entertainment") — omit it for general top headlines.
 
-function newsEndpointFor(category){
-  const base = 'https://api.thenewsapi.com/v1/news/top?limit=6';
+// The free plan caps each request at 3 articles regardless of `limit`, so a
+// full 6-card grid needs two pages fetched and combined.
+function newsEndpointFor(category, page){
+  const base = `https://api.thenewsapi.com/v1/news/top?limit=6&page=${page}`;
   if(!category) return `${base}&locale=us`;
   return `${base}&categories=${category}`;
 }
@@ -70,11 +72,15 @@ async function loadNews(){
     return;
   }
   try{
-    const res = await fetch(`${newsEndpointFor(category)}&api_token=${NEWS_API_KEY}`);
-    if(!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-    const data = await res.json();
-    if(!data.data || !data.data.length) throw new Error('No articles returned');
-    renderArticles(data.data);
+    const [page1, page2] = await Promise.all([1, 2].map(async page => {
+      const res = await fetch(`${newsEndpointFor(category, page)}&api_token=${NEWS_API_KEY}`);
+      if(!res.ok) return [];
+      const data = await res.json();
+      return data.data || [];
+    }));
+    const articles = [...page1, ...page2];
+    if(!articles.length) throw new Error('No articles returned');
+    renderArticles(articles.slice(0, 6));
   }catch(err){
     renderError(err.message);
   }
