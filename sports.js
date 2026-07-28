@@ -55,22 +55,27 @@ function pickBalanced(pool, count){
 }
 
 function gameCard(event, { live = false } = {}){
+  const statusText = `${event.leagueLabel} · ${event.status?.type?.shortDetail || event.status?.type?.description || ''}`;
+  const summary = describeGame(event);
+  const { from, pillar } = currentPillarInfo();
+
   const card = document.createElement('a');
   card.className = 'drop-card';
-  card.href = event.links?.[0]?.href || '#';
-  card.target = '_blank';
-  card.rel = 'noopener';
+  card.href = buildDetailLink({
+    title: event.name, body: summary, status: statusText,
+    source: 'ESPN', url: event.links?.[0]?.href || '', from, pillar
+  });
 
   const status = document.createElement('span');
   status.className = 'drop-status mono';
   if(live) status.append(Object.assign(document.createElement('span'), { className: 'live-dot' }));
-  status.append(document.createTextNode(`${event.leagueLabel} · ${event.status?.type?.shortDetail || event.status?.type?.description || ''}`));
+  status.append(document.createTextNode(statusText));
 
   const h4 = document.createElement('h4');
   h4.textContent = event.name || 'Untitled Matchup';
 
   const p = document.createElement('p');
-  p.textContent = describeGame(event);
+  p.textContent = summary;
 
   card.append(status, h4, p);
   return card;

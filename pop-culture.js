@@ -35,6 +35,7 @@ async function fetchTitles(){
       status: `${item.media_type === 'tv' ? 'TV' : 'Movie'} · ${yearOf(item)} · ${item.vote_average ? item.vote_average.toFixed(1) + '/10' : 'Unrated'}`,
       heading: item.title || item.name || 'Untitled',
       body: item.overview || '',
+      source: 'TMDB',
       url: `https://www.themoviedb.org/${item.media_type}/${item.id}`
     }));
   }catch{ return []; }
@@ -51,6 +52,7 @@ async function fetchCelebrityNews(){
       status: `${article.source || 'Wire'} · ${timeAgo(article.published_at)}`,
       heading: article.title || 'Untitled',
       body: article.description || '',
+      source: article.source || 'Wire',
       url: article.url
     }));
   }catch{ return []; }
@@ -66,6 +68,7 @@ async function fetchTrendingVideos(){
       status: `YouTube · ${Number(video.statistics?.viewCount || 0).toLocaleString()} views`,
       heading: video.snippet?.title || 'Untitled',
       body: video.snippet?.description || '',
+      source: 'YouTube',
       url: `https://www.youtube.com/watch?v=${video.id}`
     }));
   }catch{ return []; }
@@ -81,6 +84,7 @@ async function fetchTrendingGifs(){
       status: 'Giphy · Trending',
       heading: gif.title || 'Untitled GIF',
       body: `Trending reaction from ${gif.username || 'the community'}.`,
+      source: 'Giphy',
       url: gif.url
     }));
   }catch{ return []; }
@@ -104,12 +108,14 @@ function renderCards(cards){
   if(!grid) return;
 
   grid.innerHTML = '';
+  const { from, pillar } = currentPillarInfo();
   cards.forEach(card => {
     const el = document.createElement('a');
     el.className = 'drop-card';
-    el.href = card.url || '#';
-    el.target = '_blank';
-    el.rel = 'noopener';
+    el.href = buildDetailLink({
+      title: card.heading, body: card.body, status: card.status,
+      source: card.source, url: card.url, from, pillar
+    });
 
     const status = document.createElement('span');
     status.className = 'drop-status mono';

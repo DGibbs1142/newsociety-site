@@ -41,23 +41,29 @@ function renderAnime(mediaList){
   if(!grid) return;
 
   grid.innerHTML = '';
+  const { from, pillar } = currentPillarInfo();
   mediaList.forEach(anime => {
+    const score = anime.averageScore ? `${anime.averageScore}/100` : 'Unrated';
+    const statusText = `${anime.seasonYear || '—'} · ${score}`;
+    const heading = anime.title.english || anime.title.romaji || 'Untitled';
+    const synopsis = cleanSynopsis(anime.description);
+
     const card = document.createElement('a');
     card.className = 'drop-card';
-    card.href = anime.siteUrl;
-    card.target = '_blank';
-    card.rel = 'noopener';
+    card.href = buildDetailLink({
+      title: heading, body: synopsis, status: statusText,
+      source: 'AniList', url: anime.siteUrl, from, pillar
+    });
 
     const status = document.createElement('span');
     status.className = 'drop-status mono';
-    const score = anime.averageScore ? `${anime.averageScore}/100` : 'Unrated';
-    status.textContent = `${anime.seasonYear || '—'} · ${score}`;
+    status.textContent = statusText;
 
     const h4 = document.createElement('h4');
-    h4.textContent = anime.title.english || anime.title.romaji || 'Untitled';
+    h4.textContent = heading;
 
     const p = document.createElement('p');
-    p.textContent = cleanSynopsis(anime.description);
+    p.textContent = synopsis;
 
     card.append(status, h4, p);
     grid.appendChild(card);

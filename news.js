@@ -26,16 +26,19 @@ function renderArticles(articles){
   if(!grid) return;
 
   grid.innerHTML = '';
+  const { from, pillar } = currentPillarInfo();
   articles.forEach(article => {
+    const statusText = `${article.source || 'Wire'} · ${timeAgo(article.published_at)}`;
     const card = document.createElement('a');
     card.className = 'drop-card';
-    card.href = article.url;
-    card.target = '_blank';
-    card.rel = 'noopener';
+    card.href = buildDetailLink({
+      title: article.title, body: article.description, status: statusText,
+      source: article.source, url: article.url, from, pillar
+    });
 
     const status = document.createElement('span');
     status.className = 'drop-status mono';
-    status.textContent = `${article.source || 'Wire'} · ${timeAgo(article.published_at)}`;
+    status.textContent = statusText;
 
     const h4 = document.createElement('h4');
     h4.textContent = article.title || 'Untitled';
