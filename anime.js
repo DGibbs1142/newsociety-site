@@ -10,17 +10,17 @@ const ANIME_QUERY = `
 query($cp:Int,$up:Int,$tp:Int){
   classics: Page(page:$cp, perPage:2){
     media(type:ANIME, format:TV, sort:SCORE_DESC, startDate_lesser:20100101){
-      title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl
+      id title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl
     }
   }
   underrated: Page(page:$up, perPage:2){
     media(type:ANIME, format:TV, sort:POPULARITY_DESC, popularity_lesser:60000, averageScore_greater:70){
-      title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl
+      id title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl
     }
   }
   trending: Page(page:$tp, perPage:2){
     media(type:ANIME, sort:TRENDING_DESC){
-      title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl
+      id title{ romaji english } averageScore seasonYear episodes description(asHtml:false) siteUrl
     }
   }
 }`;
@@ -52,7 +52,8 @@ function renderAnime(mediaList){
     card.className = 'drop-card';
     card.href = buildDetailLink({
       title: heading, body: synopsis, status: statusText,
-      source: 'AniList', url: anime.siteUrl, from, pillar
+      source: 'AniList', url: anime.siteUrl, from, pillar,
+      anilistId: anime.id
     });
 
     const status = document.createElement('span');

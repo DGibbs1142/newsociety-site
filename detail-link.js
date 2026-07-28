@@ -11,15 +11,14 @@ function currentPillarInfo(){
   return { from, pillar };
 }
 
-function buildDetailLink({ title, body, status, source, url, from, pillar }){
-  const params = new URLSearchParams({
-    title: title || '',
-    body: body || '',
-    status: status || '',
-    source: source || '',
-    url: url || '',
-    from: from || '',
-    pillar: pillar || ''
+// Accepts any fields — common ones (title/body/status/source/url/from/pillar)
+// plus optional per-source lookup IDs (espnId/espnPath, tmdbId/mediaType,
+// anilistId) that detail.js uses to fetch its own richer data instead of
+// relying only on what's in the URL.
+function buildDetailLink(data){
+  const params = new URLSearchParams();
+  Object.entries(data).forEach(([key, value]) => {
+    if(value !== undefined && value !== null && value !== '') params.set(key, String(value));
   });
   return `detail.html?${params.toString()}`;
 }

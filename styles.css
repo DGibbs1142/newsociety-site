@@ -365,6 +365,67 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
 }
 .pillar:hover .pillar-more{ gap:10px; color:var(--accent); }
 
+/* ---------- DETAIL BREAKDOWN ---------- */
+.breakdown-heading{
+  font-family:'Anton',sans-serif;
+  text-transform:uppercase;
+  font-size:22px;
+  letter-spacing:0.01em;
+  margin:36px 0 20px;
+}
+.linescore-table{
+  display:flex;
+  flex-direction:column;
+  border:1px solid var(--line);
+  background:var(--line);
+  gap:1px;
+  margin-bottom:32px;
+  overflow-x:auto;
+}
+.linescore-row{
+  display:grid;
+  background:var(--bg);
+  font-family:'JetBrains Mono',monospace;
+  font-size:12.5px;
+}
+.linescore-row.header{ color:var(--text-dim); }
+.linescore-row > div{
+  padding:10px 8px;
+  text-align:center;
+}
+.linescore-row > div:first-child{
+  text-align:left;
+  white-space:nowrap;
+}
+.linescore-row > div:last-child{
+  color:var(--accent);
+  font-weight:600;
+}
+.fact-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  margin-bottom:32px;
+}
+.fact-cell{
+  background:var(--bg);
+  padding:20px 22px;
+}
+.fact-cell .label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin-bottom:8px;
+}
+.fact-cell .value{
+  font-size:14.5px;
+  color:var(--text);
+}
+
 /* ---------- DROPS GRID (pillar sub-pages) ---------- */
 .drops-grid{
   display:grid;

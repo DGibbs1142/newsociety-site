@@ -36,7 +36,9 @@ async function fetchTitles(){
       heading: item.title || item.name || 'Untitled',
       body: item.overview || '',
       source: 'TMDB',
-      url: `https://www.themoviedb.org/${item.media_type}/${item.id}`
+      url: `https://www.themoviedb.org/${item.media_type}/${item.id}`,
+      tmdbId: item.id,
+      mediaType: item.media_type
     }));
   }catch{ return []; }
 }
@@ -51,7 +53,7 @@ async function fetchCelebrityNews(){
     return (data.data || []).map(article => ({
       status: `${article.source || 'Wire'} · ${timeAgo(article.published_at)}`,
       heading: article.title || 'Untitled',
-      body: article.description || '',
+      body: article.snippet || article.description || '',
       source: article.source || 'Wire',
       url: article.url
     }));
@@ -114,7 +116,8 @@ function renderCards(cards){
     el.className = 'drop-card';
     el.href = buildDetailLink({
       title: card.heading, body: card.body, status: card.status,
-      source: card.source, url: card.url, from, pillar
+      source: card.source, url: card.url, from, pillar,
+      tmdbId: card.tmdbId, mediaType: card.mediaType
     });
 
     const status = document.createElement('span');

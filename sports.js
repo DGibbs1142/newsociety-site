@@ -18,7 +18,7 @@ async function fetchLeague(league){
     const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${league.path}/scoreboard`);
     if(!res.ok) return [];
     const data = await res.json();
-    return (data.events || []).map(event => ({ ...event, leagueLabel: league.label }));
+    return (data.events || []).map(event => ({ ...event, leagueLabel: league.label, leaguePath: league.path }));
   }catch{
     return [];
   }
@@ -63,7 +63,8 @@ function gameCard(event, { live = false } = {}){
   card.className = 'drop-card';
   card.href = buildDetailLink({
     title: event.name, body: summary, status: statusText,
-    source: 'ESPN', url: event.links?.[0]?.href || '', from, pillar
+    source: 'ESPN', url: event.links?.[0]?.href || '', from, pillar,
+    espnId: event.id, espnPath: event.leaguePath, espnLeague: event.leagueLabel
   });
 
   const status = document.createElement('span');
