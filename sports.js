@@ -176,6 +176,22 @@ function initGameSearch(){
   });
 }
 
+// Maps the league abbreviation ESPN's search returns (item.description) to
+// the sport/league path segment its site API expects. Not exhaustive — covers
+// the common cases; anything unmapped just skips the extra detail fetch and
+// falls back to a plain link, same as before.
+const ESPN_LEAGUE_PATHS = {
+  'NBA': 'basketball/nba',
+  'NFL': 'football/nfl',
+  'MLB': 'baseball/mlb',
+  'NHL': 'hockey/nhl',
+  'MLS': 'soccer/usa.1',
+  'NCAAF': 'football/college-football',
+  'NCAAM': 'basketball/mens-college-basketball',
+  'NCAAW': 'basketball/womens-college-basketball',
+  'WNBA': 'basketball/wnba'
+};
+
 // ESPN's search endpoint doesn't actually paginate (page=2 returns the same
 // results as page=1), so this fetches one larger batch and the shared widget
 // is configured with a resultsPerPage high enough that "Load More" never shows.
@@ -183,12 +199,25 @@ async function fetchSportsKeywordSearch(query){
   const res = await fetch(`https://site.api.espn.com/apis/search/v2?query=${encodeURIComponent(query)}&type=player,team&limit=10`);
   if(!res.ok) throw new Error(`${res.status}`);
   const data = await res.json();
-  const items = (data.results || []).flatMap(r => r.contents || []);
-  return items.map(item => ({
-    title: item.displayName || 'Untitled',
-    body: [item.description, item.subtitle].filter(Boolean).join(' · '),
-    status: [item.description, item.subtitle].filter(Boolean).join(' · ') || 'ESPN',
-    source: 'ESPN', url: item.link?.web || ''
+
+  return (data.results || []).flatMap(result => result.contents.map(item => {
+    // Players: description = league, subtitle = team. Teams: description is
+    // null, subtitle = league. Check both so either shape resolves the league.
+    const league = item.description || item.subtitle;
+    const leaguePath = ESPN_LEAGUE_PATHS[league];
+    const uidMatch = item.uid?.match(/([ta]):(\d+)$/);
+    const card = {
+      title: item.displayName || 'Untitled',
+      body: [item.description, item.subtitle].filter(Boolean).join(' · '),
+      status: [item.description, item.subtitle].filter(Boolean).join(' · ') || 'ESPN',
+      source: 'ESPN', url: item.link?.web || ''
+    };
+    if(leaguePath && uidMatch){
+      card.espnLeaguePath = leaguePath;
+      if(uidMatch[1] === 'a') card.espnAthleteId = uidMatch[2];
+      else card.espnTeamId = uidMatch[2];
+    }
+    return card;
   }));
 }
 

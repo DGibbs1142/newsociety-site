@@ -23,7 +23,8 @@ function mapGNewsArticle(article){
     source: article.source?.name || 'Wire',
     url: article.url,
     publishedAt: article.publishedAt,
-    imageUrl: article.image
+    imageUrl: article.image,
+    sourceCountry: article.source?.country
   };
 }
 

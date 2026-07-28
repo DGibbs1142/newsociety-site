@@ -28,6 +28,10 @@ const anilistId = params.get('anilistId');
 const categories = params.get('categories');
 const publishedAt = params.get('publishedAt');
 const imageUrl = params.get('imageUrl');
+const sourceCountry = params.get('sourceCountry');
+const espnAthleteId = params.get('espnAthleteId');
+const espnTeamId = params.get('espnTeamId');
+const espnLeaguePath = params.get('espnLeaguePath');
 
 function renderBase(){
   document.title = `${title} — NewSociety`;
@@ -215,11 +219,72 @@ async function renderAnimeBreakdown(){
   }
 }
 
+// --- Sports search: player bio/stats from ESPN's athlete endpoint ---
+async function renderAthleteBreakdown(){
+  breakdownLoading('Pulling the player profile…');
+  try{
+    const res = await fetch(`https://site.web.api.espn.com/apis/common/v3/sports/${espnLeaguePath}/athletes/${espnAthleteId}`);
+    if(!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    const a = data.athlete;
+    if(!a) throw new Error('No athlete data');
+
+    let html = '<div class="section-label">// the breakdown</div><div class="breakdown-heading">NewSociety Player Profile</div>';
+
+    const headshot = a.headshot?.href;
+    if(headshot) html += `<img src="${escapeHtml(headshot)}" alt="" style="width:140px; height:140px; object-fit:cover; border:1px solid var(--line); margin-bottom:24px; display:block;" onerror="this.remove()">`;
+
+    html += '<div class="fact-grid">';
+    if(a.position?.displayName) html += `<div class="fact-cell"><div class="label">Position</div><div class="value">${escapeHtml(a.position.displayName)}</div></div>`;
+    if(a.team?.displayName) html += `<div class="fact-cell"><div class="label">Team</div><div class="value">${escapeHtml(a.team.displayName)}</div></div>`;
+    if(a.jersey) html += `<div class="fact-cell"><div class="label">Jersey</div><div class="value">#${escapeHtml(a.jersey)}</div></div>`;
+    if(a.displayHeight || a.displayWeight) html += `<div class="fact-cell"><div class="label">Height / Weight</div><div class="value">${escapeHtml(a.displayHeight || '—')} · ${escapeHtml(a.displayWeight || '—')}</div></div>`;
+    if(a.age) html += `<div class="fact-cell"><div class="label">Age</div><div class="value">${a.age}</div></div>`;
+    html += '</div>';
+
+    document.getElementById('detailBreakdown').innerHTML = html;
+  }catch(err){
+    document.getElementById('detailBreakdown').innerHTML = '';
+    console.warn('Athlete breakdown unavailable:', err.message);
+  }
+}
+
+// --- Sports search: team record/standing from ESPN's team endpoint ---
+async function renderTeamBreakdown(){
+  breakdownLoading('Pulling the team record…');
+  try{
+    const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${espnLeaguePath}/teams/${espnTeamId}`);
+    if(!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    const t = data.team;
+    if(!t) throw new Error('No team data');
+
+    let html = '<div class="section-label">// the breakdown</div><div class="breakdown-heading">NewSociety Team Profile</div>';
+
+    const logo = t.logos?.[0]?.href;
+    if(logo) html += `<img src="${escapeHtml(logo)}" alt="" style="width:100px; height:100px; object-fit:contain; margin-bottom:24px; display:block;" onerror="this.remove()">`;
+
+    const record = t.record?.items?.[0]?.summary;
+    const nextEvent = t.nextEvent?.[0]?.name;
+
+    html += '<div class="fact-grid">';
+    if(t.standingSummary) html += `<div class="fact-cell"><div class="label">Standing</div><div class="value">${escapeHtml(t.standingSummary)}</div></div>`;
+    if(record) html += `<div class="fact-cell"><div class="label">Record</div><div class="value">${escapeHtml(record)}</div></div>`;
+    if(nextEvent) html += `<div class="fact-cell"><div class="label">Next Game</div><div class="value">${escapeHtml(nextEvent)}</div></div>`;
+    html += '</div>';
+
+    document.getElementById('detailBreakdown').innerHTML = html;
+  }catch(err){
+    document.getElementById('detailBreakdown').innerHTML = '';
+    console.warn('Team breakdown unavailable:', err.message);
+  }
+}
+
 // --- News/Fashion articles: framed as our own rundown (category, exact
 // publish time, lead image) instead of just a snippet + link. No live
 // re-fetch needed — TheNewsAPI already gave us everything via the card. ---
 function renderNewsBreakdown(){
-  if(!categories && !publishedAt && !imageUrl) return;
+  if(!categories && !publishedAt && !imageUrl && !sourceCountry) return;
 
   let html = '<div class="section-label">// the breakdown</div><div class="breakdown-heading">NewSociety Rundown</div>';
 
@@ -235,6 +300,7 @@ function renderNewsBreakdown(){
   if(categories) html += `<div class="fact-cell"><div class="label">Category</div><div class="value">${escapeHtml(categories)}</div></div>`;
   if(publishedDisplay) html += `<div class="fact-cell"><div class="label">Published</div><div class="value">${escapeHtml(publishedDisplay)}</div></div>`;
   if(source) html += `<div class="fact-cell"><div class="label">Outlet</div><div class="value">${escapeHtml(source)}</div></div>`;
+  if(sourceCountry) html += `<div class="fact-cell"><div class="label">Origin</div><div class="value">${escapeHtml(sourceCountry.toUpperCase())}</div></div>`;
   html += '</div>';
 
   document.getElementById('detailBreakdown').innerHTML = html;
@@ -245,6 +311,8 @@ if(title){
   if(espnId && espnPath) renderSportsBreakdown();
   else if(tmdbId && mediaType) renderTitleBreakdown();
   else if(anilistId) renderAnimeBreakdown();
+  else if(espnAthleteId && espnLeaguePath) renderAthleteBreakdown();
+  else if(espnTeamId && espnLeaguePath) renderTeamBreakdown();
   else renderNewsBreakdown();
 }else{
   document.getElementById('detailTitle').textContent = "Nothing to show here.";
