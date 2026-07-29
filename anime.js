@@ -29,10 +29,17 @@ function randomPage(max){
   return Math.floor(Math.random() * max) + 1;
 }
 
-function cleanSynopsis(text){
+// Strips HTML/whitespace but keeps the FULL text — used for the detail page.
+function cleanFullSynopsis(text){
   if(!text) return '';
-  const stripped = text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-  return stripped.length > 140 ? stripped.slice(0, 140).trim() + '…' : stripped;
+  return text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+// Truncated version for the card preview only, where space is tight — the
+// detail page (linked via buildDetailLink) always gets the full synopsis.
+function cleanSynopsis(text){
+  const full = cleanFullSynopsis(text);
+  return full.length > 140 ? full.slice(0, 140).trim() + '…' : full;
 }
 
 function renderAnime(mediaList){
@@ -47,11 +54,12 @@ function renderAnime(mediaList){
     const statusText = `${anime.seasonYear || '—'} · ${score}`;
     const heading = anime.title.english || anime.title.romaji || 'Untitled';
     const synopsis = cleanSynopsis(anime.description);
+    const fullSynopsis = cleanFullSynopsis(anime.description);
 
     const card = document.createElement('a');
     card.className = 'drop-card';
     card.href = buildDetailLink({
-      title: heading, body: synopsis, status: statusText,
+      title: heading, body: fullSynopsis, status: statusText,
       source: 'AniList', url: anime.siteUrl, from, pillar,
       anilistId: anime.id
     });
@@ -130,7 +138,8 @@ async function fetchAnimeSearchPage(query, page){
     const score = anime.averageScore ? `${anime.averageScore}/100` : 'Unrated';
     return {
       title: anime.title.english || anime.title.romaji || 'Untitled',
-      body: cleanSynopsis(anime.description),
+      body: cleanFullSynopsis(anime.description),
+      cardBody: cleanSynopsis(anime.description),
       status: `${anime.seasonYear || '—'} · ${score}`,
       source: 'AniList', url: anime.siteUrl, anilistId: anime.id,
       imageUrl: anime.coverImage?.large

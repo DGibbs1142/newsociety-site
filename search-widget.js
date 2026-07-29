@@ -19,9 +19,13 @@ function initSearchWidget({ formId, inputId, gridId, statusId, moreBtnId, fetchP
 
   function renderCard(card){
     const { from, pillar } = currentPillarInfo();
+    // cardBody (if a fetcher provides one) is a short preview for the card
+    // itself; the full `body` still goes to the detail page either way —
+    // it's stripped out of the link data since detail.js never reads it.
+    const { cardBody, ...linkData } = card;
     const el = document.createElement('a');
     el.className = 'drop-card';
-    el.href = buildDetailLink({ ...card, from, pillar });
+    el.href = buildDetailLink({ ...linkData, from, pillar });
 
     const statusEl = document.createElement('span');
     statusEl.className = 'drop-status mono';
@@ -31,7 +35,7 @@ function initSearchWidget({ formId, inputId, gridId, statusId, moreBtnId, fetchP
     h4.textContent = card.title || 'Untitled';
 
     const p = document.createElement('p');
-    p.textContent = card.body || '';
+    p.textContent = cardBody || card.body || '';
 
     el.append(statusEl, h4, p);
     attachCardImage(el, card.imageUrl);
