@@ -19,7 +19,7 @@ function mapGNewsArticle(article){
     title: article.title,
     body: article.content || article.description || '',
     shortBody: article.description || '',
-    status: `${article.source?.name || 'Wire'} · ${timeAgo(article.publishedAt)}`,
+    status: `NewSociety Runway · ${timeAgo(article.publishedAt)}`,
     source: article.source?.name || 'Wire',
     url: article.url,
     publishedAt: article.publishedAt,

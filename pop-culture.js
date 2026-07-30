@@ -51,7 +51,7 @@ async function fetchCelebrityNews(){
     if(!res.ok) return [];
     const data = await res.json();
     return (data.articles || []).map(article => ({
-      status: `${article.source?.name || 'Wire'} · ${timeAgo(article.publishedAt)}`,
+      status: `NewSociety Buzz · ${timeAgo(article.publishedAt)}`,
       heading: article.title || 'Untitled',
       body: article.description || article.content || '',
       source: article.source?.name || 'Wire',
@@ -70,7 +70,7 @@ async function fetchTrendingVideos(){
     if(!res.ok) return [];
     const data = await res.json();
     return (data.items || []).slice(0, 4).map(video => ({
-      status: `YouTube · ${Number(video.statistics?.viewCount || 0).toLocaleString()} views`,
+      status: `NewSociety Watch · ${Number(video.statistics?.viewCount || 0).toLocaleString()} views`,
       heading: video.snippet?.title || 'Untitled',
       body: video.snippet?.description || '',
       source: 'YouTube',
@@ -87,7 +87,7 @@ async function fetchTrendingGifs(){
     if(!res.ok) return [];
     const data = await res.json();
     return (data.data || []).slice(0, 4).map(gif => ({
-      status: 'Giphy · Trending',
+      status: 'NewSociety Reactions · Trending',
       heading: gif.title || 'Untitled GIF',
       body: `Trending reaction from ${gif.username || 'the community'}.`,
       source: 'Giphy',
