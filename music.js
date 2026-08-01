@@ -200,83 +200,129 @@ function togglePreview(url, btn){
 
 // Deezer's global chart IS a live "what's actually being played right now"
 // ranking — same source as the trending cards above, just the full list
-// instead of a top-4 sample. Rendered as a ranked chart card (not full
-// drop-cards — 100 of those would be far too heavy), with a play button on
-// each row for the 30-second preview clip Deezer provides, plus a link to
-// the same on-site detail breakdown as everything else on the site.
-async function loadTopChart(){
+// instead of a top-4 sample. Split into two 50-track slides (rendering only
+// the active 50 at a time) rather than one long scroll, with a play button
+// on each row for the 30-second preview clip Deezer provides, plus a link
+// to the same on-site detail breakdown as everything else on the site.
+const CHART_SLIDE_SIZE = 50;
+let chartTracks = [];
+let chartSlide = 0;
+let chartAutoAdvanceTimer = null;
+
+function renderChartSlide(){
   const list = document.getElementById('topChartList');
-  const status = document.getElementById('topChartStatus');
   if(!list) return;
-  try{
-    const data = await deezerJsonp(`${DEEZER_API}/chart/0/tracks?limit=100`);
-    const tracks = data.data || [];
-    if(!tracks.length) throw new Error('No chart data returned');
 
-    const { from, pillar } = currentPillarInfo();
-    list.innerHTML = '';
-    stopActivePreview();
-    tracks.forEach((track, i) => {
-      const li = document.createElement('li');
-      li.className = 'chart-row';
+  list.innerHTML = '';
+  stopActivePreview();
+  const start = chartSlide * CHART_SLIDE_SIZE;
+  const slice = chartTracks.slice(start, start + CHART_SLIDE_SIZE);
+  const { from, pillar } = currentPillarInfo();
 
-      const playBtn = document.createElement('button');
-      playBtn.type = 'button';
-      playBtn.className = 'chart-play';
-      playBtn.textContent = '▶';
-      if(track.preview){
-        playBtn.setAttribute('aria-label', `Play preview of ${track.title}`);
-        playBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          togglePreview(track.preview, playBtn);
-        });
-      }else{
-        playBtn.disabled = true;
-        playBtn.setAttribute('aria-label', 'No preview available');
-      }
+  slice.forEach((track, idx) => {
+    const rankNum = start + idx + 1;
+    const li = document.createElement('li');
+    li.className = 'chart-row';
 
-      const a = document.createElement('a');
-      a.className = 'chart-item';
-      a.href = buildDetailLink({
-        title: track.title,
-        body: `From "${track.album?.title || 'Unknown Album'}" by ${track.artist?.name || 'Unknown Artist'}.`,
-        status: `${track.artist?.name || 'Unknown Artist'} · #${i + 1} on the global chart`,
-        source: 'Deezer', url: track.link,
-        imageUrl: track.album?.cover_medium,
-        deezerId: track.id, deezerType: 'track',
-        from, pillar
+    const playBtn = document.createElement('button');
+    playBtn.type = 'button';
+    playBtn.className = 'chart-play';
+    playBtn.textContent = '▶';
+    if(track.preview){
+      playBtn.setAttribute('aria-label', `Play preview of ${track.title}`);
+      playBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        togglePreview(track.preview, playBtn);
       });
+    }else{
+      playBtn.disabled = true;
+      playBtn.setAttribute('aria-label', 'No preview available');
+    }
 
-      const rank = document.createElement('span');
-      rank.className = 'chart-rank mono';
-      rank.textContent = i + 1;
-
-      const img = document.createElement('img');
-      img.src = track.album?.cover_small || '';
-      img.alt = '';
-      img.onerror = () => img.remove();
-
-      const info = document.createElement('span');
-      info.className = 'chart-info';
-      const title = document.createElement('span');
-      title.className = 'title';
-      title.textContent = track.title;
-      const artist = document.createElement('span');
-      artist.className = 'artist';
-      artist.textContent = track.artist?.name || 'Unknown Artist';
-      info.append(title, artist);
-
-      const duration = document.createElement('span');
-      duration.className = 'chart-duration mono';
-      duration.textContent = formatDuration(track.duration);
-
-      a.append(rank, img, info, duration);
-      li.append(playBtn, a);
-      list.appendChild(li);
+    const a = document.createElement('a');
+    a.className = 'chart-item';
+    a.href = buildDetailLink({
+      title: track.title,
+      body: `From "${track.album?.title || 'Unknown Album'}" by ${track.artist?.name || 'Unknown Artist'}.`,
+      status: `${track.artist?.name || 'Unknown Artist'} · #${rankNum} on the global chart`,
+      source: 'Deezer', url: track.link,
+      imageUrl: track.album?.cover_medium,
+      deezerId: track.id, deezerType: 'track',
+      from, pillar
     });
 
-    if(status) status.textContent = `Updated live from Deezer's global chart — ${tracks.length} tracks.`;
+    const rank = document.createElement('span');
+    rank.className = 'chart-rank mono';
+    rank.textContent = rankNum;
+
+    const img = document.createElement('img');
+    img.src = track.album?.cover_small || '';
+    img.alt = '';
+    img.onerror = () => img.remove();
+
+    const info = document.createElement('span');
+    info.className = 'chart-info';
+    const title = document.createElement('span');
+    title.className = 'title';
+    title.textContent = track.title;
+    const artist = document.createElement('span');
+    artist.className = 'artist';
+    artist.textContent = track.artist?.name || 'Unknown Artist';
+    info.append(title, artist);
+
+    const duration = document.createElement('span');
+    duration.className = 'chart-duration mono';
+    duration.textContent = formatDuration(track.duration);
+
+    a.append(rank, img, info, duration);
+    li.append(playBtn, a);
+    list.appendChild(li);
+  });
+
+  document.querySelectorAll('.chart-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === chartSlide);
+  });
+}
+
+// Auto-advances to the next 50 every 15s. Any manual navigation (arrows or
+// dots) cancels the timer for good, so the chart stays on whichever slide
+// the visitor picked instead of yanking it out from under them.
+function goToChartSlide(index, manual){
+  const slideCount = Math.ceil(chartTracks.length / CHART_SLIDE_SIZE);
+  chartSlide = ((index % slideCount) + slideCount) % slideCount;
+  renderChartSlide();
+  if(manual && chartAutoAdvanceTimer){
+    clearInterval(chartAutoAdvanceTimer);
+    chartAutoAdvanceTimer = null;
+  }
+}
+
+function startChartAutoAdvance(){
+  const slideCount = Math.ceil(chartTracks.length / CHART_SLIDE_SIZE);
+  if(slideCount <= 1) return;
+  chartAutoAdvanceTimer = setInterval(() => goToChartSlide(chartSlide + 1, false), 15000);
+}
+
+async function loadTopChart(){
+  const status = document.getElementById('topChartStatus');
+  const prevBtn = document.getElementById('chartPrevBtn');
+  const nextBtn = document.getElementById('chartNextBtn');
+  if(!document.getElementById('topChartList')) return;
+  try{
+    const data = await deezerJsonp(`${DEEZER_API}/chart/0/tracks?limit=100`);
+    chartTracks = data.data || [];
+    if(!chartTracks.length) throw new Error('No chart data returned');
+
+    goToChartSlide(0, false);
+    startChartAutoAdvance();
+    if(prevBtn) prevBtn.addEventListener('click', () => goToChartSlide(chartSlide - 1, true));
+    if(nextBtn) nextBtn.addEventListener('click', () => goToChartSlide(chartSlide + 1, true));
+    document.querySelectorAll('.chart-dot').forEach((dot, i) => {
+      dot.addEventListener('click', () => goToChartSlide(i, true));
+    });
+
+    if(status) status.textContent = `Updated live from Deezer's global chart — ${chartTracks.length} tracks.`;
   }catch(err){
     if(status) status.textContent = 'Chart temporarily unavailable — check back shortly.';
     console.warn('Top chart error:', err.message);
