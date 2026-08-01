@@ -32,6 +32,8 @@ const sourceCountry = params.get('sourceCountry');
 const espnAthleteId = params.get('espnAthleteId');
 const espnTeamId = params.get('espnTeamId');
 const espnLeaguePath = params.get('espnLeaguePath');
+const deezerId = params.get('deezerId');
+const deezerType = params.get('deezerType');
 
 function renderBase(){
   document.title = `${title} — NewSociety`;
@@ -301,6 +303,76 @@ async function renderTeamBreakdown(){
   }
 }
 
+// --- Music: fuller Deezer record (artist, duration/track count, label,
+// genre, release date, plus a real 30-second preview clip for tracks) — no
+// key needed, but Deezer doesn't send CORS headers for plain fetch(), so
+// this uses their JSONP output the same way music.js does. ---
+function deezerJsonp(url, timeoutMs = 8000){
+  return new Promise((resolve, reject) => {
+    const callbackName = 'deezer_cb_' + Math.random().toString(36).slice(2);
+    const script = document.createElement('script');
+    let settled = false;
+
+    const cleanup = () => {
+      settled = true;
+      clearTimeout(timer);
+      delete window[callbackName];
+      script.remove();
+    };
+    const timer = setTimeout(() => {
+      if(settled) return;
+      cleanup();
+      reject(new Error('Deezer request timed out'));
+    }, timeoutMs);
+
+    window[callbackName] = (data) => {
+      if(settled) return;
+      cleanup();
+      if(data?.error){ reject(new Error(data.error.message || 'Deezer error')); return; }
+      resolve(data);
+    };
+    script.onerror = () => {
+      if(settled) return;
+      cleanup();
+      reject(new Error('Deezer request failed'));
+    };
+    const sep = url.includes('?') ? '&' : '?';
+    script.src = `${url}${sep}output=jsonp&callback=${callbackName}`;
+    document.head.appendChild(script);
+  });
+}
+
+async function renderMusicBreakdown(){
+  breakdownLoading('Pulling the track info…');
+  try{
+    const data = await deezerJsonp(`https://api.deezer.com/${deezerType}/${deezerId}`);
+
+    let html = '<div class="section-label">// the breakdown</div><div class="breakdown-heading">NewSociety Sound Rundown</div>';
+
+    const durationMin = data.duration ? `${Math.floor(data.duration / 60)}:${String(data.duration % 60).padStart(2, '0')}` : '';
+    const genres = (data.genres?.data || []).map(g => g.name).join(', ');
+
+    html += '<div class="fact-grid">';
+    if(data.artist?.name) html += `<div class="fact-cell"><div class="label">Artist</div><div class="value">${escapeHtml(data.artist.name)}</div></div>`;
+    if(deezerType === 'track' && data.album?.title) html += `<div class="fact-cell"><div class="label">Album</div><div class="value">${escapeHtml(data.album.title)}</div></div>`;
+    if(deezerType === 'track' && durationMin) html += `<div class="fact-cell"><div class="label">Duration</div><div class="value">${durationMin}</div></div>`;
+    if(deezerType === 'album' && data.nb_tracks) html += `<div class="fact-cell"><div class="label">Tracks</div><div class="value">${data.nb_tracks}</div></div>`;
+    if(data.release_date) html += `<div class="fact-cell"><div class="label">Released</div><div class="value">${escapeHtml(data.release_date)}</div></div>`;
+    if(genres) html += `<div class="fact-cell"><div class="label">Genre</div><div class="value">${escapeHtml(genres)}</div></div>`;
+    if(deezerType === 'album' && data.label) html += `<div class="fact-cell"><div class="label">Label</div><div class="value">${escapeHtml(data.label)}</div></div>`;
+    html += '</div>';
+
+    if(data.preview){
+      html += `<audio controls src="${escapeHtml(data.preview)}" style="width:100%; max-width:420px; margin-top:24px; display:block;"></audio>`;
+    }
+
+    document.getElementById('detailBreakdown').innerHTML = html;
+  }catch(err){
+    document.getElementById('detailBreakdown').innerHTML = '';
+    console.warn('Music breakdown unavailable:', err.message);
+  }
+}
+
 // --- News/Fashion articles: framed as our own rundown (category, exact
 // publish time, lead image) instead of just a snippet + link. No live
 // re-fetch needed — TheNewsAPI already gave us everything via the card. ---
@@ -334,6 +406,7 @@ if(title){
   else if(anilistId) renderAnimeBreakdown();
   else if(espnAthleteId && espnLeaguePath) renderAthleteBreakdown();
   else if(espnTeamId && espnLeaguePath) renderTeamBreakdown();
+  else if(deezerId && deezerType) renderMusicBreakdown();
   else renderNewsBreakdown();
 }else{
   document.getElementById('detailTitle').textContent = "Nothing to show here.";

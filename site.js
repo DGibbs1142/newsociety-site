@@ -4,6 +4,7 @@ const TICKER_ITEMS = [
   { label: 'Anime', href: 'anime.html' },
   { label: 'Pop Culture', href: 'pop-culture.html' },
   { label: 'Fashion', href: 'fashion.html' },
+  { label: 'Music', href: 'music.html' },
   { label: 'Current Events', href: 'current-events.html' },
   { label: 'New Drop Daily', href: 'index.html#follow' },
   { label: 'Follow the Feed', href: 'index.html#follow' }

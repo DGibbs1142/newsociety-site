@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pop Culture — NewSociety</title>
+<title>Music — NewSociety</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body data-page="pop-culture.html">
+<body data-page="music.html">
 
 <header class="nav">
   <div class="nav-inner">
@@ -29,9 +29,9 @@
 <section class="page-hero">
   <div class="wrap">
     <a href="index.html" class="breadcrumb">← Back to NewSociety</a>
-    <div class="eyebrow"><span class="live-dot"></span>Pop Culture</div>
-    <h1 class="page-title display">What Everyone's Actually Talking About</h1>
-    <p class="page-sub">Drops, drama, and the discourse — filtered down to what's worth your ten seconds.</p>
+    <div class="eyebrow"><span class="live-dot"></span>Music</div>
+    <h1 class="page-title display">Tracks Worth Replaying</h1>
+    <p class="page-sub">New drops, chart movement, and the songs about to take over every playlist.</p>
   </div>
 </section>
 
@@ -40,10 +40,10 @@
     <div class="section-head reveal">
       <div>
         <div class="section-label">// about this pillar</div>
-        <h2 class="section-title display">The discourse, distilled.</h2>
+        <h2 class="section-title display">Not just the Top 40.</h2>
       </div>
     </div>
-    <p class="about-copy reveal">Drops, drama, callouts, and the internet's collective main-character energy — filtered down to what's actually worth ten seconds of your day. Music, film, celebrity, internet culture — if it's trending for the right (or hilariously wrong) reasons, it lands here first.</p>
+    <p class="about-copy reveal">Fresh releases the day they drop, plus whatever's actually climbing the charts right now — not a label's press release dressed up as news. New albums, breakout singles, and the tracks about to be everywhere, pulled straight from the charts.</p>
   </div>
 </section>
 
@@ -52,14 +52,14 @@
     <div class="section-head reveal">
       <div>
         <div class="section-label">// latest drops</div>
-        <h2 class="section-title display" id="newsSectionTitle">Loading trending titles…</h2>
+        <h2 class="section-title display" id="newsSectionTitle">Loading live picks…</h2>
       </div>
     </div>
     <div class="drops-grid reveal" id="newsGrid">
       <div class="drop-card">
         <span class="drop-status mono">Loading</span>
-        <h4>Checking what's trending…</h4>
-        <p>Pulling today's trending movies and TV from TMDB.</p>
+        <h4>Pulling the latest…</h4>
+        <p>Mixing new releases with what's trending right now, straight from Spotify.</p>
       </div>
     </div>
   </div>
@@ -69,12 +69,33 @@
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="section-label">// search titles</div>
-        <h2 class="section-title display">Any movie, any show.</h2>
+        <div class="section-label">// global top 100</div>
+        <h2 class="section-title display">What the world's playing right now.</h2>
+      </div>
+    </div>
+    <p class="search-status mono" id="topChartStatus">Loading the chart…</p>
+    <div class="chart-card reveal">
+      <div class="chart-head mono">
+        <span></span>
+        <span></span>
+        <span>Track</span>
+        <span>Time</span>
+      </div>
+      <ol class="chart-list" id="topChartList"></ol>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="section-label">// search the catalog</div>
+        <h2 class="section-title display">Any artist, any track.</h2>
       </div>
     </div>
     <form class="search-form reveal" id="searchForm">
-      <input type="text" id="searchInput" placeholder="Search movies &amp; TV by title…" required>
+      <input type="text" id="searchInput" placeholder="Search songs or artists…" required>
       <button type="submit" class="btn btn-primary">Search</button>
     </form>
     <p class="search-status mono" id="searchStatus"></p>
@@ -115,7 +136,7 @@
 <script src="config.local.js"></script>
 <script src="detail-link.js"></script>
 <script src="search-widget.js"></script>
-<script src="pop-culture.js"></script>
+<script src="music.js"></script>
 <script src="site.js"></script>
 
 </body>

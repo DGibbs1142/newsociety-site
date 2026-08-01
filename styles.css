@@ -496,6 +496,111 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
 .play-row.scoring{ background:var(--accent-soft); }
 .play-row.scoring .period{ color:var(--accent); }
 
+/* ---------- CHART CARD (Music: global top 100) ---------- */
+.chart-card{
+  background:var(--bg-card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.chart-head{
+  display:grid;
+  grid-template-columns:52px 60px 1fr 60px;
+  align-items:center;
+  gap:16px;
+  padding:14px 24px;
+  border-bottom:1px solid var(--line);
+  font-size:11px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+}
+.chart-list{
+  list-style:none;
+  max-height:680px;
+  overflow-y:auto;
+}
+.chart-row{
+  display:flex;
+  align-items:center;
+  border-bottom:1px solid var(--line-soft);
+  transition:background 0.2s ease;
+}
+.chart-row:last-child{ border-bottom:none; }
+.chart-row:hover{ background:var(--bg-elevated); }
+.chart-play{
+  flex-shrink:0;
+  width:52px;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:transparent;
+  border:none;
+  color:var(--text-muted);
+  font-size:13px;
+  cursor:pointer;
+}
+.chart-play:disabled{ color:var(--line); cursor:default; }
+.chart-play:not(:disabled):hover{ color:var(--text); }
+.chart-play.playing{ color:var(--accent); }
+.chart-item{
+  flex:1;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:14px 24px 14px 0;
+  text-decoration:none;
+  color:var(--text);
+}
+.chart-rank{
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  color:var(--text-dim);
+  min-width:36px;
+  flex-shrink:0;
+}
+.chart-item img{
+  width:52px;
+  height:52px;
+  object-fit:cover;
+  flex-shrink:0;
+}
+.chart-info{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+.chart-info .title{
+  font-size:15px;
+  font-weight:600;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.chart-info .artist{
+  font-size:13px;
+  color:var(--text-muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.chart-duration{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--text-dim);
+  flex-shrink:0;
+  min-width:36px;
+  text-align:right;
+}
+@media (max-width:640px){
+  .chart-head{ display:none; }
+  .chart-item img{ width:40px; height:40px; }
+}
+
 /* ---------- DROPS GRID (pillar sub-pages) ----------
    Borders live on each card (not a background-through-gap trick on the
    container) so a grid with a variable, not-always-divisible item count
