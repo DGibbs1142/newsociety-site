@@ -48,6 +48,7 @@ function renderAnime(mediaList){
   if(!grid) return;
 
   grid.innerHTML = '';
+  setPillarAboutImage(mediaList[0]?.coverImage?.large);
   const { from, pillar } = currentPillarInfo();
   mediaList.forEach(anime => {
     const score = anime.averageScore ? `${anime.averageScore}/100` : 'Unrated';

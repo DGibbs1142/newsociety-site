@@ -34,6 +34,7 @@ function renderArticles(articles){
   if(!grid) return;
 
   grid.innerHTML = '';
+  setPillarAboutImage(articles[0]?.imageUrl);
   const { from, pillar } = currentPillarInfo();
   articles.forEach(article => {
     const card = document.createElement('a');

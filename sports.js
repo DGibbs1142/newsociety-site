@@ -127,6 +127,9 @@ async function loadSports(){
     const pool = results.flat();
     if(!pool.length) throw new Error('No games returned');
 
+    const firstTeam = pool[0]?.competitions?.[0]?.competitors?.find(c => c.homeAway === 'home') || pool[0]?.competitions?.[0]?.competitors?.[0];
+    setPillarAboutImage(firstTeam?.team?.logo);
+
     const liveGames = pool.filter(e => e.status?.type?.state === 'in');
     const rest = pool.filter(e => e.status?.type?.state !== 'in');
 

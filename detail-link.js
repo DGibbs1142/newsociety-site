@@ -38,6 +38,21 @@ function attachCardImage(card, imageUrl){
   card.insertBefore(media, card.firstChild);
 }
 
+// Fills the "About this pillar" section's image with a real, live image —
+// each pillar's fetcher passes in whatever its first live item already
+// returned (a poster, cover, album art, team logo, article photo…), so this
+// needs no extra API call of its own. Stays hidden until an image actually
+// loads successfully, and hides itself again if that image fails.
+function setPillarAboutImage(imageUrl){
+  const media = document.getElementById('aboutMedia');
+  const img = document.getElementById('aboutImage');
+  if(!media || !img || !imageUrl) return;
+  img.onerror = () => { media.style.display = 'none'; };
+  img.onload = () => { media.style.display = 'block'; };
+  img.src = imageUrl;
+  img.alt = '';
+}
+
 // Sports-only variant: two team logos side by side with "@" between them,
 // used instead of a single photo since a game card represents two teams.
 function attachMatchupLogos(card, awayLogo, homeLogo){

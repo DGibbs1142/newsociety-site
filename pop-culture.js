@@ -115,6 +115,7 @@ function renderCards(cards){
   if(!grid) return;
 
   grid.innerHTML = '';
+  setPillarAboutImage(cards[0]?.imageUrl);
   const { from, pillar } = currentPillarInfo();
   cards.forEach(card => {
     const el = document.createElement('a');

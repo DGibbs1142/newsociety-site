@@ -1,2 +1,4 @@
 config.local.js
 .claude/settings.local.json
+.netlify
+node_modules

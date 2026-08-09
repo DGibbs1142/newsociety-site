@@ -98,6 +98,7 @@ function renderCards(cards){
   if(!grid) return;
 
   grid.innerHTML = '';
+  setPillarAboutImage(cards[0]?.imageUrl);
   const { from, pillar } = currentPillarInfo();
   cards.forEach(card => {
     const el = document.createElement('a');
@@ -162,20 +163,33 @@ async function fetchMusicSearchPage(query, page){
   }));
 }
 
-// Only one preview clip plays at a time — starting a new one stops whatever
-// was already playing and resets its button back to the play icon.
+// Apple's official "Top Songs USA" chart — genuinely country-scoped (unlike
+// Deezer's chart/0, which has no real country filter despite accepting a
+// country param). Apple's marketing feed blocks direct browser fetch() with
+// no CORS headers, so this goes through our own /api/us-top-songs serverless
+// function, which fetches it server-side and hands back plain JSON,
+// same-origin. That feed doesn't include preview clips, so each row's play
+// button looks one up on demand from Apple's (separate, CORS-friendly)
+// iTunes Search API instead of fetching all 100 upfront. Split into two
+// 50-track slides rather than one long scroll, with each row also linking to
+// the same on-site detail breakdown as everything else on the site.
+const ITUNES_SEARCH = 'https://itunes.apple.com/search';
+const CHART_SLIDE_SIZE = 50;
+let chartTracks = [];
+let chartSlide = 0;
+let chartAutoAdvanceTimer = null;
 let activePreviewAudio = null;
 let activePreviewBtn = null;
 
 function stopActivePreview(){
   if(activePreviewAudio) activePreviewAudio.pause();
-  if(activePreviewBtn){ activePreviewBtn.textContent = '▶'; activePreviewBtn.classList.remove('playing'); }
+  if(activePreviewBtn){ activePreviewBtn.textContent = '▶'; activePreviewBtn.classList.remove('playing', 'loading'); }
   activePreviewAudio = null;
   activePreviewBtn = null;
 }
 
-function togglePreview(url, btn){
-  if(activePreviewBtn === btn){
+async function togglePreview(track, btn){
+  if(activePreviewBtn === btn && activePreviewAudio){
     if(activePreviewAudio.paused){
       activePreviewAudio.play();
       btn.textContent = '❚❚';
@@ -189,25 +203,38 @@ function togglePreview(url, btn){
   }
 
   stopActivePreview();
-  const audio = new Audio(url);
-  activePreviewAudio = audio;
   activePreviewBtn = btn;
-  audio.play();
-  btn.textContent = '❚❚';
-  btn.classList.add('playing');
-  audio.addEventListener('ended', stopActivePreview);
-}
+  btn.classList.add('loading');
+  btn.textContent = '···';
 
-// Deezer's global chart IS a live "what's actually being played right now"
-// ranking — same source as the trending cards above, just the full list
-// instead of a top-4 sample. Split into two 50-track slides (rendering only
-// the active 50 at a time) rather than one long scroll, with a play button
-// on each row for the 30-second preview clip Deezer provides, plus a link
-// to the same on-site detail breakdown as everything else on the site.
-const CHART_SLIDE_SIZE = 50;
-let chartTracks = [];
-let chartSlide = 0;
-let chartAutoAdvanceTimer = null;
+  try{
+    const res = await fetch(`${ITUNES_SEARCH}?term=${encodeURIComponent(`${track.title} ${track.artist}`)}&media=music&limit=1`);
+    const data = await res.json();
+    const previewUrl = data.results?.[0]?.previewUrl;
+    if(activePreviewBtn !== btn) return; // a different row was clicked while this lookup was in flight
+
+    btn.classList.remove('loading');
+    if(!previewUrl){
+      btn.textContent = '▶';
+      btn.disabled = true;
+      btn.setAttribute('aria-label', 'No preview available');
+      activePreviewBtn = null;
+      return;
+    }
+
+    const audio = new Audio(previewUrl);
+    activePreviewAudio = audio;
+    audio.play();
+    btn.textContent = '❚❚';
+    btn.classList.add('playing');
+    audio.addEventListener('ended', stopActivePreview);
+  }catch(err){
+    btn.classList.remove('loading');
+    btn.textContent = '▶';
+    activePreviewBtn = null;
+    console.warn('Preview lookup failed:', err.message);
+  }
+}
 
 function renderChartSlide(){
   const list = document.getElementById('topChartList');
@@ -228,27 +255,22 @@ function renderChartSlide(){
     playBtn.type = 'button';
     playBtn.className = 'chart-play';
     playBtn.textContent = '▶';
-    if(track.preview){
-      playBtn.setAttribute('aria-label', `Play preview of ${track.title}`);
-      playBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        togglePreview(track.preview, playBtn);
-      });
-    }else{
-      playBtn.disabled = true;
-      playBtn.setAttribute('aria-label', 'No preview available');
-    }
+    playBtn.setAttribute('aria-label', `Play preview of ${track.title}`);
+    playBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      togglePreview(track, playBtn);
+    });
 
     const a = document.createElement('a');
     a.className = 'chart-item';
     a.href = buildDetailLink({
       title: track.title,
-      body: `From "${track.album?.title || 'Unknown Album'}" by ${track.artist?.name || 'Unknown Artist'}.`,
-      status: `${track.artist?.name || 'Unknown Artist'} · #${rankNum} on the global chart`,
-      source: 'Deezer', url: track.link,
-      imageUrl: track.album?.cover_medium,
-      deezerId: track.id, deezerType: 'track',
+      body: `#${rankNum} on Apple Music's official US chart, by ${track.artist}.`,
+      status: `${track.artist} · #${rankNum} on the US chart`,
+      source: 'Apple Music', url: track.url,
+      imageUrl: track.artworkUrl,
+      categories: track.genre, publishedAt: track.releaseDate,
       from, pillar
     });
 
@@ -257,7 +279,7 @@ function renderChartSlide(){
     rank.textContent = rankNum;
 
     const img = document.createElement('img');
-    img.src = track.album?.cover_small || '';
+    img.src = track.artworkUrl || '';
     img.alt = '';
     img.onerror = () => img.remove();
 
@@ -268,14 +290,14 @@ function renderChartSlide(){
     title.textContent = track.title;
     const artist = document.createElement('span');
     artist.className = 'artist';
-    artist.textContent = track.artist?.name || 'Unknown Artist';
+    artist.textContent = track.artist || 'Unknown Artist';
     info.append(title, artist);
 
-    const duration = document.createElement('span');
-    duration.className = 'chart-duration mono';
-    duration.textContent = formatDuration(track.duration);
+    const meta = document.createElement('span');
+    meta.className = 'chart-meta mono';
+    meta.textContent = track.genre || '';
 
-    a.append(rank, img, info, duration);
+    a.append(rank, img, info, meta);
     li.append(playBtn, a);
     list.appendChild(li);
   });
@@ -310,8 +332,10 @@ async function loadTopChart(){
   const nextBtn = document.getElementById('chartNextBtn');
   if(!document.getElementById('topChartList')) return;
   try{
-    const data = await deezerJsonp(`${DEEZER_API}/chart/0/tracks?limit=100`);
-    chartTracks = data.data || [];
+    const res = await fetch('/api/us-top-songs');
+    if(!res.ok) throw new Error(`${res.status}`);
+    const data = await res.json();
+    chartTracks = data.tracks || [];
     if(!chartTracks.length) throw new Error('No chart data returned');
 
     goToChartSlide(0, false);
@@ -322,7 +346,7 @@ async function loadTopChart(){
       dot.addEventListener('click', () => goToChartSlide(i, true));
     });
 
-    if(status) status.textContent = `Updated live from Deezer's global chart — ${chartTracks.length} tracks.`;
+    if(status) status.textContent = `Updated live from Apple Music's official US chart — ${chartTracks.length} tracks.`;
   }catch(err){
     if(status) status.textContent = 'Chart temporarily unavailable — check back shortly.';
     console.warn('Top chart error:', err.message);
