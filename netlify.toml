@@ -3,3 +3,14 @@
 
 [functions]
   directory = "netlify/functions"
+
+# config.local.js holds real API secrets and must never be publicly
+# fetchable. It's gitignored, but the deploy tooling bundles the raw
+# working directory regardless — this redirect blocks the path at
+# Netlify's edge routing layer as a backstop that doesn't depend on the
+# file actually being absent from the deploy bundle.
+[[redirects]]
+  from = "/config.local.js"
+  to = "/"
+  status = 404
+  force = true
