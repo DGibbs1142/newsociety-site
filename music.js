@@ -163,16 +163,17 @@ async function fetchMusicSearchPage(query, page){
   }));
 }
 
-// Apple's official "Top Songs USA" chart — genuinely country-scoped (unlike
-// Deezer's chart/0, which has no real country filter despite accepting a
-// country param). Apple's marketing feed blocks direct browser fetch() with
-// no CORS headers, so this goes through our own /api/us-top-songs serverless
-// function, which fetches it server-side and hands back plain JSON,
-// same-origin. That feed doesn't include preview clips, so each row's play
-// button looks one up on demand from Apple's (separate, CORS-friendly)
-// iTunes Search API instead of fetching all 100 upfront. Split into two
-// 50-track slides rather than one long scroll, with each row also linking to
-// the same on-site detail breakdown as everything else on the site.
+// The NewSociety 100 — our own blended US chart, built server-side by
+// /api/us-top-songs from Apple Music's official US chart plus Deezer's
+// chart (Apple alone only reflects Apple Music listeners; Deezer alone has
+// no real country filter). A song's blended rank rewards showing up on
+// both, so it's more broadly representative than either single source —
+// see the function itself for the actual merge math. Neither feed's own
+// preview clips survive the blend cleanly, so each row's play button looks
+// one up on demand from Apple's (separate, CORS-friendly) iTunes Search API
+// instead of fetching all 100 upfront. Split into two 50-track slides
+// rather than one long scroll, with each row also linking to the same
+// on-site detail breakdown as everything else on the site.
 const ITUNES_SEARCH = 'https://itunes.apple.com/search';
 const CHART_SLIDE_SIZE = 50;
 let chartTracks = [];
@@ -266,9 +267,9 @@ function renderChartSlide(){
     a.className = 'chart-item';
     a.href = buildDetailLink({
       title: track.title,
-      body: `#${rankNum} on Apple Music's official US chart, by ${track.artist}.`,
+      body: `#${rankNum} on the NewSociety 100, blending Apple Music and Deezer listening data. By ${track.artist}.`,
       status: `${track.artist} · #${rankNum} on the US chart`,
-      source: 'Apple Music', url: track.url,
+      source: track.source, url: track.url,
       imageUrl: track.artworkUrl,
       categories: track.genre, publishedAt: track.releaseDate,
       from, pillar
@@ -346,7 +347,7 @@ async function loadTopChart(){
       dot.addEventListener('click', () => goToChartSlide(i, true));
     });
 
-    if(status) status.textContent = `Updated live from Apple Music's official US chart — ${chartTracks.length} tracks.`;
+    if(status) status.textContent = `The NewSociety 100 — blended from Apple Music and Deezer, updated live. ${chartTracks.length} tracks.`;
   }catch(err){
     if(status) status.textContent = 'Chart temporarily unavailable — check back shortly.';
     console.warn('Top chart error:', err.message);
