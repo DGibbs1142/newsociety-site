@@ -1,13 +1,12 @@
 // Populates the Pop Culture drops-grid from multiple sources so it's not just
-// movies/TV: trending titles (TMDB), celebrity/industry news (TheNewsAPI),
-// viral videos (YouTube Data API), and trending GIFs/memes (Giphy). The last
-// two are optional — if their keys aren't set, those sources are just skipped
-// and the grid balances across whichever sources are available.
+// movies/TV: trending titles (TMDB), celebrity/industry news (GNews), viral
+// videos (YouTube Data API), and trending GIFs/memes (Giphy). TMDB/GNews/
+// Giphy go through our own serverless proxies (netlify/functions/) so their
+// keys stay server-side — YouTube's key was never actually configured, so
+// that source just stays skipped as it always has. GIFs/videos are optional
+// either way — the grid balances across whichever sources are available.
 
-const TMDB_ENDPOINT = 'https://api.themoviedb.org/3/trending/all/day';
-const NEWS_ENDPOINT = 'https://gnews.io/api/v4/top-headlines?category=entertainment&lang=en&country=us&max=4';
 const YOUTUBE_ENDPOINT = 'https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&videoCategoryId=24&regionCode=US&maxResults=4';
-const GIPHY_ENDPOINT = 'https://api.giphy.com/v1/gifs/trending?limit=4&rating=pg-13';
 
 function yearOf(item){
   const date = item.release_date || item.first_air_date;
@@ -26,9 +25,8 @@ function timeAgo(dateStr){
 // --- Each fetcher returns a flat array of normalized cards: { status, heading, body, url } ---
 
 async function fetchTitles(){
-  if(typeof TMDB_API_KEY === 'undefined') return [];
   try{
-    const res = await fetch(`${TMDB_ENDPOINT}?api_key=${TMDB_API_KEY}`);
+    const res = await fetch('/api/tmdb?op=trending');
     if(!res.ok) return [];
     const data = await res.json();
     return (data.results || []).slice(0, 4).map(item => ({
@@ -45,9 +43,8 @@ async function fetchTitles(){
 }
 
 async function fetchCelebrityNews(){
-  if(typeof GNEWS_API_KEY === 'undefined') return [];
   try{
-    const res = await fetch(`${NEWS_ENDPOINT}&apikey=${GNEWS_API_KEY}`);
+    const res = await fetch('/api/gnews?op=headlines&category=entertainment&max=4');
     if(!res.ok) return [];
     const data = await res.json();
     return (data.articles || []).map(article => ({
@@ -81,9 +78,8 @@ async function fetchTrendingVideos(){
 }
 
 async function fetchTrendingGifs(){
-  if(typeof GIPHY_API_KEY === 'undefined') return [];
   try{
-    const res = await fetch(`${GIPHY_ENDPOINT}&api_key=${GIPHY_API_KEY}`);
+    const res = await fetch('/api/giphy');
     if(!res.ok) return [];
     const data = await res.json();
     return (data.data || []).slice(0, 4).map(gif => ({
@@ -176,8 +172,7 @@ async function loadPopCulture(){
 }
 
 async function fetchTitleSearchPage(query, page){
-  if(typeof TMDB_API_KEY === 'undefined') return [];
-  const res = await fetch(`https://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(query)}&page=${page}&api_key=${TMDB_API_KEY}`);
+  const res = await fetch(`/api/tmdb?op=search&query=${encodeURIComponent(query)}&page=${page}`);
   if(!res.ok) throw new Error(`${res.status}`);
   const data = await res.json();
   return (data.results || [])

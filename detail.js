@@ -174,8 +174,7 @@ async function renderSportsBreakdown(){
 async function renderTitleBreakdown(){
   breakdownLoading('Pulling the full record…');
   try{
-    if(typeof TMDB_API_KEY === 'undefined') throw new Error('no TMDB key configured');
-    const res = await fetch(`https://api.themoviedb.org/3/${mediaType}/${tmdbId}?api_key=${TMDB_API_KEY}&append_to_response=credits`);
+    const res = await fetch(`/api/tmdb?op=detail&mediaType=${mediaType}&id=${tmdbId}`);
     if(!res.ok) throw new Error(`${res.status}`);
     const data = await res.json();
 

@@ -1,9 +1,6 @@
 // Populates the Fashion drops-grid with live fashion news from GNews.io,
-// filtered to a "fashion" keyword search. GNews returns up to 10 results per
-// request on the free tier, so — unlike the old TheNewsAPI integration —
-// no multi-page-per-page fan-out is needed here.
-
-const FASHION_ENDPOINT = 'https://gnews.io/api/v4/search?q=fashion&lang=en&max=10';
+// filtered to a "fashion" keyword search, via our own serverless proxy
+// (netlify/functions/gnews.mts) so the API key stays server-side.
 
 function timeAgo(dateStr){
   const diffMs = Date.now() - new Date(dateStr).getTime();
@@ -76,12 +73,8 @@ function renderError(message){
 }
 
 async function loadFashion(){
-  if(typeof GNEWS_API_KEY === 'undefined'){
-    renderError('No API key configured — copy config.example.js to config.local.js and add your GNews.io key.');
-    return;
-  }
   try{
-    const res = await fetch(`${FASHION_ENDPOINT}&apikey=${GNEWS_API_KEY}`);
+    const res = await fetch('/api/gnews?op=search&q=fashion&max=10');
     if(res.status === 403 || res.status === 429) throw new Error('GNews usage limit reached');
     if(!res.ok) throw new Error(`${res.status} ${res.statusText}`);
     const data = await res.json();
@@ -94,8 +87,7 @@ async function loadFashion(){
 }
 
 async function fetchFashionSearchPage(query, page){
-  if(typeof GNEWS_API_KEY === 'undefined') return [];
-  const res = await fetch(`https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=10&page=${page}&apikey=${GNEWS_API_KEY}`);
+  const res = await fetch(`/api/gnews?op=search&q=${encodeURIComponent(query)}&max=10&page=${page}`);
   if(res.status === 403 || res.status === 429) throw new Error('GNews usage limit reached — try again later');
   if(!res.ok) return [];
   const data = await res.json();
