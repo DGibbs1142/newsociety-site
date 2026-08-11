@@ -116,9 +116,28 @@ nav.links a.current{ color:var(--text); }
   white-space:nowrap;
 }
 .nav-cta:hover{ border-color:var(--accent); background:var(--accent-soft); }
+.nav-search{
+  flex:1;
+  max-width:280px;
+  margin:0 24px;
+}
+.nav-search input{
+  width:100%;
+  background:var(--bg-elevated);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:8px 14px;
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+}
+.nav-search input:focus{ outline:none; border-color:var(--accent); }
+.nav-search input::placeholder{ color:var(--text-dim); }
 
 @media (max-width:820px){
   nav.links{ display:none; }
+  .nav-inner{ flex-wrap:wrap; row-gap:12px; }
+  .nav-search{ order:3; flex:1 1 100%; max-width:none; margin:0; }
 }
 
 /* ---------- TICKER ---------- */
@@ -358,6 +377,17 @@ h1.page-title{
   gap:24px;
   flex-wrap:wrap;
 }
+.search-section{ margin-bottom:64px; }
+.search-section .section-head{ margin-bottom:24px; }
+.search-section-more{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  white-space:nowrap;
+}
+.search-section-more:hover{ color:var(--text); }
 .section-label{
   font-family:'JetBrains Mono',monospace;
   font-size:12px;
@@ -671,6 +701,7 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   .drops-grid{ grid-template-columns:1fr; }
 }
 .drop-card{
+  position:relative;
   background:var(--bg);
   padding:32px 28px;
   display:flex;
@@ -680,6 +711,27 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   border-right:1px solid var(--line);
   border-bottom:1px solid var(--line);
 }
+.save-btn{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(10,10,12,0.72);
+  border:1px solid var(--line);
+  border-radius:50%;
+  color:var(--text-muted);
+  font-size:15px;
+  line-height:1;
+  cursor:pointer;
+  z-index:2;
+  transition:color 0.2s ease, border-color 0.2s ease;
+}
+.save-btn:hover{ color:var(--text); border-color:var(--text-muted); }
+.save-btn.saved{ color:var(--accent); border-color:var(--accent); }
 /* Negative margins pull the image flush to the card's edges despite the
    card's own padding; `gap` (from .drop-card) handles the space below it. */
 .drop-card-media{

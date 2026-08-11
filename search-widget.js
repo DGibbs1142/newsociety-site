@@ -39,6 +39,7 @@ function initSearchWidget({ formId, inputId, gridId, statusId, moreBtnId, fetchP
 
     el.append(statusEl, h4, p);
     attachCardImage(el, card.imageUrl);
+    attachSaveButton(el, { href: el.href, title: card.title || 'Untitled', pillar, status: card.status || '', imageUrl: card.imageUrl || '' });
     grid.appendChild(el);
   }
 

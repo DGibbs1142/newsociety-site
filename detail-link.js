@@ -53,6 +53,57 @@ function setPillarAboutImage(imageUrl){
   img.alt = '';
 }
 
+// "Save for later" — pure client-side via localStorage, no backend needed.
+// Each saved item stores just enough to redisplay itself on saved.html
+// without re-fetching anything: the detail link (used as its unique id),
+// title, pillar, status, and image.
+const SAVED_STORAGE_KEY = 'newsociety_saved';
+
+function getSavedItems(){
+  try{
+    return JSON.parse(localStorage.getItem(SAVED_STORAGE_KEY)) || [];
+  }catch{ return []; }
+}
+
+function isItemSaved(href){
+  return getSavedItems().some(item => item.href === href);
+}
+
+function toggleSavedItem(item){
+  const items = getSavedItems();
+  const idx = items.findIndex(i => i.href === item.href);
+  if(idx >= 0) items.splice(idx, 1);
+  else items.unshift(item);
+  localStorage.setItem(SAVED_STORAGE_KEY, JSON.stringify(items));
+  return idx < 0; // true if the item is now saved
+}
+
+// Adds a bookmark toggle button to a drop-card. Nested inside the card's own
+// <a> (like attachCardImage's media div) rather than as a sibling, so it
+// needs preventDefault/stopPropagation to keep clicks from also following
+// the card's link — same technique already used for the chart's play
+// buttons, just inline instead of alongside.
+function attachSaveButton(card, item){
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'save-btn';
+  const sync = () => {
+    const saved = isItemSaved(item.href);
+    btn.classList.toggle('saved', saved);
+    btn.textContent = saved ? '★' : '☆';
+    btn.setAttribute('aria-label', saved ? 'Remove from saved' : 'Save for later');
+  };
+  sync();
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleSavedItem(item);
+    sync();
+  });
+  card.appendChild(btn);
+  return btn;
+}
+
 // Sports-only variant: two team logos side by side with "@" between them,
 // used instead of a single photo since a game card represents two teams.
 function attachMatchupLogos(card, awayLogo, homeLogo){

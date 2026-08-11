@@ -62,6 +62,21 @@ function renderBase(){
   }else if(source){
     credit.textContent = `Source: ${source}`;
   }
+
+  const saveBtn = document.getElementById('saveDetailBtn');
+  if(saveBtn){
+    const item = { href: window.location.href, title, pillar: pillar || '', status: status || '', imageUrl: imageUrl || '' };
+    const sync = () => {
+      const saved = isItemSaved(item.href);
+      saveBtn.textContent = saved ? '★ Saved' : '☆ Save for later';
+    };
+    saveBtn.style.display = '';
+    sync();
+    saveBtn.addEventListener('click', () => {
+      toggleSavedItem(item);
+      sync();
+    });
+  }
 }
 
 function breakdownLoading(text){

@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anime — NewSociety</title>
+<title>Saved — NewSociety</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body data-page="anime.html">
+<body data-page="saved.html">
 
 <header class="nav">
   <div class="nav-inner">
@@ -33,9 +33,9 @@
 <section class="page-hero">
   <div class="wrap">
     <a href="index.html" class="breadcrumb">← Back to NewSociety</a>
-    <div class="eyebrow"><span class="live-dot"></span>Anime</div>
-    <h1 class="page-title display">Arcs Worth Yelling About</h1>
-    <p class="page-sub">Episode breakdowns, power-scaling debates, and the panels that made the timeline lose it.</p>
+    <div class="eyebrow"><span class="live-dot"></span>Saved</div>
+    <h1 class="page-title display">Your reading list.</h1>
+    <p class="page-sub">Everything you've bookmarked across every pillar — stored right in this browser, nowhere else.</p>
   </div>
 </section>
 
@@ -43,58 +43,18 @@
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="section-label">// about this pillar</div>
-        <h2 class="section-title display">Not just the top 10.</h2>
+        <div class="section-label">// saved for later</div>
+        <h2 class="section-title display" id="savedCount">Loading…</h2>
       </div>
     </div>
-    <div class="about-layout reveal">
-      <p class="about-copy">Beyond whatever the algorithm's pushing this week — this pillar mixes must-watch classics, underrated gems the timeline slept on, and whatever's trending right now. Episode breakdowns, power-scaling debates, and the panels that made everyone lose it, pulled from decades of anime, not just this season's chart.</p>
-      <div class="about-media" id="aboutMedia"><img id="aboutImage" alt=""></div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="section-head reveal">
-      <div>
-        <div class="section-label">// latest drops</div>
-        <h2 class="section-title display" id="newsSectionTitle">Loading live picks…</h2>
-      </div>
-    </div>
-    <div class="drops-grid reveal" id="newsGrid">
-      <div class="drop-card">
-        <span class="drop-status mono">Loading</span>
-        <h4>Digging through the archive…</h4>
-        <p>Pulling a mix of classics, underrated picks, and trending anime from AniList.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="section-head reveal">
-      <div>
-        <div class="section-label">// search the archive</div>
-        <h2 class="section-title display">Any title, any era.</h2>
-      </div>
-    </div>
-    <form class="search-form reveal" id="searchForm">
-      <input type="text" id="searchInput" placeholder="Search anime by title…" required>
-      <button type="submit" class="btn btn-primary">Search</button>
-    </form>
-    <p class="search-status mono" id="searchStatus"></p>
-    <div class="drops-grid reveal" id="searchResultsGrid" style="display:none;"></div>
-    <div class="search-more">
-      <button type="button" class="btn btn-ghost" id="searchMoreBtn" style="display:none;">Load More</button>
-    </div>
+    <div class="drops-grid reveal" id="savedGrid"></div>
+    <p class="about-copy" id="savedEmpty" style="display:none;">Nothing saved yet. Tap the ☆ on any card across the site to add it here.</p>
   </div>
 </section>
 
 <section class="cta" id="follow">
   <div class="wrap">
-    <div class="reveal">
+    <div class="reveal in">
       <div class="section-label" style="margin-bottom:20px;">// join the feed</div>
       <h2 class="display">Don't watch the news.<br>Watch the feed.</h2>
       <p>New drops daily across sports, anime, pop culture, fashion, music, and the stuff everyone's about to be talking about.</p>
@@ -120,8 +80,7 @@
 </footer>
 
 <script src="detail-link.js"></script>
-<script src="search-widget.js"></script>
-<script src="anime.js"></script>
+<script src="saved.js"></script>
 <script src="site.js"></script>
 
 </body>

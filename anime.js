@@ -77,6 +77,7 @@ function renderAnime(mediaList){
 
     card.append(status, h4, p);
     attachCardImage(card, anime.coverImage?.large);
+    attachSaveButton(card, { href: card.href, title: heading, pillar, status: statusText, imageUrl: anime.coverImage?.large || '' });
     grid.appendChild(card);
   });
 
