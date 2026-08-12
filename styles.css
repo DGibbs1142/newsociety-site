@@ -890,13 +890,27 @@ footer{
 }
 .footer-links{
   display:flex;
-  gap:26px;
+  flex-wrap:wrap;
+  gap:16px 26px;
   font-family:'JetBrains Mono',monospace;
   font-size:12px;
   text-transform:uppercase;
   letter-spacing:0.06em;
   color:var(--text-dim);
 }
+
+/* ---------- FAQ ---------- */
+.faq-list{
+  display:flex;
+  flex-direction:column;
+  gap:36px;
+  max-width:720px;
+}
+.faq-item h4{
+  font-size:18px;
+  margin-bottom:10px;
+}
+.faq-item .about-copy{ max-width:none; }
 .footer-links a:hover{ color:var(--text); }
 .footer-copy{
   font-family:'JetBrains Mono',monospace;
