@@ -138,14 +138,25 @@ function renderPlayByPlay(plays){
 // --- Sports: real box score / game info from ESPN, framed as our own live report ---
 async function renderSportsBreakdown(){
   breakdownLoading('Pulling the box score…');
+  await fetchAndRenderSportsBreakdown();
+}
+
+// Re-fetches and re-renders itself on a timer while the game is still live —
+// a box score frozen at whatever it was when the page loaded would defeat
+// the point of a "live report." Stops on its own the moment the game ends
+// (no more reschedule), so it never polls a finished game forever.
+async function fetchAndRenderSportsBreakdown(){
   try{
     const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${espnPath}/summary?event=${espnId}`);
     if(!res.ok) throw new Error(`${res.status}`);
     const data = await res.json();
     const comp = data.header?.competitions?.[0];
     const competitors = comp?.competitors || [];
+    const isLive = comp?.status?.type?.state === 'in';
 
-    let html = '<div class="section-label">// the breakdown</div><div class="breakdown-heading">NewSociety Live Report</div>';
+    let html = '<div class="section-label">// the breakdown</div><div class="breakdown-heading">NewSociety Live Report'
+      + (isLive ? ' <span class="live-dot" style="margin-left:10px;"></span><span class="mono" style="font-size:11px; color:var(--live); vertical-align:middle; letter-spacing:0.06em;">UPDATING LIVE</span>' : '')
+      + '</div>';
 
     const periods = Math.max(0, ...competitors.map(c => c.linescores?.length || 0));
     if(periods > 0){
@@ -179,6 +190,10 @@ async function renderSportsBreakdown(){
     html += renderPlayerStats(data.boxscore?.players, competitors);
 
     document.getElementById('detailBreakdown').innerHTML = html;
+
+    if(isLive){
+      setTimeout(fetchAndRenderSportsBreakdown, 20000);
+    }
   }catch(err){
     document.getElementById('detailBreakdown').innerHTML = '';
     console.warn('Sports breakdown unavailable:', err.message);

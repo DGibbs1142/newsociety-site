@@ -234,6 +234,10 @@ async function fetchSportsKeywordSearch(query){
 
 if(document.getElementById('newsGrid')){
   loadSports();
+  // Scores actually move while someone's sitting on this page — refresh
+  // periodically so "Live Now" stays live instead of freezing at whatever
+  // the score was on page load.
+  setInterval(loadSports, 30000);
   initGameSearch();
   initSearchWidget({
     formId: 'keywordSearchForm', inputId: 'keywordSearchInput', gridId: 'keywordSearchResultsGrid',
