@@ -77,6 +77,26 @@ function renderBase(){
       sync();
     });
   }
+
+  const shareXBtn = document.getElementById('shareXBtn');
+  if(shareXBtn){
+    shareXBtn.href = `https://x.com/intent/post?text=${encodeURIComponent(title)}&url=${encodeURIComponent(window.location.href)}`;
+    shareXBtn.style.display = '';
+  }
+
+  const copyLinkBtn = document.getElementById('copyLinkBtn');
+  if(copyLinkBtn){
+    copyLinkBtn.style.display = '';
+    copyLinkBtn.addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(window.location.href);
+        copyLinkBtn.textContent = 'Copied!';
+      }catch{
+        copyLinkBtn.textContent = 'Copy failed';
+      }
+      setTimeout(() => { copyLinkBtn.textContent = 'Copy Link'; }, 2000);
+    });
+  }
 }
 
 function breakdownLoading(text){
