@@ -256,6 +256,8 @@ h1.hero-title .accent-word{ color:var(--accent); }
   gap:10px;
   transition:all 0.2s ease;
   border:1px solid transparent;
+  background:none;
+  cursor:pointer;
 }
 .btn-primary{
   background:var(--accent);
