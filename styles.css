@@ -81,13 +81,13 @@ header.nav{
   text-transform:uppercase;
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:9px;
 }
 .logo-dot{
-  width:8px; height:8px;
-  background:var(--accent);
-  border-radius:50%;
+  width:22px; height:22px;
+  flex:none;
   display:inline-block;
+  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M20 84V22l60 62V44' fill='none' stroke='%23f4f3ef' stroke-width='13' stroke-linejoin='round' stroke-linecap='round'/><circle cx='80' cy='21' r='9' fill='%236e56ff'/></svg>") center/contain no-repeat;
 }
 nav.links{
   display:flex;

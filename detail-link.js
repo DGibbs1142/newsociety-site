@@ -48,7 +48,20 @@ function attachCardImage(card, imageUrl){
 // never detect truncation.
 function attachExpandToggle(card, p){
   requestAnimationFrame(() => {
-    if(p.scrollHeight <= p.clientHeight + 1) return;
+    // scrollHeight is unreliable on a -webkit-line-clamp box (it tends to
+    // just report the clamped height back) — briefly drop to a plain block
+    // display to get the paragraph's true unclamped height, then restore
+    // before anything paints, so there's no visible flash.
+    const clampedHeight = p.clientHeight;
+    const prevDisplay = p.style.display;
+    const prevClamp = p.style.webkitLineClamp;
+    p.style.display = 'block';
+    p.style.webkitLineClamp = 'unset';
+    const naturalHeight = p.scrollHeight;
+    p.style.display = prevDisplay;
+    p.style.webkitLineClamp = prevClamp;
+
+    if(naturalHeight <= clampedHeight + 1) return;
     const dots = document.createElement('button');
     dots.type = 'button';
     dots.className = 'expand-dots';
