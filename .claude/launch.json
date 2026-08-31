@@ -3,6 +3,9 @@
   "configurations": [
     {
       "name": "newsociety-site",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [".claude/serve.py"],
+      "port": 8000,
       "url": "http://localhost:8000"
     }
   ]

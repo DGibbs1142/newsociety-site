@@ -196,14 +196,6 @@ nav.links a.current{ color:var(--text); }
   border-bottom:1px solid var(--line);
   position:relative;
 }
-.hero::before{
-  content:'';
-  position:absolute;
-  top:0; left:50%;
-  width:1px; height:100%;
-  background:linear-gradient(to bottom, transparent, var(--line-soft) 20%, var(--line-soft) 80%, transparent);
-  opacity:0.6;
-}
 .eyebrow{
   font-family:'JetBrains Mono',monospace;
   font-size:12px;
