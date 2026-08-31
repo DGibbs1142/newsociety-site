@@ -38,6 +38,33 @@ function attachCardImage(card, imageUrl){
   card.insertBefore(media, card.firstChild);
 }
 
+// Adds a "···" toggle right after a card's paragraph, but only when the
+// text is actually being cut off by the 3-line clamp — clicking it expands
+// the full text in place, right there in the grid, without navigating to
+// the detail page. Measured on the next animation frame rather than
+// immediately: cards are usually still detached from the document when
+// this runs (built, then appended right after), and a detached element
+// always reports 0 for scrollHeight/clientHeight, so measuring "now" would
+// never detect truncation.
+function attachExpandToggle(card, p){
+  requestAnimationFrame(() => {
+    if(p.scrollHeight <= p.clientHeight + 1) return;
+    const dots = document.createElement('button');
+    dots.type = 'button';
+    dots.className = 'expand-dots';
+    dots.textContent = '···';
+    dots.setAttribute('aria-label', 'Show full text');
+    dots.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const expanded = p.classList.toggle('expanded');
+      dots.textContent = expanded ? '︿' : '···';
+      dots.setAttribute('aria-label', expanded ? 'Show less' : 'Show full text');
+    });
+    p.insertAdjacentElement('afterend', dots);
+  });
+}
+
 // Fills the "About this pillar" section's image with a real, live image —
 // each pillar's fetcher passes in whatever its first live item already
 // returned (a poster, cover, album art, team logo, article photo…), so this

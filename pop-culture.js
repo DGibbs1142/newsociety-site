@@ -137,6 +137,7 @@ function renderCards(cards){
     el.append(status, h4, p);
     attachCardImage(el, card.imageUrl);
     attachSaveButton(el, { href: el.href, title: card.heading || 'Untitled', pillar, status: card.status || '', imageUrl: card.imageUrl || '' });
+    attachExpandToggle(el, p);
     grid.appendChild(el);
   });
 

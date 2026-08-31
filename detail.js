@@ -448,6 +448,168 @@ function renderNewsBreakdown(){
   document.getElementById('detailBreakdown').innerHTML = html;
 }
 
+// --- Related Stories: a few more items from the same pillar, using the
+// same live sources each pillar's own page already pulls from — no new
+// APIs, just a second lightweight fetch scoped to "what else is here right
+// now," with the current item filtered out. ---
+async function fetchRelatedSports(){
+  if(!espnPath) return [];
+  const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${espnPath}/scoreboard`);
+  if(!res.ok) return [];
+  const data = await res.json();
+  return (data.events || [])
+    .filter(e => String(e.id) !== String(espnId))
+    .slice(0, 4)
+    .map(e => {
+      const st = `${espnLeague || ''} · ${e.status?.type?.shortDetail || e.status?.type?.description || ''}`.trim();
+      const comp = e.competitions?.[0];
+      const home = comp?.competitors?.find(c => c.homeAway === 'home');
+      return {
+        title: e.name, status: st, imageUrl: home?.team?.logo || '',
+        href: buildDetailLink({
+          title: e.name, status: st, source: 'ESPN', url: e.links?.[0]?.href || '',
+          espnId: e.id, espnPath, espnLeague, pillar, from
+        })
+      };
+    });
+}
+
+async function fetchRelatedAnime(){
+  const gqlQuery = `query{ Page(page:1, perPage:8){ media(type:ANIME, sort:TRENDING_DESC){ id title{ romaji english } averageScore seasonYear description(asHtml:false) siteUrl coverImage{ large } } } }`;
+  const res = await fetch('https://graphql.anilist.co', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: gqlQuery })
+  });
+  if(!res.ok) return [];
+  const { data } = await res.json();
+  return (data?.Page?.media || [])
+    .filter(a => String(a.id) !== String(anilistId))
+    .slice(0, 4)
+    .map(a => {
+      const t = a.title.english || a.title.romaji || 'Untitled';
+      const st = `${a.seasonYear || '—'} · ${a.averageScore ? a.averageScore + '/100' : 'Unrated'}`;
+      const b = (a.description || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+      return { title: t, status: st, imageUrl: a.coverImage?.large || '', href: buildDetailLink({ title: t, body: b, status: st, source: 'AniList', url: a.siteUrl, anilistId: a.id, pillar, from }) };
+    });
+}
+
+async function fetchRelatedPopCulture(){
+  const res = await fetch('/api/tmdb?op=trending');
+  if(!res.ok) return [];
+  const data = await res.json();
+  return (data.results || [])
+    .filter(item => String(item.id) !== String(tmdbId))
+    .slice(0, 4)
+    .map(item => {
+      const t = item.title || item.name || 'Untitled';
+      const year = (item.release_date || item.first_air_date || '').slice(0, 4) || '—';
+      const st = `${item.media_type === 'tv' ? 'TV' : 'Movie'} · ${year}`;
+      const img = item.poster_path ? `https://image.tmdb.org/t/p/w342${item.poster_path}` : '';
+      return {
+        title: t, status: st, imageUrl: img,
+        href: buildDetailLink({
+          title: t, body: item.overview || '', status: st, source: 'TMDB',
+          url: `https://www.themoviedb.org/${item.media_type}/${item.id}`,
+          tmdbId: item.id, mediaType: item.media_type, imageUrl: img, pillar, from
+        })
+      };
+    });
+}
+
+async function fetchRelatedFashion(){
+  const res = await fetch('/api/gnews?op=search&q=fashion&max=8');
+  if(!res.ok) return [];
+  const data = await res.json();
+  return (data.articles || [])
+    .filter(a => a.title !== title)
+    .slice(0, 4)
+    .map(a => ({
+      title: a.title, status: a.source?.name || 'Wire', imageUrl: a.image || '',
+      href: buildDetailLink({
+        title: a.title, body: a.content || a.description || '', status: a.source?.name || 'Wire',
+        source: a.source?.name || 'Wire', url: a.url, publishedAt: a.publishedAt, imageUrl: a.image || '',
+        sourceCountry: a.source?.country, pillar, from
+      })
+    }));
+}
+
+async function fetchRelatedMusic(){
+  const data = await deezerJsonp('https://api.deezer.com/chart/0/tracks?limit=8');
+  return (data?.data || [])
+    .filter(t => String(t.id) !== String(deezerId))
+    .slice(0, 4)
+    .map(t => {
+      const artist = t.artist?.name || 'Unknown Artist';
+      const st = `${artist} · Trending`;
+      return {
+        title: t.title, status: st, imageUrl: t.album?.cover_medium || '',
+        href: buildDetailLink({
+          title: t.title, body: `From "${t.album?.title || 'Unknown Album'}" by ${artist}.`, status: st,
+          source: 'Deezer', url: t.link, imageUrl: t.album?.cover_medium || '',
+          deezerId: t.id, deezerType: 'track', pillar, from
+        })
+      };
+    });
+}
+
+async function fetchRelatedNews(){
+  const res = await fetch('/api/gnews?op=headlines&category=general&max=8');
+  if(!res.ok) return [];
+  const data = await res.json();
+  return (data.articles || [])
+    .filter(a => a.title !== title)
+    .slice(0, 4)
+    .map(a => ({
+      title: a.title, status: a.source?.name || 'Wire', imageUrl: a.image || '',
+      href: buildDetailLink({
+        title: a.title, body: a.content || a.description || '', status: a.source?.name || 'Wire',
+        source: a.source?.name || 'Wire', url: a.url, publishedAt: a.publishedAt, imageUrl: a.image || '',
+        sourceCountry: a.source?.country, pillar, from
+      })
+    }));
+}
+
+async function renderRelated(){
+  const fetchers = {
+    'Sports': fetchRelatedSports, 'Anime': fetchRelatedAnime, 'Pop Culture': fetchRelatedPopCulture,
+    'Fashion': fetchRelatedFashion, 'Music': fetchRelatedMusic, 'Current Events': fetchRelatedNews
+  };
+  const fetcher = fetchers[pillar];
+  if(!fetcher) return;
+
+  try{
+    const items = await fetcher();
+    if(!items.length) return;
+
+    const section = document.getElementById('relatedSection');
+    const heading = document.getElementById('relatedHeading');
+    const grid = document.getElementById('relatedGrid');
+    if(!section || !grid) return;
+
+    if(heading) heading.textContent = `More from ${pillar}.`;
+    items.forEach(item => {
+      const card = document.createElement('a');
+      card.className = 'drop-card';
+      card.href = item.href;
+
+      const statusEl = document.createElement('span');
+      statusEl.className = 'drop-status mono';
+      statusEl.textContent = item.status || '';
+
+      const h4 = document.createElement('h4');
+      h4.textContent = item.title || 'Untitled';
+
+      card.append(statusEl, h4);
+      attachCardImage(card, item.imageUrl);
+      attachSaveButton(card, { href: card.href, title: item.title || 'Untitled', pillar, status: item.status || '', imageUrl: item.imageUrl || '' });
+      grid.appendChild(card);
+    });
+
+    section.style.display = '';
+  }catch(err){
+    console.warn('Related content unavailable:', err.message);
+  }
+}
+
 if(title){
   renderBase();
   if(espnId && espnPath) renderSportsBreakdown();
@@ -457,6 +619,7 @@ if(title){
   else if(espnTeamId && espnLeaguePath) renderTeamBreakdown();
   else if(deezerId && deezerType) renderMusicBreakdown();
   else renderNewsBreakdown();
+  renderRelated();
 }else{
   document.getElementById('detailTitle').textContent = "Nothing to show here.";
   document.getElementById('detailStatus').textContent = '';

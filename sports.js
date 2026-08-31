@@ -85,6 +85,7 @@ function gameCard(event, { live = false } = {}){
   const home = comp?.competitors?.find(c => c.homeAway === 'home');
   attachMatchupLogos(card, away?.team?.logo, home?.team?.logo);
   attachSaveButton(card, { href: card.href, title: event.name || 'Untitled Matchup', pillar, status: statusText, imageUrl: home?.team?.logo || away?.team?.logo || '' });
+  attachExpandToggle(card, p);
 
   return card;
 }

@@ -51,6 +51,7 @@ function renderArticles(articles){
     card.append(status, h4, p);
     attachCardImage(card, article.imageUrl);
     attachSaveButton(card, { href: card.href, title: article.title || 'Untitled', pillar, status: article.status || '', imageUrl: article.imageUrl || '' });
+    attachExpandToggle(card, p);
     grid.appendChild(card);
   });
 
