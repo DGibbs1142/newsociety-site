@@ -14,3 +14,32 @@
   to = "/"
   status = 404
   force = true
+
+# Same backstop as config.local.js above, for everything else the raw
+# working directory drags along: the git history, local editor/CLI state,
+# and the deploy config itself. None of it is part of the site, and a
+# served .git directory in particular hands out the whole repo. Blocking
+# at the edge doesn't depend on these files being absent from the bundle.
+[[redirects]]
+  from = "/.git/*"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.claude/*"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.gitignore"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/netlify.toml"
+  to = "/"
+  status = 404
+  force = true
