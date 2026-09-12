@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+  <!-- Square canvas so the renderer can't letterbox or rescale by aspect;
+       the actual 1200x630 share image is the centred band y=285..915,
+       cropped out after rasterising. -->
+  <rect width="1200" height="1200" fill="#0a0a0c"/>
+  <rect x="0" y="285" width="1200" height="6" fill="#6e56ff"/>
+
+  <g transform="translate(96,371) scale(1.15)">
+    <path d="M20 84V22l60 62V44" fill="none" stroke="#f4f3ef" stroke-width="13"
+          stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="80" cy="21" r="9" fill="#6e56ff"/>
+  </g>
+
+  <text x="96" y="645" font-family="Impact, 'Haettenschweiler', 'Arial Narrow Bold', sans-serif"
+        font-size="112" fill="#f4f3ef" letter-spacing="1">CULTURE MOVES FAST.</text>
+  <text x="96" y="757" font-family="Impact, 'Haettenschweiler', 'Arial Narrow Bold', sans-serif"
+        font-size="112" fill="#6e56ff" letter-spacing="1">WE MOVE FASTER.</text>
+
+  <text x="96" y="858" font-family="'SF Mono', Menlo, monospace"
+        font-size="21" fill="#8b8b96" letter-spacing="3">SPORTS · ANIME · POP CULTURE · FASHION · MUSIC · NEWS</text>
+</svg>
