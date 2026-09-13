@@ -6,6 +6,7 @@ const TICKER_ITEMS = [
   { label: 'Fashion', href: 'fashion.html' },
   { label: 'Music', href: 'music.html' },
   { label: 'Current Events', href: 'current-events.html' },
+  { label: 'NewSociety Live', href: 'live.html' },
   { label: 'New Drop Daily', href: 'index.html#follow' },
   { label: 'Follow the Feed', href: 'index.html#follow' }
 ];

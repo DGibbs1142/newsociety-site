@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About — NewSociety</title>
-<meta name="description" content="NewSociety is a culture outlet built for the feed, not the broadcast booth. Here's who we are and how we move.">
+<title>NewSociety Live — Launch Party RSVP</title>
+<meta name="description" content="NewSociety Live brings the feed into the room — free community nights to ticketed shows, launching in NYC / NJ. RSVP for the launch party.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="NewSociety">
-<meta property="og:url" content="https://newsociety.netlify.app/about.html">
-<link rel="canonical" href="https://newsociety.netlify.app/about.html">
-<meta property="og:title" content="About — NewSociety">
-<meta property="og:description" content="NewSociety is a culture outlet built for the feed, not the broadcast booth. Here's who we are and how we move.">
+<meta property="og:url" content="https://newsociety.netlify.app/live.html">
+<link rel="canonical" href="https://newsociety.netlify.app/live.html">
+<meta property="og:title" content="NewSociety Live — Launch Party RSVP">
+<meta property="og:description" content="NewSociety Live brings the feed into the room — free community nights to ticketed shows, launching in NYC / NJ. RSVP for the launch party.">
 <meta property="og:image" content="https://newsociety.netlify.app/icons/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="NewSociety — Culture moves fast. We move faster.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="About — NewSociety">
-<meta name="twitter:description" content="NewSociety is a culture outlet built for the feed, not the broadcast booth. Here's who we are and how we move.">
+<meta name="twitter:title" content="NewSociety Live — Launch Party RSVP">
+<meta name="twitter:description" content="NewSociety Live brings the feed into the room — free community nights to ticketed shows, launching in NYC / NJ. RSVP for the launch party.">
 <meta name="twitter:image" content="https://newsociety.netlify.app/icons/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
 <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 </head>
-<body data-page="about.html">
+<body data-page="live.html">
 
 <header class="nav">
   <div class="nav-inner">
@@ -54,21 +54,43 @@
 <section class="page-hero">
   <div class="wrap">
     <a href="index.html" class="breadcrumb">← Back to NewSociety</a>
-    <div class="eyebrow"><span class="live-dot"></span>About</div>
-    <h1 class="page-title display">Culture, Uncut.</h1>
-    <p class="page-sub">Six beats, one feed, built for the moment it happens — not the recap three days later.</p>
+    <div class="eyebrow"><span class="live-dot"></span>NewSociety Live</div>
+    <h1 class="page-title display">The feed, in the room.</h1>
+    <p class="page-sub">Free community nights to ticketed shows — accessible to everyone. Launching in NYC / NJ.</p>
   </div>
 </section>
 
-<section>
-  <div class="wrap">
-    <div class="section-head reveal">
-      <div>
-        <div class="section-label">// what we are</div>
-        <h2 class="section-title display">Not a wire service. A feed.</h2>
-      </div>
+<section id="rsvp">
+  <div class="wrap live-split">
+    <div class="reveal">
+      <div class="section-label">// the launch party</div>
+      <h2 class="section-title display" style="margin:16px 0 28px;">Opening night. You're invited.</h2>
+      <p class="about-copy">The first NewSociety Live event is a free, RSVP-only launch party — the people behind the feed and the community that reads it, in one room.</p>
+      <p class="about-copy" style="margin-top:18px;">Date and venue drop here first. Get on the list and you'll hear before anyone else does.</p>
     </div>
-    <p class="about-copy reveal">NewSociety covers sports, anime, pop culture, fashion, music, and the news cycle — six pillars, pulled live from the sources that actually track them (ESPN, AniList, TMDB, GNews, Apple Music, Deezer) and rebuilt into something that reads like it's ours, not a pile of links to someone else's site. Every story gets its own breakdown here — box scores, play-by-play, full synopses, chart data — instead of a headline and a "read more" that sends you away.</p>
+    <form class="live-form reveal" name="launch-rsvp" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="launch-rsvp">
+      <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+      <div class="field">
+        <label for="rsvp-name">Name</label>
+        <input id="rsvp-name" type="text" name="name" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="rsvp-email">Email</label>
+        <input id="rsvp-email" type="email" name="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="rsvp-area">Where are you coming from?</label>
+        <select id="rsvp-area" name="area" required>
+          <option value="" disabled selected>Pick one</option>
+          <option>New York City</option>
+          <option>New Jersey</option>
+          <option>Elsewhere — I'd travel</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Get on the list →</button>
+      <p class="form-note">Free. No spam — you'll only hear from us about NewSociety Live events.</p>
+    </form>
   </div>
 </section>
 
@@ -76,37 +98,30 @@
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="section-label">// how it moves</div>
-        <h2 class="section-title display">Catch it, cut it, drop it.</h2>
+        <div class="section-label">// what's coming</div>
+        <h2 class="section-title display">Start free. Build the room.</h2>
       </div>
     </div>
     <div class="process-list reveal">
       <div class="process-step">
         <div class="step-num mono">01</div>
         <div class="step-body">
-          <h4>Catch</h4>
-          <p>Live scores, trending charts, and breaking headlines pulled the moment they happen — not a recap written after the fact.</p>
+          <h4>Launch Party</h4>
+          <p>Free and RSVP-only. The first night the feed and its community share a room.</p>
         </div>
       </div>
       <div class="process-step">
         <div class="step-num mono">02</div>
         <div class="step-body">
-          <h4>Cut</h4>
-          <p>Every card is trimmed to what actually matters — a real image, a real stat line, no filler.</p>
+          <h4>Community Nights</h4>
+          <p>Free or low-cost events built around the beats — watch parties, listening sessions, nights worth showing up for.</p>
         </div>
       </div>
       <div class="process-step">
         <div class="step-num mono">03</div>
         <div class="step-body">
-          <h4>Caption</h4>
-          <p>Context in one line. If it needs a paragraph to explain, it's not ready to post.</p>
-        </div>
-      </div>
-      <div class="process-step">
-        <div class="step-num mono">04</div>
-        <div class="step-body">
-          <h4>Drop</h4>
-          <p>Out the door and onto the site — searchable across every pillar, saveable for later, gone the second it's stale.</p>
+          <h4>Recurring Series</h4>
+          <p>Once a night works, it comes back — a regular slot you can plan your week around.</p>
         </div>
       </div>
     </div>
@@ -114,14 +129,15 @@
 </section>
 
 <section>
-  <div class="wrap">
-    <div class="section-head reveal">
-      <div>
-        <div class="section-label">// who's behind it</div>
-        <h2 class="section-title display">Small team. Big feed.</h2>
-      </div>
+  <div class="wrap live-split">
+    <div class="reveal">
+      <div class="section-label">// for networks, brands &amp; promoters</div>
+      <h2 class="section-title display" style="margin:16px 0 28px;">Need a crew?</h2>
+      <p class="about-copy">NewSociety Live also produces for other people — crewing, technical production, and on-site execution for your event.</p>
     </div>
-    <p class="about-copy reveal">NewSociety is built and run independently — no newsroom, no syndication deal, just a live site pulling from the same public data everyone else has access to and presenting it the way we think culture coverage should actually feel. Got a question we didn't answer? Check the <a href="faq.html" style="color:var(--accent);">FAQ</a> or find us on <a href="https://x.com/newsociety1142" target="_blank" rel="noopener" style="color:var(--accent);">X</a>.</p>
+    <div class="reveal live-aside">
+      <a href="production.html" class="btn btn-ghost">Production Services →</a>
+    </div>
   </div>
 </section>
 
