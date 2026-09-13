@@ -170,7 +170,7 @@ async function loadHomepageLive(){
     status.className = 'drop-status mono';
     status.textContent = `${item.pillar} · ${item.status}`;
 
-    const h4 = document.createElement('h4');
+    const h4 = document.createElement('h3');
     h4.textContent = item.title;
 
     card.append(status, h4);

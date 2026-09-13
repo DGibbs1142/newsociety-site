@@ -6,9 +6,12 @@
   --line-soft: #1c1c20;
   --text: #f4f3ef;
   --text-muted: #8d8d95;
-  --text-dim: #57575e;
+  --text-dim: #808088;
   --accent: #6e56ff;
   --accent-soft: #6e56ff22;
+  /* the brand purple fails 4.5:1 as small text on the dark backgrounds;
+     this lighter tint passes (4.89:1 worst case) for labels and links */
+  --accent-text: #8470ff;
   --live: #ff3b30;
   --radius: 2px;
 }
@@ -231,7 +234,7 @@ header.nav.menu-open .nav-toggle-bar:nth-child(3){ transform:translateY(-7px) ro
   color:var(--text);
 }
 .ticker-track a.current{
-  color:var(--accent);
+  color:var(--accent-text);
 }
 .ticker-track a::before{
   content:'';
@@ -260,7 +263,7 @@ header.nav.menu-open .nav-toggle-bar:nth-child(3){ transform:translateY(-7px) ro
   font-size:12px;
   letter-spacing:0.12em;
   text-transform:uppercase;
-  color:var(--accent);
+  color:var(--accent-text);
   display:flex;
   align-items:center;
   gap:10px;
@@ -482,7 +485,7 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   font-size:11px;
   letter-spacing:0.1em;
   text-transform:uppercase;
-  color:var(--accent);
+  color:var(--accent-text);
   margin-bottom:18px;
   display:block;
 }
@@ -511,7 +514,7 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   gap:6px;
   transition:gap 0.2s ease, color 0.2s ease;
 }
-.pillar:hover .pillar-more{ gap:10px; color:var(--accent); }
+.pillar:hover .pillar-more{ gap:10px; color:var(--accent-text); }
 
 /* ---------- DETAIL BREAKDOWN ---------- */
 .breakdown-heading{
@@ -546,7 +549,7 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   white-space:nowrap;
 }
 .linescore-row > div:last-child{
-  color:var(--accent);
+  color:var(--accent-text);
   font-weight:600;
 }
 .fact-grid{
@@ -598,7 +601,7 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   min-width:78px;
 }
 .play-row.scoring{ background:var(--accent-soft); }
-.play-row.scoring .period{ color:var(--accent); }
+.play-row.scoring .period{ color:var(--accent-text); }
 
 /* ---------- CHART CARD (Music: global top 100) ---------- */
 .chart-card{
@@ -647,7 +650,7 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
 }
 .chart-play:disabled{ color:var(--line); cursor:default; }
 .chart-play:not(:disabled):hover{ color:var(--text); }
-.chart-play.playing{ color:var(--accent); }
+.chart-play.playing{ color:var(--accent-text); }
 .chart-play.loading{ color:var(--text-dim); cursor:wait; }
 .chart-item{
   flex:1;
@@ -784,7 +787,7 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   transition:color 0.2s ease, border-color 0.2s ease;
 }
 .save-btn:hover{ color:var(--text); border-color:var(--text-muted); }
-.save-btn.saved{ color:var(--accent); border-color:var(--accent); }
+.save-btn.saved{ color:var(--accent-text); border-color:var(--accent); }
 /* Negative margins pull the image flush to the card's edges despite the
    card's own padding; `gap` (from .drop-card) handles the space below it. */
 .drop-card-media{
@@ -838,6 +841,7 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   background:var(--text-dim);
   display:inline-block;
 }
+.drop-card h3,
 .drop-card h4{
   font-family:'Anton',sans-serif;
   text-transform:uppercase;
@@ -892,6 +896,7 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   font-size:13px;
   padding-top:4px;
 }
+.step-body h3,
 .step-body h4{
   font-family:'Anton',sans-serif;
   text-transform:uppercase;
@@ -922,7 +927,7 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
 .signal-cell .num{
   font-family:'Anton',sans-serif;
   font-size:38px;
-  color:var(--accent);
+  color:var(--accent-text);
 }
 .signal-cell .label{
   font-family:'JetBrains Mono',monospace;
@@ -981,6 +986,7 @@ footer{
   gap:36px;
   max-width:720px;
 }
+.faq-item h3,
 .faq-item h4{
   font-size:18px;
   margin-bottom:10px;

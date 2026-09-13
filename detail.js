@@ -595,7 +595,7 @@ async function renderRelated(){
       statusEl.className = 'drop-status mono';
       statusEl.textContent = item.status || '';
 
-      const h4 = document.createElement('h4');
+      const h4 = document.createElement('h3');
       h4.textContent = item.title || 'Untitled';
 
       card.append(statusEl, h4);

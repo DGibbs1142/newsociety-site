@@ -69,7 +69,7 @@ function renderAnime(mediaList){
     status.className = 'drop-status mono';
     status.textContent = statusText;
 
-    const h4 = document.createElement('h4');
+    const h4 = document.createElement('h3');
     h4.textContent = heading;
 
     const p = document.createElement('p');

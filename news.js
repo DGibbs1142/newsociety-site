@@ -42,7 +42,7 @@ function renderArticles(articles){
     status.className = 'drop-status mono';
     status.textContent = article.status;
 
-    const h4 = document.createElement('h4');
+    const h4 = document.createElement('h3');
     h4.textContent = article.title || 'Untitled';
 
     const p = document.createElement('p');

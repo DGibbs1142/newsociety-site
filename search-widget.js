@@ -31,7 +31,7 @@ function initSearchWidget({ formId, inputId, gridId, statusId, moreBtnId, fetchP
     statusEl.className = 'drop-status mono';
     statusEl.textContent = card.status || '';
 
-    const h4 = document.createElement('h4');
+    const h4 = document.createElement('h3');
     h4.textContent = card.title || 'Untitled';
 
     const p = document.createElement('p');

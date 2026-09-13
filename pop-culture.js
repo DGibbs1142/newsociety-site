@@ -128,7 +128,7 @@ function renderCards(cards){
     status.className = 'drop-status mono';
     status.textContent = card.status;
 
-    const h4 = document.createElement('h4');
+    const h4 = document.createElement('h3');
     h4.textContent = card.heading;
 
     const p = document.createElement('p');

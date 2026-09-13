@@ -32,7 +32,7 @@ function renderSaved(){
     status.className = 'drop-status mono';
     status.textContent = item.status || item.pillar || '';
 
-    const h4 = document.createElement('h4');
+    const h4 = document.createElement('h3');
     h4.textContent = item.title || 'Untitled';
 
     card.append(status, h4);

@@ -72,7 +72,7 @@ function gameCard(event, { live = false } = {}){
   if(live) status.append(Object.assign(document.createElement('span'), { className: 'live-dot' }));
   status.append(document.createTextNode(statusText));
 
-  const h4 = document.createElement('h4');
+  const h4 = document.createElement('h3');
   h4.textContent = event.name || 'Untitled Matchup';
 
   const p = document.createElement('p');

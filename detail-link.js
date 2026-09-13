@@ -26,13 +26,25 @@ function buildDetailLink(data){
 // Prepends a media image to a drop-card (inserted first regardless of when
 // called, since it uses insertBefore). Silently removes itself if the image
 // fails to load — better than a broken-image icon on a live feed.
+// ESPN serves team logos at 500x500 (~500 KB each as PNG) even though
+// cards show them at a fraction of that. Its image combiner returns a
+// resized copy (96px: ~7 KB), so request roughly 2x the displayed size.
+// Non-ESPN URLs pass through unchanged.
+function espnSized(url, px){
+  if(!url) return url;
+  const m = url.match(/^https:\/\/a\.espncdn\.com(\/i\/[^?#]+)$/);
+  return m ? `https://a.espncdn.com/combiner/i?img=${m[1]}&w=${px}&h=${px}` : url;
+}
+
 function attachCardImage(card, imageUrl){
   if(!imageUrl) return;
   const media = document.createElement('div');
   media.className = 'drop-card-media';
   const img = document.createElement('img');
-  img.src = imageUrl;
+  img.src = espnSized(imageUrl, 320);
   img.alt = '';
+  img.loading = 'lazy';
+  img.decoding = 'async';
   img.onerror = () => media.remove();
   media.appendChild(img);
   card.insertBefore(media, card.firstChild);
@@ -89,7 +101,7 @@ function setPillarAboutImage(imageUrl){
   if(!media || !img || !imageUrl) return;
   img.onerror = () => { media.style.display = 'none'; };
   img.onload = () => { media.style.display = 'block'; };
-  img.src = imageUrl;
+  img.src = espnSized(imageUrl, 320);
   img.alt = '';
 }
 
@@ -152,7 +164,8 @@ function attachMatchupLogos(card, awayLogo, homeLogo){
   media.className = 'drop-card-matchup';
   if(awayLogo){
     const img = document.createElement('img');
-    img.src = awayLogo; img.alt = '';
+    img.src = espnSized(awayLogo, 96); img.alt = '';
+    img.loading = 'lazy'; img.decoding = 'async';
     img.onerror = () => img.remove();
     media.appendChild(img);
   }
@@ -162,7 +175,8 @@ function attachMatchupLogos(card, awayLogo, homeLogo){
   media.appendChild(vs);
   if(homeLogo){
     const img = document.createElement('img');
-    img.src = homeLogo; img.alt = '';
+    img.src = espnSized(homeLogo, 96); img.alt = '';
+    img.loading = 'lazy'; img.decoding = 'async';
     img.onerror = () => img.remove();
     media.appendChild(img);
   }

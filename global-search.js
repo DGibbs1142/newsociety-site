@@ -172,7 +172,7 @@ function renderResultCard(grid, result, pillar){
   status.className = 'drop-status mono';
   status.textContent = result.status || '';
 
-  const h4 = document.createElement('h4');
+  const h4 = document.createElement('h3');
   h4.textContent = result.title || 'Untitled';
 
   card.append(status, h4);

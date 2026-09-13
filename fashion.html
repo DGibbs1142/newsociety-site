@@ -21,7 +21,8 @@
 <meta name="twitter:image" content="https://newsociety.netlify.app/icons/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
 <link rel="stylesheet" href="styles.css">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0a0a0c">
@@ -89,7 +90,7 @@
     <div class="drops-grid reveal" id="newsGrid">
       <div class="drop-card">
         <span class="drop-status mono">Loading</span>
-        <h4>Fetching the wire…</h4>
+        <h3>Fetching the wire…</h3>
         <p>Pulling the latest fashion headlines from TheNewsAPI.</p>
       </div>
     </div>
@@ -161,10 +162,10 @@
   </div>
 </footer>
 
-<script src="detail-link.js"></script>
-<script src="search-widget.js"></script>
-<script src="fashion.js"></script>
-<script src="site.js"></script>
+<script src="detail-link.js" defer></script>
+<script src="search-widget.js" defer></script>
+<script src="fashion.js" defer></script>
+<script src="site.js" defer></script>
 
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "07674b847fc94b21a8946d015b3c1fc9"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
