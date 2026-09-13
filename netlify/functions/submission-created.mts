@@ -12,8 +12,17 @@
 // Uses the v1 handler signature, which Netlify's event triggers support.
 
 const FIELDS: Record<string, string[]> = {
-  "launch-rsvp": ["name", "email", "area", "age_range", "gender", "party_size"],
+  "launch-rsvp": ["name", "email", "area", "age_range", "gender", "party_size", "vip_interest"],
   "production-inquiry": ["name", "email", "organization", "project_type", "timeline", "message"],
+  "host-a-night": ["name", "email", "venue_name", "phone", "venue_type", "capacity", "location", "nights", "deal_preference", "notes"],
+  "get-involved": [
+    "role", "name", "email", "location",
+    "crew_skills", "crew_experience", "crew_availability", "crew_portfolio",
+    "artist_act", "artist_type", "artist_genre", "artist_links",
+    "sponsor_company", "sponsor_website", "sponsor_interest", "sponsor_timeline",
+    "press_outlet", "press_deadline", "message",
+  ],
+  "newsletter": ["email"],
 };
 
 export const handler = async (event: { body: string | null }) => {
@@ -40,7 +49,12 @@ export const handler = async (event: { body: string | null }) => {
   }
 
   const data: Record<string, string> = {};
-  for (const key of fields) data[key] = String(payload.data?.[key] ?? "");
+  for (const key of fields) {
+    const value = payload.data?.[key];
+    // Checkbox groups (nights, skills, interests) can arrive as arrays;
+    // keep them readable in a single cell.
+    data[key] = Array.isArray(value) ? value.join(", ") : String(value ?? "");
+  }
 
   try {
     const res = await fetch(url, {
