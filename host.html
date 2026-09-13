@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Host a Night — NewSociety Live</title>
+<meta name="description" content="Got a room that needs a crowd? Partner with NewSociety Live to host community nights at your bar, brewery, lounge, or event space in NYC / NJ.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NewSociety">
+<meta property="og:url" content="https://newsociety.netlify.app/host.html">
+<link rel="canonical" href="https://newsociety.netlify.app/host.html">
+<meta property="og:title" content="Host a Night — NewSociety Live">
+<meta property="og:description" content="Got a room that needs a crowd? Partner with NewSociety Live to host community nights at your bar, brewery, lounge, or event space in NYC / NJ.">
+<meta property="og:image" content="https://newsociety.netlify.app/icons/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="NewSociety — Culture moves fast. We move faster.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Host a Night — NewSociety Live">
+<meta name="twitter:description" content="Got a room that needs a crowd? Partner with NewSociety Live to host community nights at your bar, brewery, lounge, or event space in NYC / NJ.">
+<meta name="twitter:image" content="https://newsociety.netlify.app/icons/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a0a0c">
+<link rel="icon" href="icons/icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+</head>
+<body data-page="host.html">
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="logo-dot"></span>NewSociety</a>
+    <nav class="links">
+      <a href="index.html#pillars">Pillars</a>
+      <a href="index.html#process">How It Moves</a>
+      <a href="saved.html">Saved</a>
+      <a href="live.html">Live</a>
+      <a href="index.html#follow">Follow</a>
+    </nav>
+    <form class="nav-search" action="search.html" method="get">
+      <input type="text" name="q" placeholder="Search everything…" aria-label="Search NewSociety" required>
+    </form>
+    <a href="index.html#follow" class="nav-cta">Watch the Feed</a>
+  </div>
+  <div class="ticker-bar">
+    <div class="ticker-track mono" id="tickerTrack"></div>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="wrap">
+    <a href="live.html" class="breadcrumb">← Back to NewSociety Live</a>
+    <div class="eyebrow"><span class="live-dot"></span>Host a Night</div>
+    <h1 class="page-title display">Got a room that needs a crowd?</h1>
+    <p class="page-sub">You bring the space. We bring the community and run the night. Partnering with bars, breweries, lounges, and event spaces across NYC / NJ.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="section-label">// how it works</div>
+        <h2 class="section-title display">Your room. Our night.</h2>
+      </div>
+    </div>
+    <div class="process-list reveal">
+      <div class="process-step">
+        <div class="step-num mono">01</div>
+        <div class="step-body">
+          <h4>Tell us about your space</h4>
+          <p>What kind of room it is, how many people it holds, and which nights you'd like to fill.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num mono">02</div>
+        <div class="step-body">
+          <h4>We shape the night</h4>
+          <p>Watch parties, listening sessions, community nights — built around the room and the people it fits.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num mono">03</div>
+        <div class="step-body">
+          <h4>We work out a deal that fits</h4>
+          <p>Revenue share, a bar minimum, or something else — we'll talk it through before anything's booked.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="venue">
+  <div class="wrap live-split">
+    <div class="reveal">
+      <div class="section-label">// venue inquiry</div>
+      <h2 class="section-title display" style="margin:16px 0 28px;">Put your space on our radar.</h2>
+      <p class="about-copy">Dive bars, sports bars, barcades, taprooms, raw spaces, rooftops — if it's a room people want to be in, we want to hear about it.</p>
+      <p class="about-copy" style="margin-top:18px;">Share the basics and we'll reach out to talk dates and terms.</p>
+    </div>
+    <form class="live-form reveal" name="host-a-night" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="host-a-night">
+      <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+      <div class="row">
+        <div class="field">
+          <label for="host-name">Your name</label>
+          <input id="host-name" type="text" name="name" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="host-email">Email</label>
+          <input id="host-email" type="email" name="email" autocomplete="email" required>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="host-venue">Venue name</label>
+          <input id="host-venue" type="text" name="venue_name" autocomplete="organization" required>
+        </div>
+        <div class="field">
+          <label for="host-phone">Phone (optional)</label>
+          <input id="host-phone" type="tel" name="phone" autocomplete="tel">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="host-type">Type of venue</label>
+          <select id="host-type" name="venue_type" required>
+            <option value="" disabled selected>Pick one</option>
+            <option>Bar / lounge</option>
+            <option>Sports bar</option>
+            <option>Barcade / gaming lounge</option>
+            <option>Brewery / taproom</option>
+            <option>Warehouse / event space</option>
+            <option>Rooftop</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="host-capacity">Capacity</label>
+          <select id="host-capacity" name="capacity" required>
+            <option value="" disabled selected>Pick one</option>
+            <option>Under 50</option>
+            <option>50–100</option>
+            <option>100–200</option>
+            <option>200–500</option>
+            <option>500+</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="host-location">Neighborhood / city</label>
+        <input id="host-location" type="text" name="location" placeholder="e.g. Bushwick, Brooklyn or Jersey City" required>
+      </div>
+      <fieldset class="field check-group">
+        <legend>Nights you'd like to fill</legend>
+        <div class="checks">
+            <label class="check"><input type="checkbox" name="nights" value="Mon"> Mon</label>
+            <label class="check"><input type="checkbox" name="nights" value="Tue"> Tue</label>
+            <label class="check"><input type="checkbox" name="nights" value="Wed"> Wed</label>
+            <label class="check"><input type="checkbox" name="nights" value="Thu"> Thu</label>
+            <label class="check"><input type="checkbox" name="nights" value="Fri"> Fri</label>
+            <label class="check"><input type="checkbox" name="nights" value="Sat"> Sat</label>
+            <label class="check"><input type="checkbox" name="nights" value="Sun"> Sun</label>
+        </div>
+      </fieldset>
+      <div class="field">
+        <label for="host-deal">What kind of deal works for you?</label>
+        <select id="host-deal" name="deal_preference" required>
+          <option value="" disabled selected>Pick one</option>
+          <option>Revenue share / door split</option>
+          <option>Bar minimum / spend</option>
+          <option>Flat rental</option>
+          <option>Open to talk</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="host-notes">Anything else? (optional)</label>
+        <textarea id="host-notes" name="notes" placeholder="Sound system, screens, outdoor space, dates you have in mind…"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Put us in touch →</button>
+    </form>
+  </div>
+</section>
+
+<section class="cta" id="follow">
+  <div class="wrap">
+    <div class="reveal in">
+      <div class="section-label" style="margin-bottom:20px;">// join the feed</div>
+      <h2 class="display">Don't watch the news.<br>Watch the feed.</h2>
+      <p>New drops daily across sports, anime, pop culture, fashion, music, and the stuff everyone's about to be talking about.</p>
+      <div class="cta-actions">
+        <a href="https://www.tiktok.com/@newsociety22" class="btn btn-primary" target="_blank" rel="noopener">Follow on TikTok →</a>
+        <a href="https://www.instagram.com/newsociety2242" class="btn btn-ghost" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://x.com/newsociety1142" class="btn btn-ghost" target="_blank" rel="noopener">X (Twitter)</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-signup">
+    <div>
+      <div class="section-label">// the list</div>
+      <p class="footer-signup-copy">NewSociety Live events, launch news, and the occasional drop worth knowing about.</p>
+    </div>
+    <form class="signup-form" name="newsletter" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="newsletter">
+      <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+      <label for="signup-email" class="visually-hidden">Email address</label>
+      <input id="signup-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
+      <button type="submit" class="btn btn-primary">Join the list →</button>
+    </form>
+  </div>
+  <div class="wrap footer-inner">
+    <div class="footer-copy">© 2026 NewSociety — Culture, Uncut</div>
+    <div class="footer-links">
+      <a href="https://www.tiktok.com/@newsociety22" target="_blank" rel="noopener">TikTok</a>
+      <a href="https://www.instagram.com/newsociety2242" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://x.com/newsociety1142" target="_blank" rel="noopener">X (Twitter)</a>
+      <a href="index.html#pillars">Pillars</a>
+      <a href="live.html">Live</a>
+      <a href="about.html">About</a>
+      <a href="faq.html">FAQ</a>
+    </div>
+  </div>
+</footer>
+
+<script src="site.js"></script>
+
+</body>
+</html>

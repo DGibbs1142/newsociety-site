@@ -1017,3 +1017,100 @@ footer{
 /* production cards reuse the pillar look but aren't links */
 .pillar-static{ cursor:default; }
 .pillar-static:hover{ background:var(--bg); }
+
+/* checkbox groups inside live forms */
+.live-form fieldset.check-group{ border:none; padding:0; margin:0; min-width:0; }
+.live-form .check-group legend{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin-bottom:10px;
+  padding:0;
+}
+.live-form .checks{ display:flex; flex-wrap:wrap; gap:8px; }
+.live-form label.check{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--bg-elevated);
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  letter-spacing:0.04em;
+  text-transform:none;
+  color:var(--text);
+  cursor:pointer;
+  transition:border-color 0.2s ease;
+}
+.live-form label.check:hover{ border-color:var(--text-muted); }
+.live-form label.check input[type="checkbox"]{
+  width:auto;
+  padding:0;
+  margin:0;
+  accent-color:var(--accent);
+}
+.live-form label.check:has(input:checked){ border-color:var(--accent); }
+
+/* VIP interest — a single checkbox that reads as a sentence */
+.live-form label.check-wide{
+  display:flex;
+  width:100%;
+  font-family:'Inter',sans-serif;
+  font-size:14px;
+  letter-spacing:0;
+  line-height:1.5;
+  padding:13px 16px;
+}
+
+/* ---------- FOOTER EMAIL SIGNUP ---------- */
+.footer-signup{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:24px 48px;
+  flex-wrap:wrap;
+  padding-bottom:36px;
+  margin-bottom:36px;
+  border-bottom:1px solid var(--line);
+}
+.footer-signup-copy{
+  color:var(--text-muted);
+  font-size:14.5px;
+  line-height:1.6;
+  margin-top:10px;
+  max-width:420px;
+}
+.signup-form{
+  display:flex;
+  gap:10px;
+  flex:1 1 360px;
+  max-width:480px;
+}
+.signup-form input[type="email"]{
+  flex:1;
+  min-width:0;
+  font-family:'Inter',sans-serif;
+  font-size:15px;
+  color:var(--text);
+  background:var(--bg-elevated);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:13px 16px;
+  outline:none;
+  transition:border-color 0.2s ease;
+}
+.signup-form input[type="email"]:focus{ border-color:var(--accent); }
+.signup-form input[type="email"]::placeholder{ color:var(--text-dim); }
+.signup-form .btn{ white-space:nowrap; }
+@media (max-width:600px){
+  .signup-form{ flex-direction:column; max-width:none; }
+  .signup-form .btn{ justify-content:center; }
+}
+.visually-hidden{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}

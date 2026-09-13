@@ -125,6 +125,9 @@
           <option>6+</option>
         </select>
       </div>
+      <div class="field">
+        <label class="check check-wide"><input type="checkbox" name="vip_interest" value="Yes"> I'd be interested in a VIP option — reserved area, early access</label>
+      </div>
       <button type="submit" class="btn btn-primary">Get on the list →</button>
       <p class="form-note">Free. Age and group size just help us plan the night. No spam — you'll only hear from us about NewSociety Live events.</p>
     </form>
@@ -168,6 +171,19 @@
 <section>
   <div class="wrap live-split">
     <div class="reveal">
+      <div class="section-label">// for venues</div>
+      <h2 class="section-title display" style="margin:16px 0 28px;">Got a room?</h2>
+      <p class="about-copy">Bars, breweries, lounges, and event spaces across NYC / NJ — host a NewSociety Live night and we'll bring the crowd.</p>
+    </div>
+    <div class="reveal live-aside">
+      <a href="host.html" class="btn btn-ghost">Host a Night →</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap live-split">
+    <div class="reveal">
       <div class="section-label">// for networks, brands &amp; promoters</div>
       <h2 class="section-title display" style="margin:16px 0 28px;">Need a crew?</h2>
       <p class="about-copy">NewSociety Live also produces for other people — crewing, technical production, and on-site execution for your event.</p>
@@ -194,6 +210,19 @@
 </section>
 
 <footer>
+  <div class="wrap footer-signup">
+    <div>
+      <div class="section-label">// the list</div>
+      <p class="footer-signup-copy">NewSociety Live events, launch news, and the occasional drop worth knowing about.</p>
+    </div>
+    <form class="signup-form" name="newsletter" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="newsletter">
+      <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+      <label for="signup-email" class="visually-hidden">Email address</label>
+      <input id="signup-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
+      <button type="submit" class="btn btn-primary">Join the list →</button>
+    </form>
+  </div>
   <div class="wrap footer-inner">
     <div class="footer-copy">© 2026 NewSociety — Culture, Uncut</div>
     <div class="footer-links">

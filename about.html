@@ -141,6 +141,19 @@
 </section>
 
 <footer>
+  <div class="wrap footer-signup">
+    <div>
+      <div class="section-label">// the list</div>
+      <p class="footer-signup-copy">NewSociety Live events, launch news, and the occasional drop worth knowing about.</p>
+    </div>
+    <form class="signup-form" name="newsletter" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="newsletter">
+      <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+      <label for="signup-email" class="visually-hidden">Email address</label>
+      <input id="signup-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
+      <button type="submit" class="btn btn-primary">Join the list →</button>
+    </form>
+  </div>
   <div class="wrap footer-inner">
     <div class="footer-copy">© 2026 NewSociety — Culture, Uncut</div>
     <div class="footer-links">
