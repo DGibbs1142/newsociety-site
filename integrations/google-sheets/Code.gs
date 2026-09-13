@@ -1,0 +1,116 @@
+/**
+ * NewSociety Live — Google Sheets receiver
+ *
+ * Paste into Extensions → Apps Script on the Google Sheet that should
+ * collect form submissions, then deploy as a web app. The Netlify
+ * `submission-created` function POSTs every verified submission here.
+ *
+ * Set a Script Property named WEBHOOK_SECRET to the same value as the
+ * SHEETS_WEBHOOK_SECRET environment variable in Netlify. Requests without
+ * it are rejected, so the web app URL on its own can't write rows.
+ */
+
+const FORMS = {
+  'launch-rsvp': {
+    tab: 'RSVPs',
+    columns: [
+      ['Name', 'name'],
+      ['Email', 'email'],
+      ['Coming from', 'area'],
+      ['Age range', 'age_range'],
+      ['Sex / gender', 'gender'],
+      ['Party size', 'party_size'],
+    ],
+    headcount: true,
+  },
+  'production-inquiry': {
+    tab: 'Production inquiries',
+    columns: [
+      ['Name', 'name'],
+      ['Email', 'email'],
+      ['Organization', 'organization'],
+      ['Project type', 'project_type'],
+      ['Timeline', 'timeline'],
+      ['Details', 'message'],
+    ],
+    headcount: false,
+  },
+};
+
+function doPost(e) {
+  let body;
+  try {
+    body = JSON.parse(e.postData.contents);
+  } catch (err) {
+    return reply_({ ok: false, error: 'bad json' });
+  }
+
+  const secret = PropertiesService.getScriptProperties().getProperty('WEBHOOK_SECRET');
+  if (!secret || body.secret !== secret) return reply_({ ok: false, error: 'unauthorized' });
+
+  const form = FORMS[body.form];
+  if (!form) return reply_({ ok: false, error: 'unknown form' });
+
+  // Two submissions landing together shouldn't interleave their writes.
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(form.tab) || ss.insertSheet(form.tab);
+
+    const headers = ['Received'].concat(form.columns.map(function (c) { return c[0]; }));
+    if (form.headcount) headers.push('Headcount');
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(headers);
+      sheet.setFrozenRows(1);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
+    }
+
+    const data = body.data || {};
+    const row = [body.created_at ? new Date(body.created_at) : new Date()]
+      .concat(form.columns.map(function (c) { return cell_(data[c[1]]); }));
+    // "1 — just me" → 1, "6+" → 6, so the Summary tab can add them up.
+    if (form.headcount) row.push(parseInt(data.party_size, 10) || 1);
+    sheet.appendRow(row);
+
+    if (form.headcount) ensureSummary_(ss, sheet, headers.length);
+  } finally {
+    lock.releaseLock();
+  }
+
+  return reply_({ ok: true });
+}
+
+// Text a visitor types that starts with = + - or @ would otherwise be run
+// by Sheets as a formula; a leading apostrophe keeps it plain text.
+function cell_(value) {
+  const s = value == null ? '' : String(value);
+  return /^[=+\-@]/.test(s) ? "'" + s : s;
+}
+
+function ensureSummary_(ss, rsvpSheet, headcountCol) {
+  if (ss.getSheetByName('Summary')) return;
+  const summary = ss.insertSheet('Summary', 0);
+  const ref = "'" + rsvpSheet.getName() + "'!";
+  const col = columnLetter_(headcountCol);
+  summary.getRange('A1').setValue('Launch party').setFontWeight('bold');
+  summary.getRange('A2').setValue('RSVPs');
+  summary.getRange('B2').setFormula('=COUNTA(' + ref + 'A2:A)');
+  summary.getRange('A3').setValue('Total people attending');
+  summary.getRange('B3').setFormula('=SUM(' + ref + col + '2:' + col + ')');
+}
+
+function columnLetter_(n) {
+  let s = '';
+  while (n > 0) {
+    const m = (n - 1) % 26;
+    s = String.fromCharCode(65 + m) + s;
+    n = Math.floor((n - 1) / 26);
+  }
+  return s;
+}
+
+function reply_(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
