@@ -5,21 +5,6 @@
 // (not full grids) — this is a "the feed is alive right now" strip, not
 // a duplicate of each pillar's own page.
 
-function homeDeezerJsonp(url, timeoutMs = 8000){
-  return new Promise((resolve, reject) => {
-    const callbackName = 'deezer_cb_' + Math.random().toString(36).slice(2);
-    const script = document.createElement('script');
-    let settled = false;
-    const cleanup = () => { settled = true; clearTimeout(timer); delete window[callbackName]; script.remove(); };
-    const timer = setTimeout(() => { if(settled) return; cleanup(); reject(new Error('timeout')); }, timeoutMs);
-    window[callbackName] = (data) => { if(settled) return; cleanup(); resolve(data); };
-    script.onerror = () => { if(settled) return; cleanup(); reject(new Error('failed')); };
-    const sep = url.includes('?') ? '&' : '?';
-    script.src = `${url}${sep}output=jsonp&callback=${callbackName}`;
-    document.head.appendChild(script);
-  });
-}
-
 async function homeLatestSports(){
   try{
     const leagues = [
@@ -111,19 +96,28 @@ async function homeLatestFashion(){
   }catch{ return null; }
 }
 
+// Uses the site's own blended chart (Apple Music + Deezer, merged and cached
+// server-side by /api/us-top-songs) rather than calling Deezer from the
+// browser. Deezer's JSONP endpoint set a third-party cookie on every
+// homepage visit, and the chart is already cached at the edge for 30
+// minutes. The card and detail link match the Music page's chart rows.
 async function homeLatestMusic(){
   try{
-    const data = await homeDeezerJsonp('https://api.deezer.com/chart/0/tracks?limit=1');
-    const t = data?.data?.[0];
+    const res = await fetch('/api/us-top-songs');
+    if(!res.ok) return null;
+    const data = await res.json();
+    const t = data?.tracks?.[0];
     if(!t) return null;
-    const artist = t.artist?.name || 'Unknown Artist';
-    const status = `${artist} · Trending`;
+    const artist = t.artist || 'Unknown Artist';
+    const status = `${artist} · #1 on the US chart`;
     return {
-      pillar: 'Music', title: t.title, status, imageUrl: t.album?.cover_medium || '',
+      pillar: 'Music', title: t.title, status, imageUrl: t.artworkUrl || '',
       href: buildDetailLink({
-        title: t.title, body: `From "${t.album?.title || 'Unknown Album'}" by ${artist}.`, status,
-        source: 'Deezer', url: t.link, imageUrl: t.album?.cover_medium || '',
-        deezerId: t.id, deezerType: 'track', pillar: 'Music', from: 'music.html'
+        title: t.title,
+        body: `#1 on the NewSociety 100, blending Apple Music and Deezer listening data. By ${artist}.`,
+        status, source: t.source, url: t.url, imageUrl: t.artworkUrl || '',
+        categories: t.genre, publishedAt: t.releaseDate,
+        pillar: 'Music', from: 'music.html'
       })
     };
   }catch{ return null; }
