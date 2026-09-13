@@ -13,7 +13,7 @@
 // RSVP confirmation emails are sent from the account that owns this script
 // (via MailApp). Leave false until the script has been re-authorized for
 // sending mail and a new deployment version is live.
-const SEND_RSVP_CONFIRMATIONS = false;
+const SEND_RSVP_CONFIRMATIONS = true;
 // Consumer Gmail allows about 100 recipients a day; stop short of that so a
 // spike (or someone scripting the form) can't use up the whole quota.
 const CONFIRMATION_QUOTA_FLOOR = 10;
