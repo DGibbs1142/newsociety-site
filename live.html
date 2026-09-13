@@ -88,8 +88,45 @@
           <option>Elsewhere — I'd travel</option>
         </select>
       </div>
+      <div class="row">
+        <div class="field">
+          <label for="rsvp-age">Age</label>
+          <select id="rsvp-age" name="age_range" required>
+            <option value="" disabled selected>Pick one</option>
+            <option>Under 18</option>
+            <option>18–20</option>
+            <option>21–24</option>
+            <option>25–34</option>
+            <option>35–44</option>
+            <option>45+</option>
+            <option>Prefer not to say</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="rsvp-gender">Sex / gender</label>
+          <select id="rsvp-gender" name="gender" required>
+            <option value="" disabled selected>Pick one</option>
+            <option>Female</option>
+            <option>Male</option>
+            <option>Non-binary</option>
+            <option>Prefer not to say</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="rsvp-party">How many people total, including you?</label>
+        <select id="rsvp-party" name="party_size" required>
+          <option value="" disabled selected>Pick one</option>
+          <option>1 — just me</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6+</option>
+        </select>
+      </div>
       <button type="submit" class="btn btn-primary">Get on the list →</button>
-      <p class="form-note">Free. No spam — you'll only hear from us about NewSociety Live events.</p>
+      <p class="form-note">Free. Age and group size just help us plan the night. No spam — you'll only hear from us about NewSociety Live events.</p>
     </form>
   </div>
 </section>
