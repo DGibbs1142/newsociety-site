@@ -141,11 +141,63 @@ nav.links a.current{ color:var(--text); }
 }
 @media (max-width:1140px){
   nav.links{ display:none; }
+  .nav-inner{ flex-wrap:wrap; }
+  /* scoped one level deeper than the base .nav-toggle rule below, which
+     would otherwise win on source order and keep the button hidden */
+  header.nav .nav-toggle{ display:inline-flex; }
+  /* opened menu: the links drop below the bar as a full-width list */
+  header.nav.menu-open nav.links{
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    order:5;
+    flex:1 1 100%;
+    margin-top:16px;
+    border-top:1px solid var(--line);
+    font-size:14px;
+  }
+  header.nav.menu-open nav.links a{
+    padding:15px 2px;
+    border-bottom:1px solid var(--line-soft);
+    color:var(--text);
+  }
 }
 @media (max-width:820px){
-  .nav-inner{ flex-wrap:wrap; row-gap:12px; }
+  .nav-inner{ row-gap:12px; }
   .nav-search{ order:3; flex:1 1 100%; max-width:none; margin:0; }
 }
+/* A phone can't fit the wordmark, the CTA and the menu button in one row;
+   the menu already carries the same destination (Follow). */
+@media (max-width:480px){
+  .nav-cta{ display:none; }
+}
+
+/* menu button — hidden on desktop, shown by the 1140px query above */
+.nav-toggle{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:5px;
+  width:44px;
+  height:44px;
+  margin-left:12px;
+  background:none;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  cursor:pointer;
+}
+.nav-toggle:hover{ border-color:var(--text-muted); }
+.nav-toggle-bar{
+  display:block;
+  width:18px;
+  height:2px;
+  background:var(--text);
+  transition:transform 0.2s ease, opacity 0.2s ease;
+}
+header.nav.menu-open .nav-toggle-bar:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+header.nav.menu-open .nav-toggle-bar:nth-child(2){ opacity:0; }
+header.nav.menu-open .nav-toggle-bar:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
 
 /* ---------- TICKER ---------- */
 .ticker-bar{

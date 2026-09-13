@@ -35,7 +35,7 @@
 <header class="nav">
   <div class="nav-inner">
     <a href="index.html" class="logo"><span class="logo-dot"></span>NewSociety</a>
-    <nav class="links">
+    <nav class="links" id="siteNav" aria-label="Main">
       <a href="index.html#pillars">Pillars</a>
       <a href="index.html#process">How It Moves</a>
       <a href="saved.html">Saved</a>
@@ -46,6 +46,9 @@
       <input type="text" name="q" placeholder="Search everything…" aria-label="Search NewSociety" required>
     </form>
     <a href="index.html#follow" class="nav-cta">Watch the Feed</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Open menu">
+      <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
+    </button>
   </div>
   <div class="ticker-bar">
     <div class="ticker-track mono" id="tickerTrack"></div>
