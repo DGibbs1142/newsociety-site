@@ -134,7 +134,7 @@ function doPost(e) {
 
     if (body.form === 'launch-rsvp' && SEND_RSVP_CONFIRMATIONS) {
       // Never let an email problem undo or block saving the RSVP.
-      try { sendRsvpConfirmation_(sheet, data); } catch (err) { console.error('confirmation email failed', err); }
+      try { sendRsvpConfirmation_(sheet, sheet.getLastRow(), data); } catch (err) { console.error('confirmation email failed', err); }
     }
   } finally {
     lock.releaseLock();
@@ -143,24 +143,97 @@ function doPost(e) {
   return reply_({ ok: true });
 }
 
-// Sends one confirmation per email address. Anyone can type any address into
-// a public form, so: the address must look valid, a repeat RSVP from the same
-// address doesn't email again, sending stops near the daily quota, and every
-// visitor-supplied value is escaped before it goes into the HTML.
-function sendRsvpConfirmation_(sheet, data) {
+// Sends one confirmation per email address, and records it. The RSVPs tab has
+// a "Confirmation sent" column that gets a timestamp only when an email really
+// goes out; an address is skipped only if one of its rows already has one.
+// Anyone can type any address into a public form, so: the address must look
+// valid, sending stops near the daily quota, and visitor-supplied values are
+// escaped before they go into the HTML. A skipped or failed send leaves the
+// column blank, so that person can still be confirmed later.
+const CONFIRMATION_HEADER = 'Confirmation sent';
+
+function sendRsvpConfirmation_(sheet, row, data) {
   const email = String(data.email || '').trim();
   if (!/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(email)) return 'skipped: invalid address';
-
-  // Column C is Email (Received, Name, Email, ...). The row just appended is
-  // the last one, so an earlier match means this address already RSVPed.
-  const lastRow = sheet.getLastRow();
-  if (lastRow > 2) {
-    const earlier = sheet.getRange(2, 3, lastRow - 2, 1).getValues()
-      .map(function (r) { return String(r[0]).trim().toLowerCase().replace(/^'/, ''); });
-    if (earlier.indexOf(email.toLowerCase()) !== -1) return 'skipped: already confirmed';
-  }
+  const sentCol = confirmationColumn_(sheet);
+  if (alreadyConfirmed_(sheet, sentCol, email)) return 'skipped: already confirmed';
   if (MailApp.getRemainingDailyQuota() <= CONFIRMATION_QUOTA_FLOOR) return 'skipped: quota floor';
+  MailApp.sendEmail(confirmationMessage_(email, data));
+  sheet.getRange(row, sentCol).setValue(new Date());
+  return 'sent';
+}
 
+// One-time catch-up, run by hand from the editor: emails every RSVP address
+// that has never been confirmed, using its most recent RSVP, and stamps that
+// row. Safe to run again — already-confirmed addresses are skipped.
+function sendMissingConfirmations() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(FORMS['launch-rsvp'].tab);
+  if (!sheet || sheet.getLastRow() < 2) { console.log('No RSVPs yet.'); return { sent: 0 }; }
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sentCol = confirmationColumn_(sheet);
+    const lastRow = sheet.getLastRow();
+    const header = sheet.getRange(1, 1, 1, sentCol).getValues()[0].map(String);
+    const col = function (name) { return header.indexOf(name); };
+    const values = sheet.getRange(2, 1, lastRow - 1, sentCol).getValues();
+
+    // latest row per address, and whether any of its rows was confirmed
+    const latest = {}, confirmed = {};
+    values.forEach(function (v, i) {
+      const key = cleanEmail_(v[col('Email')]);
+      if (!key) return;
+      if (v[sentCol - 1] !== '' && v[sentCol - 1] !== null) confirmed[key] = true;
+      latest[key] = { row: i + 2, v: v };
+    });
+
+    const report = { sent: 0, skipped: [] };
+    Object.keys(latest).forEach(function (key) {
+      if (confirmed[key]) return;
+      const v = latest[key].v;
+      const data = {
+        name: v[col('Name')], email: String(v[col('Email')]).replace(/^'/, ''),
+        party_size: v[col('Party size')], vip_interest: v[col('VIP interest')]
+      };
+      const result = sendRsvpConfirmation_(sheet, latest[key].row, data);
+      if (result === 'sent') report.sent++; else report.skipped.push(result);
+    });
+    console.log('Catch-up confirmations: ' + report.sent + ' sent' + (report.skipped.length ? ', skipped: ' + report.skipped.join('; ') : ''));
+    return report;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// Column number of "Confirmation sent", adding the header to the first empty
+// column if this RSVPs tab was created before the column existed.
+function confirmationColumn_(sheet) {
+  const lastCol = Math.max(sheet.getLastColumn(), 1);
+  const header = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(String);
+  const at = header.indexOf(CONFIRMATION_HEADER);
+  if (at !== -1) return at + 1;
+  sheet.getRange(1, lastCol + 1).setValue(CONFIRMATION_HEADER).setFontWeight('bold');
+  return lastCol + 1;
+}
+
+function alreadyConfirmed_(sheet, sentCol, email) {
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return false;
+  const header = sheet.getRange(1, 1, 1, sentCol).getValues()[0].map(String);
+  const emailCol = header.indexOf('Email') + 1;
+  const rows = sheet.getRange(2, 1, lastRow - 1, sentCol).getValues();
+  const target = email.toLowerCase();
+  return rows.some(function (v) {
+    return cleanEmail_(v[emailCol - 1]) === target && v[sentCol - 1] !== '' && v[sentCol - 1] !== null;
+  });
+}
+
+function cleanEmail_(value) {
+  return String(value == null ? '' : value).trim().replace(/^'/, '').toLowerCase();
+}
+
+function confirmationMessage_(email, data) {
   const firstName = String(data.name || '').trim().split(/\s+/)[0] || 'there';
   const party = String(data.party_size || '').trim();
   const vip = String(data.vip_interest || '') === 'Yes';
@@ -193,14 +266,13 @@ function sendRsvpConfirmation_(sheet, data) {
     '<p style="font-size:12px;line-height:1.5;color:#808088;margin:0;">You\'re getting this because this address was used to RSVP at newsociety.netlify.app. If that wasn\'t you, ignore this email — you won\'t get another.</p>' +
     '</div>';
 
-  MailApp.sendEmail({
+  return {
     to: email,
     subject: "You're on the list — NewSociety Live launch party",
     body: lines.join('\n'),
     htmlBody: html,
     name: 'NewSociety Live'
-  });
-  return 'sent';
+  };
 }
 
 // Text a visitor types that starts with = + - or @ would otherwise be run
