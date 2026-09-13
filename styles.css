@@ -1114,3 +1114,38 @@ footer{
   position:absolute; width:1px; height:1px; padding:0; margin:-1px;
   overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
 }
+
+/* ---------- GET INVOLVED ---------- */
+.live-form .role-fields{ display:grid; gap:18px; }
+/* .field sets display:grid, which would otherwise beat the hidden attribute */
+.live-form [hidden]{ display:none !important; }
+
+/* ---------- PRESS KIT ---------- */
+.asset-preview{
+  background:var(--bg-elevated);
+  border:1px solid var(--line);
+  aspect-ratio:16 / 9;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:22px;
+  overflow:hidden;
+}
+.asset-preview img{ max-width:88%; max-height:70%; width:auto; height:auto; object-fit:contain; }
+.asset-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+.swatches{ display:grid; gap:10px; margin-bottom:22px; }
+.swatch{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:14px;
+  color:var(--text-muted);
+}
+.swatch span{
+  width:40px;
+  height:40px;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  flex:none;
+}
+.swatch code{ font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--text); }

@@ -6,14 +6,14 @@
 // Live API calls (cross-origin sources, and our own /api/* functions) are
 // never intercepted — they always go straight to the network.
 
-const CACHE_VERSION = 'newsociety-v4';
+const CACHE_VERSION = 'newsociety-v5';
 const APP_SHELL = [
   '/', '/index.html', '/sports.html', '/anime.html', '/pop-culture.html',
   '/fashion.html', '/music.html', '/current-events.html', '/detail.html',
   '/search.html', '/saved.html', '/about.html', '/faq.html',
-  '/live.html', '/production.html', '/host.html',
+  '/live.html', '/production.html', '/host.html', '/get-involved.html', '/press.html',
   '/styles.css',
-  '/site.js', '/detail-link.js', '/search-widget.js',
+  '/site.js', '/detail-link.js', '/search-widget.js', '/get-involved.js',
   '/sports.js', '/anime.js', '/pop-culture.js', '/fashion.js', '/music.js', '/news.js',
   '/detail.js', '/global-search.js', '/saved.js', '/homepage-live.js',
   '/icons/icon-192.png', '/icons/icon-512.png', '/icons/icon-512-maskable.png'
