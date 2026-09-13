@@ -202,7 +202,9 @@ async function runGlobalSearch(query){
 
     const head = document.createElement('div');
     head.className = 'section-head';
-    head.innerHTML = `<div><div class="section-label">// ${section.label.toLowerCase()}</div></div>`;
+    // A real h2 (styled exactly like the other section labels) so the result
+    // cards' h3 headings don't jump straight from the page's h1.
+    head.innerHTML = `<div><h2 class="section-label">// ${section.label.toLowerCase()}</h2></div>`;
     const more = document.createElement('a');
     more.className = 'search-section-more mono';
     more.href = section.more;

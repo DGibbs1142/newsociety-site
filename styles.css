@@ -445,6 +445,7 @@ h1.page-title{
 }
 .search-section-more:hover{ color:var(--text); }
 .section-label{
+  font-weight:400; /* also used on h2s, which default to bold */
   font-family:'JetBrains Mono',monospace;
   font-size:12px;
   letter-spacing:0.1em;
@@ -726,18 +727,28 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   transition:border-color 0.2s ease, color 0.2s ease;
 }
 .chart-nav-btn:hover{ color:var(--text); border-color:var(--text-muted); }
-.chart-dots{ display:flex; gap:10px; }
+/* 24px tap targets (the audit minimum) drawn as the same 8px dots.
+   Targets can't overlap, so the visible dots now sit 26px apart
+   (previously 18px). */
+.chart-dots{ display:flex; gap:2px; }
 .chart-dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
+  position:relative;
+  width:24px;
+  height:24px;
   border:none;
-  background:var(--line);
+  background:none;
   cursor:pointer;
   padding:0;
+}
+.chart-dot::before{
+  content:'';
+  position:absolute;
+  inset:8px;
+  border-radius:50%;
+  background:var(--line);
   transition:background 0.2s ease;
 }
-.chart-dot.active{ background:var(--accent); }
+.chart-dot.active::before{ background:var(--accent); }
 
 /* ---------- DROPS GRID (pillar sub-pages) ----------
    Borders live on each card (not a background-through-gap trick on the
