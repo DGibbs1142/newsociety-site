@@ -10,6 +10,14 @@
  * it are rejected, so the web app URL on its own can't write rows.
  */
 
+// RSVP confirmation emails are sent from the account that owns this script
+// (via MailApp). Leave false until the script has been re-authorized for
+// sending mail and a new deployment version is live.
+const SEND_RSVP_CONFIRMATIONS = false;
+// Consumer Gmail allows about 100 recipients a day; stop short of that so a
+// spike (or someone scripting the form) can't use up the whole quota.
+const CONFIRMATION_QUOTA_FLOOR = 10;
+
 const FORMS = {
   'launch-rsvp': {
     tab: 'RSVPs',
@@ -123,11 +131,76 @@ function doPost(e) {
     sheet.appendRow(row);
 
     if (form.headcount) ensureSummary_(ss, sheet, headers.length);
+
+    if (body.form === 'launch-rsvp' && SEND_RSVP_CONFIRMATIONS) {
+      // Never let an email problem undo or block saving the RSVP.
+      try { sendRsvpConfirmation_(sheet, data); } catch (err) { console.error('confirmation email failed', err); }
+    }
   } finally {
     lock.releaseLock();
   }
 
   return reply_({ ok: true });
+}
+
+// Sends one confirmation per email address. Anyone can type any address into
+// a public form, so: the address must look valid, a repeat RSVP from the same
+// address doesn't email again, sending stops near the daily quota, and every
+// visitor-supplied value is escaped before it goes into the HTML.
+function sendRsvpConfirmation_(sheet, data) {
+  const email = String(data.email || '').trim();
+  if (!/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(email)) return 'skipped: invalid address';
+
+  // Column C is Email (Received, Name, Email, ...). The row just appended is
+  // the last one, so an earlier match means this address already RSVPed.
+  const lastRow = sheet.getLastRow();
+  if (lastRow > 2) {
+    const earlier = sheet.getRange(2, 3, lastRow - 2, 1).getValues()
+      .map(function (r) { return String(r[0]).trim().toLowerCase().replace(/^'/, ''); });
+    if (earlier.indexOf(email.toLowerCase()) !== -1) return 'skipped: already confirmed';
+  }
+  if (MailApp.getRemainingDailyQuota() <= CONFIRMATION_QUOTA_FLOOR) return 'skipped: quota floor';
+
+  const firstName = String(data.name || '').trim().split(/\s+/)[0] || 'there';
+  const party = String(data.party_size || '').trim();
+  const vip = String(data.vip_interest || '') === 'Yes';
+  const site = 'https://newsociety.netlify.app';
+
+  const lines = [
+    "You're on the list for the NewSociety Live launch party.",
+    '',
+    party ? 'Your RSVP: ' + party + (vip ? ' (and you flagged interest in VIP)' : '') : '',
+    "The date and venue haven't been announced yet — you'll hear them here first, before they go public.",
+    '',
+    'Until then, the feed never stops: ' + site,
+    '',
+    '— NewSociety Live',
+    '',
+    "You're getting this because this address was used to RSVP at " + site + '/live.html. If that wasn\'t you, you can ignore this email — you won\'t get another one.'
+  ].filter(function (l, i, a) { return !(l === '' && a[i - 1] === ''); });
+
+  const esc = function (v) {
+    return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  };
+  const html =
+    '<div style="font-family:Helvetica,Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#0a0a0c;color:#f4f3ef;">' +
+    '<p style="font:12px/1.4 Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;color:#8470ff;margin:0 0 16px;">NewSociety Live</p>' +
+    '<h1 style="font-size:28px;line-height:1.1;text-transform:uppercase;margin:0 0 20px;">You\'re on the list, ' + esc(firstName) + '.</h1>' +
+    '<p style="font-size:15px;line-height:1.6;color:#c9c9cf;margin:0 0 14px;">Thanks for RSVPing to the NewSociety Live launch party.</p>' +
+    (party ? '<p style="font-size:15px;line-height:1.6;color:#c9c9cf;margin:0 0 14px;">Your RSVP: <strong style="color:#f4f3ef;">' + esc(party) + '</strong>' + (vip ? ' — and you flagged interest in VIP.' : '') + '</p>' : '') +
+    '<p style="font-size:15px;line-height:1.6;color:#c9c9cf;margin:0 0 24px;">The date and venue haven\'t been announced yet. You\'ll hear them here first, before they go public.</p>' +
+    '<p style="margin:0 0 28px;"><a href="' + site + '" style="display:inline-block;background:#6e56ff;color:#fff;text-decoration:none;font:13px Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;padding:13px 22px;border-radius:2px;">Watch the Feed →</a></p>' +
+    '<p style="font-size:12px;line-height:1.5;color:#808088;margin:0;">You\'re getting this because this address was used to RSVP at newsociety.netlify.app. If that wasn\'t you, ignore this email — you won\'t get another.</p>' +
+    '</div>';
+
+  MailApp.sendEmail({
+    to: email,
+    subject: "You're on the list — NewSociety Live launch party",
+    body: lines.join('\n'),
+    htmlBody: html,
+    name: 'NewSociety Live'
+  });
+  return 'sent';
 }
 
 // Text a visitor types that starts with = + - or @ would otherwise be run
