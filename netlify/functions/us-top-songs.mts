@@ -98,7 +98,10 @@ export default async (req: Request, context: Context) => {
   return new Response(JSON.stringify({ country: "us", updated: new Date().toISOString(), tracks: blended }), {
     headers: {
       "Content-Type": "application/json",
-      "Cache-Control": "public, max-age=1800"
+      "Cache-Control": "public, max-age=1800",
+      // Shared across all edge locations (see gnews.mts), so Apple and Deezer
+      // are hit once per 30 minutes rather than once per region.
+      "Netlify-CDN-Cache-Control": "public, durable, s-maxage=1800, stale-while-revalidate=600"
     }
   });
 };

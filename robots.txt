@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+# Serverless data proxies, not pages.
+Disallow: /api/
+
+Sitemap: https://newsociety.netlify.app/sitemap.xml
