@@ -17,6 +17,9 @@ const SEND_RSVP_CONFIRMATIONS = true;
 // Consumer Gmail allows about 100 recipients a day; stop short of that so a
 // spike (or someone scripting the form) can't use up the whole quota.
 const CONFIRMATION_QUOTA_FLOOR = 10;
+// Addresses sendTestConfirmation() mails a sample confirmation to, for
+// checking whether it lands in the inbox or spam. Keep empty when not testing.
+const TEST_CONFIRMATION_TO = [];
 
 const FORMS = {
   'launch-rsvp': {
@@ -204,6 +207,17 @@ function sendMissingConfirmations() {
   } finally {
     lock.releaseLock();
   }
+}
+
+// Run from the editor: sends the real confirmation email, filled with sample
+// RSVP details, to each TEST_CONFIRMATION_TO address. Doesn't touch the Sheet.
+function sendTestConfirmation() {
+  if (!TEST_CONFIRMATION_TO.length) throw new Error('Add addresses to TEST_CONFIRMATION_TO first.');
+  const sample = { name: 'Test Guest', party_size: '2', vip_interest: 'Yes' };
+  TEST_CONFIRMATION_TO.forEach(function (to) {
+    MailApp.sendEmail(confirmationMessage_(to, sample));
+  });
+  console.log('Test confirmations sent: ' + TEST_CONFIRMATION_TO.length);
 }
 
 // Column number of "Confirmation sent", adding the header to the first empty
