@@ -220,15 +220,160 @@ function sendTestConfirmation() {
   console.log('Test confirmations sent: ' + TEST_CONFIRMATION_TO.length);
 }
 
+// ---- Launch party announcement ----
+// Once the date and venue are locked: fill in LAUNCH_DETAILS and save, run
+// previewLaunchAnnouncement() (emails one sample to the script owner and logs
+// how many guests would get it), then run sendLaunchAnnouncement(). Each guest
+// is emailed once, at their latest RSVP; running it again only reaches guests
+// who RSVP'd after the last send.
+const LAUNCH_DETAILS = {
+  date: '',     // e.g. 'Saturday, October 17'
+  time: '',     // e.g. '9 PM – 2 AM'
+  venue: '',    // e.g. 'The Loft'
+  address: '',  // e.g. '123 Main St, Newark, NJ'
+  note: ''      // optional extra line, e.g. 'Bring a photo ID. 21+.'
+};
+const ANNOUNCEMENT_HEADER = 'Announcement sent';
+
+function previewLaunchAnnouncement() {
+  requireLaunchDetails_();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(FORMS['launch-rsvp'].tab);
+  const wouldSend = sheet ? pendingGuests_(sheet, ANNOUNCEMENT_HEADER).length : 0;
+  const me = Session.getEffectiveUser().getEmail();
+  MailApp.sendEmail(announcementMessage_(me, { name: 'Preview', party_size: '2' }));
+  console.log('Preview sent to ' + me + '. sendLaunchAnnouncement() would email ' + wouldSend + ' guest(s).');
+  return { preview: me, wouldSend: wouldSend };
+}
+
+function sendLaunchAnnouncement() {
+  requireLaunchDetails_();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(FORMS['launch-rsvp'].tab);
+  if (!sheet || sheet.getLastRow() < 2) { console.log('No RSVPs yet.'); return { sent: 0, skipped: 0 }; }
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sentCol = stampColumn_(sheet, ANNOUNCEMENT_HEADER);
+    const report = { sent: 0, skipped: 0 };
+    pendingGuests_(sheet, ANNOUNCEMENT_HEADER).forEach(function (guest) {
+      if (MailApp.getRemainingDailyQuota() <= CONFIRMATION_QUOTA_FLOOR) { report.skipped++; return; }
+      MailApp.sendEmail(announcementMessage_(guest.data.email, guest.data));
+      sheet.getRange(guest.row, sentCol).setValue(new Date());
+      report.sent++;
+    });
+    console.log('Launch announcement: ' + report.sent + ' sent' +
+      (report.skipped ? ', ' + report.skipped + ' held back by the daily email limit (run again tomorrow)' : ''));
+    return report;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function requireLaunchDetails_() {
+  const missing = ['date', 'time', 'venue', 'address'].filter(function (k) {
+    return !String(LAUNCH_DETAILS[k] || '').trim();
+  });
+  if (missing.length) throw new Error('Fill in LAUNCH_DETAILS first (missing: ' + missing.join(', ') + ').');
+}
+
+// Latest RSVP row for each valid address that has no stamp in `header` on any
+// of its rows.
+function pendingGuests_(sheet, header) {
+  const lastRow = sheet.getLastRow();
+  const lastCol = Math.max(sheet.getLastColumn(), 1);
+  if (lastRow < 2) return [];
+  const head = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(String);
+  const at = function (name) { return head.indexOf(name); };
+  const stampAt = at(header);
+  const latest = {}, done = {};
+  sheet.getRange(2, 1, lastRow - 1, lastCol).getValues().forEach(function (v, i) {
+    const key = cleanEmail_(v[at('Email')]);
+    if (!/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(key)) return;
+    if (stampAt >= 0 && v[stampAt] !== '' && v[stampAt] !== null) done[key] = true;
+    latest[key] = {
+      row: i + 2,
+      data: {
+        name: v[at('Name')],
+        email: String(v[at('Email')]).replace(/^'/, '').trim(),
+        party_size: v[at('Party size')]
+      }
+    };
+  });
+  return Object.keys(latest)
+    .filter(function (key) { return !done[key]; })
+    .map(function (key) { return latest[key]; });
+}
+
+function announcementMessage_(email, data) {
+  const d = LAUNCH_DETAILS;
+  const firstName = String(data.name || '').trim().split(/\s+/)[0] || 'there';
+  const party = String(data.party_size || '').trim();
+  const site = 'https://newsociety.netlify.app';
+  const when = d.date + ', ' + d.time;
+
+  const lines = [
+    "It's official: the NewSociety Live launch party is locked in.",
+    '',
+    'When: ' + when,
+    'Where: ' + d.venue + ', ' + d.address,
+    party ? 'Your RSVP: ' + party : '',
+    '',
+    d.note || '',
+    '',
+    'Plans changed? Just reply to this email and let us know.',
+    '',
+    '— NewSociety Live',
+    '',
+    "You're getting this because this address was used to RSVP at " + site + '/live.html.'
+  ].filter(function (l, i, a) { return !(l === '' && a[i - 1] === ''); });
+
+  const esc = function (v) {
+    return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  };
+  const p = function (text, extra) {
+    return '<p style="font-size:15px;line-height:1.6;color:#c9c9cf;margin:0 0 14px;' + (extra || '') + '">' + text + '</p>';
+  };
+  const row = function (label, value) {
+    return '<tr><td style="padding:6px 18px 6px 0;font:12px/1.4 Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:#8470ff;vertical-align:top;">' + label + '</td>' +
+      '<td style="padding:6px 0;font-size:16px;line-height:1.45;color:#f4f3ef;">' + value + '</td></tr>';
+  };
+  const html =
+    '<div style="font-family:Helvetica,Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#0a0a0c;color:#f4f3ef;">' +
+    '<p style="font:12px/1.4 Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;color:#8470ff;margin:0 0 16px;">NewSociety Live</p>' +
+    '<h1 style="font-size:28px;line-height:1.1;text-transform:uppercase;margin:0 0 20px;">It\'s official, ' + esc(firstName) + '.</h1>' +
+    p('The NewSociety Live launch party is locked in. Here are the details.') +
+    '<table role="presentation" style="border-collapse:collapse;margin:0 0 22px;">' +
+    row('When', esc(when)) +
+    row('Where', esc(d.venue) + '<br>' + esc(d.address)) +
+    (party ? row('Your RSVP', esc(party)) : '') +
+    '</table>' +
+    (d.note ? p(esc(d.note)) : '') +
+    p('Plans changed? Just reply to this email and let us know.', 'margin-bottom:24px;') +
+    '<p style="margin:0 0 28px;"><a href="' + site + '/live.html" style="display:inline-block;background:#6e56ff;color:#fff;text-decoration:none;font:13px Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;padding:13px 22px;border-radius:2px;">NewSociety Live →</a></p>' +
+    '<p style="font-size:12px;line-height:1.5;color:#808088;margin:0;">You\'re getting this because this address was used to RSVP at newsociety.netlify.app.</p>' +
+    '</div>';
+
+  return {
+    to: email,
+    subject: "It's official: NewSociety Live launch party, " + d.date,
+    body: lines.join('\n'),
+    htmlBody: html,
+    name: 'NewSociety Live'
+  };
+}
+
 // Column number of "Confirmation sent", adding the header to the first empty
 // column if this RSVPs tab was created before the column existed.
-function confirmationColumn_(sheet) {
+function stampColumn_(sheet, label) {
   const lastCol = Math.max(sheet.getLastColumn(), 1);
   const header = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(String);
-  const at = header.indexOf(CONFIRMATION_HEADER);
+  const at = header.indexOf(label);
   if (at !== -1) return at + 1;
-  sheet.getRange(1, lastCol + 1).setValue(CONFIRMATION_HEADER).setFontWeight('bold');
+  sheet.getRange(1, lastCol + 1).setValue(label).setFontWeight('bold');
   return lastCol + 1;
+}
+
+function confirmationColumn_(sheet) {
+  return stampColumn_(sheet, CONFIRMATION_HEADER);
 }
 
 function alreadyConfirmed_(sheet, sentCol, email) {
