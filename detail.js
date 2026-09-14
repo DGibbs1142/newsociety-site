@@ -353,48 +353,22 @@ async function renderTeamBreakdown(){
 }
 
 // --- Music: fuller Deezer record (artist, duration/track count, label,
-// genre, release date, plus a real 30-second preview clip for tracks) — no
-// key needed, but Deezer doesn't send CORS headers for plain fetch(), so
-// this uses their JSONP output the same way music.js does. ---
-function deezerJsonp(url, timeoutMs = 8000){
-  return new Promise((resolve, reject) => {
-    const callbackName = 'deezer_cb_' + Math.random().toString(36).slice(2);
-    const script = document.createElement('script');
-    let settled = false;
-
-    const cleanup = () => {
-      settled = true;
-      clearTimeout(timer);
-      delete window[callbackName];
-      script.remove();
-    };
-    const timer = setTimeout(() => {
-      if(settled) return;
-      cleanup();
-      reject(new Error('Deezer request timed out'));
-    }, timeoutMs);
-
-    window[callbackName] = (data) => {
-      if(settled) return;
-      cleanup();
-      if(data?.error){ reject(new Error(data.error.message || 'Deezer error')); return; }
-      resolve(data);
-    };
-    script.onerror = () => {
-      if(settled) return;
-      cleanup();
-      reject(new Error('Deezer request failed'));
-    };
-    const sep = url.includes('?') ? '&' : '?';
-    script.src = `${url}${sep}output=jsonp&callback=${callbackName}`;
-    document.head.appendChild(script);
-  });
+// genre, release date, plus a real 30-second preview clip for tracks),
+// fetched through /api/deezer the same way music.js does. ---
+async function deezerApi(params, timeoutMs = 8000){
+  const res = await fetch(`/api/deezer?${new URLSearchParams(params)}`, { signal: AbortSignal.timeout(timeoutMs) });
+  const data = await res.json().catch(() => null);
+  if(!res.ok || !data || data.error){
+    const message = typeof data?.error === 'string' ? data.error : data?.error?.message;
+    throw new Error(message || 'Deezer request failed');
+  }
+  return data;
 }
 
 async function renderMusicBreakdown(){
   breakdownLoading('Pulling the track info…');
   try{
-    const data = await deezerJsonp(`https://api.deezer.com/${deezerType}/${deezerId}`);
+    const data = await deezerApi({ op: deezerType, id: deezerId });
 
     let html = '<div class="section-label">// the breakdown</div><div class="breakdown-heading">NewSociety Sound Rundown</div>';
 
@@ -533,7 +507,7 @@ async function fetchRelatedFashion(){
 }
 
 async function fetchRelatedMusic(){
-  const data = await deezerJsonp('https://api.deezer.com/chart/0/tracks?limit=8');
+  const data = await deezerApi({ op: 'chart', type: 'tracks', limit: 8 });
   return (data?.data || [])
     .filter(t => String(t.id) !== String(deezerId))
     .slice(0, 4)

@@ -1,44 +1,16 @@
 // Populates the Music drops-grid with real chart data from Deezer's public
-// API — no key or login needed at all. Deezer doesn't send CORS headers for
-// plain fetch() from a browser, so we use their JSONP output instead (loading
-// the response via a <script> tag sidesteps CORS entirely — an older but
-// still legitimate technique for exactly this situation).
+// API. Requests go through /api/deezer (netlify/functions/deezer.mts) because
+// Deezer doesn't send CORS headers, and its JSONP fallback set a third-party
+// Deezer cookie on every visitor.
 
-const DEEZER_API = 'https://api.deezer.com';
-
-function deezerJsonp(url, timeoutMs = 8000){
-  return new Promise((resolve, reject) => {
-    const callbackName = 'deezer_cb_' + Math.random().toString(36).slice(2);
-    const script = document.createElement('script');
-    let settled = false;
-
-    const cleanup = () => {
-      settled = true;
-      clearTimeout(timer);
-      delete window[callbackName];
-      script.remove();
-    };
-    const timer = setTimeout(() => {
-      if(settled) return;
-      cleanup();
-      reject(new Error('Deezer request timed out'));
-    }, timeoutMs);
-
-    window[callbackName] = (data) => {
-      if(settled) return;
-      cleanup();
-      if(data?.error){ reject(new Error(data.error.message || 'Deezer error')); return; }
-      resolve(data);
-    };
-    script.onerror = () => {
-      if(settled) return;
-      cleanup();
-      reject(new Error('Deezer request failed'));
-    };
-    const sep = url.includes('?') ? '&' : '?';
-    script.src = `${url}${sep}output=jsonp&callback=${callbackName}`;
-    document.head.appendChild(script);
-  });
+async function deezerApi(params, timeoutMs = 8000){
+  const res = await fetch(`/api/deezer?${new URLSearchParams(params)}`, { signal: AbortSignal.timeout(timeoutMs) });
+  const data = await res.json().catch(() => null);
+  if(!res.ok || !data || data.error){
+    const message = typeof data?.error === 'string' ? data.error : data?.error?.message;
+    throw new Error(message || 'Deezer request failed');
+  }
+  return data;
 }
 
 function formatDuration(seconds){
@@ -71,12 +43,12 @@ function trackToCard(track){
 }
 
 async function fetchChartAlbums(){
-  const data = await deezerJsonp(`${DEEZER_API}/chart/0/albums?limit=4`);
+  const data = await deezerApi({ op: 'chart', type: 'albums', limit: 4 });
   return (data.data || []).map(albumToCard);
 }
 
 async function fetchChartTracks(){
-  const data = await deezerJsonp(`${DEEZER_API}/chart/0/tracks?limit=4`);
+  const data = await deezerApi({ op: 'chart', type: 'tracks', limit: 4 });
   return (data.data || []).map(trackToCard);
 }
 
@@ -154,7 +126,7 @@ async function loadMusic(){
 
 async function fetchMusicSearchPage(query, page){
   const index = (page - 1) * 10;
-  const data = await deezerJsonp(`${DEEZER_API}/search?q=${encodeURIComponent(query)}&index=${index}&limit=10`);
+  const data = await deezerApi({ op: 'search', q: query, index, limit: 10 });
   return (data.data || []).map(track => ({
     title: track.title,
     body: `From "${track.album?.title || 'Unknown Album'}" by ${track.artist?.name || 'Unknown Artist'}.`,

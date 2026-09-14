@@ -13,24 +13,14 @@ const ESPN_LEAGUE_PATHS = {
   'WNBA': 'basketball/wnba'
 };
 
-function deezerJsonp(url, timeoutMs = 8000){
-  return new Promise((resolve, reject) => {
-    const callbackName = 'deezer_cb_' + Math.random().toString(36).slice(2);
-    const script = document.createElement('script');
-    let settled = false;
-    const cleanup = () => { settled = true; clearTimeout(timer); delete window[callbackName]; script.remove(); };
-    const timer = setTimeout(() => { if(settled) return; cleanup(); reject(new Error('Deezer request timed out')); }, timeoutMs);
-    window[callbackName] = (data) => {
-      if(settled) return;
-      cleanup();
-      if(data?.error){ reject(new Error(data.error.message || 'Deezer error')); return; }
-      resolve(data);
-    };
-    script.onerror = () => { if(settled) return; cleanup(); reject(new Error('Deezer request failed')); };
-    const sep = url.includes('?') ? '&' : '?';
-    script.src = `${url}${sep}output=jsonp&callback=${callbackName}`;
-    document.head.appendChild(script);
-  });
+async function deezerApi(params, timeoutMs = 8000){
+  const res = await fetch(`/api/deezer?${new URLSearchParams(params)}`, { signal: AbortSignal.timeout(timeoutMs) });
+  const data = await res.json().catch(() => null);
+  if(!res.ok || !data || data.error){
+    const message = typeof data?.error === 'string' ? data.error : data?.error?.message;
+    throw new Error(message || 'Deezer request failed');
+  }
+  return data;
 }
 
 async function searchSports(query){
@@ -122,7 +112,7 @@ async function searchFashion(query){
 
 async function searchMusic(query){
   try{
-    const data = await deezerJsonp(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=4`);
+    const data = await deezerApi({ op: 'search', q: query, limit: 4 });
     return (data.data || []).map(t => {
       const artist = t.artist?.name || 'Unknown Artist';
       const status = `${artist} · ${t.album?.title || ''}`;
