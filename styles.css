@@ -1218,3 +1218,76 @@ footer{
   flex:none;
 }
 .swatch code{ font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--text); }
+
+/* ---------- LINKS (link-in-bio page) ---------- */
+.links-wrap{
+  max-width:520px;
+  margin:0 auto;
+  padding:56px 22px 40px;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+}
+.links-mark img{
+  display:block;
+  width:88px;
+  height:88px;
+  border-radius:50%;
+  border:1px solid var(--line);
+}
+.links-title{
+  font-size:44px;
+  margin-top:22px;
+}
+.links-sub{
+  margin-top:12px;
+  font-size:16px;
+  color:var(--text-muted);
+}
+.links-sub span{ color:var(--accent-text); }
+.links-pillars{
+  margin-top:10px;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  text-wrap:balance;
+}
+.links-list{
+  width:100%;
+  margin-top:36px;
+  display:grid;
+  gap:12px;
+}
+.links-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  padding:16px 20px;
+  background:var(--bg-card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  transition:border-color 0.2s ease, transform 0.2s ease;
+}
+.links-item:hover{ border-color:var(--text-muted); transform:translateY(-1px); }
+.links-item-label{ font-size:16px; font-weight:600; }
+.links-item-meta{ font-size:12px; color:var(--text-muted); }
+.links-item-primary{ background:var(--accent); border-color:var(--accent); }
+.links-item-primary .links-item-meta{ color:rgba(255,255,255,0.8); }
+.links-item-primary:hover{ background:#5c43f0; border-color:#5c43f0; }
+/* .signup-form grows via flex-basis in the footer row; in this column
+   layout that basis would become a 360px height */
+.links-signup{
+  flex:none;
+  width:100%;
+  max-width:none;
+  margin-top:28px;
+}
+.links-foot{
+  margin-top:auto;
+  padding-top:36px;
+  font-size:11px;
+  color:var(--text-dim);
+}

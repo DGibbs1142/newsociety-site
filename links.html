@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Links — NewSociety</title>
+<meta name="description" content="Every place to find NewSociety: the feed, TikTok, Instagram, X, and NewSociety Live.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NewSociety">
+<meta property="og:url" content="https://newsociety.netlify.app/links">
+<link rel="canonical" href="https://newsociety.netlify.app/links">
+<meta property="og:title" content="Links — NewSociety">
+<meta property="og:description" content="Every place to find NewSociety: the feed, TikTok, Instagram, X, and NewSociety Live.">
+<meta property="og:image" content="https://newsociety.netlify.app/icons/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="NewSociety — Culture moves fast. We move faster.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Links — NewSociety">
+<meta name="twitter:description" content="Every place to find NewSociety: the feed, TikTok, Instagram, X, and NewSociety Live.">
+<meta name="twitter:image" content="https://newsociety.netlify.app/icons/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+<link rel="stylesheet" href="/styles.css">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0a0a0c">
+<link rel="icon" href="/icons/icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/icons/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+</head>
+<body data-page="links.html" class="links-page">
+
+<!-- Link-in-bio page: one address for every social profile to point at.
+     Paths are root-absolute because it's served at /links as well as /links.html. -->
+<main class="links-wrap">
+  <a href="/" class="links-mark" aria-label="NewSociety home">
+    <img src="/icons/icon-512-maskable.png" alt="" width="88" height="88">
+  </a>
+  <h1 class="display links-title">NewSociety</h1>
+  <p class="links-sub">Culture moves fast. <span>We move faster.</span></p>
+  <p class="mono links-pillars">Sports · Anime · Pop Culture · Fashion · Music · News</p>
+
+  <nav class="links-list" aria-label="NewSociety links">
+    <a href="/" class="links-item links-item-primary">
+      <span class="links-item-label">Watch the Feed</span>
+      <span class="mono links-item-meta">newsociety.netlify.app</span>
+    </a>
+    <a href="https://www.tiktok.com/@newsociety22" class="links-item" target="_blank" rel="noopener">
+      <span class="links-item-label">TikTok</span>
+      <span class="mono links-item-meta">@newsociety22</span>
+    </a>
+    <a href="https://www.instagram.com/newsociety1142" class="links-item" target="_blank" rel="noopener">
+      <span class="links-item-label">Instagram</span>
+      <span class="mono links-item-meta">@newsociety1142</span>
+    </a>
+    <a href="https://x.com/newsociety1142" class="links-item" target="_blank" rel="noopener">
+      <span class="links-item-label">X</span>
+      <span class="mono links-item-meta">@newsociety1142</span>
+    </a>
+    <a href="/live.html" class="links-item">
+      <span class="links-item-label">NewSociety Live</span>
+      <span class="mono links-item-meta">Launch party RSVP</span>
+    </a>
+    <a href="/get-involved.html" class="links-item">
+      <span class="links-item-label">Get Involved</span>
+      <span class="mono links-item-meta">Create, host, or work with us</span>
+    </a>
+  </nav>
+
+  <form class="signup-form links-signup" name="newsletter" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="newsletter">
+    <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+    <label for="signup-email" class="visually-hidden">Email address</label>
+    <input id="signup-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
+    <button type="submit" class="btn btn-primary">Join the list →</button>
+  </form>
+
+  <p class="mono links-foot">© 2026 NewSociety — Culture, Uncut</p>
+</main>
+
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "07674b847fc94b21a8946d015b3c1fc9"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
