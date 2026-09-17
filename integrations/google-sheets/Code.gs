@@ -237,35 +237,12 @@ const ANNOUNCEMENT_HEADER = 'Announcement sent';
 
 function previewLaunchAnnouncement() {
   requireLaunchDetails_();
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(FORMS['launch-rsvp'].tab);
-  const wouldSend = sheet ? pendingGuests_(sheet, ANNOUNCEMENT_HEADER).length : 0;
-  const me = Session.getEffectiveUser().getEmail();
-  MailApp.sendEmail(announcementMessage_(me, { name: 'Preview', party_size: '2' }));
-  console.log('Preview sent to ' + me + '. sendLaunchAnnouncement() would email ' + wouldSend + ' guest(s).');
-  return { preview: me, wouldSend: wouldSend };
+  return previewToOwner_(ANNOUNCEMENT_HEADER, announcementMessage_, 'sendLaunchAnnouncement()');
 }
 
 function sendLaunchAnnouncement() {
   requireLaunchDetails_();
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(FORMS['launch-rsvp'].tab);
-  if (!sheet || sheet.getLastRow() < 2) { console.log('No RSVPs yet.'); return { sent: 0, skipped: 0 }; }
-  const lock = LockService.getScriptLock();
-  lock.waitLock(10000);
-  try {
-    const sentCol = stampColumn_(sheet, ANNOUNCEMENT_HEADER);
-    const report = { sent: 0, skipped: 0 };
-    pendingGuests_(sheet, ANNOUNCEMENT_HEADER).forEach(function (guest) {
-      if (MailApp.getRemainingDailyQuota() <= CONFIRMATION_QUOTA_FLOOR) { report.skipped++; return; }
-      MailApp.sendEmail(announcementMessage_(guest.data.email, guest.data));
-      sheet.getRange(guest.row, sentCol).setValue(new Date());
-      report.sent++;
-    });
-    console.log('Launch announcement: ' + report.sent + ' sent' +
-      (report.skipped ? ', ' + report.skipped + ' held back by the daily email limit (run again tomorrow)' : ''));
-    return report;
-  } finally {
-    lock.releaseLock();
-  }
+  return sendToPendingGuests_(ANNOUNCEMENT_HEADER, announcementMessage_, 'Launch announcement');
 }
 
 function requireLaunchDetails_() {
@@ -273,6 +250,41 @@ function requireLaunchDetails_() {
     return !String(LAUNCH_DETAILS[k] || '').trim();
   });
   if (missing.length) throw new Error('Fill in LAUNCH_DETAILS first (missing: ' + missing.join(', ') + ').');
+}
+
+// Emails one sample of a guest email to the script owner and reports how many
+// guests the real send would reach. Doesn't touch the Sheet.
+function previewToOwner_(header, messageFn, sendFnName) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(FORMS['launch-rsvp'].tab);
+  const wouldSend = sheet ? pendingGuests_(sheet, header).length : 0;
+  const me = Session.getEffectiveUser().getEmail();
+  MailApp.sendEmail(messageFn(me, { name: 'Preview', party_size: '2' }));
+  console.log('Preview sent to ' + me + '. ' + sendFnName + ' would email ' + wouldSend + ' guest(s).');
+  return { preview: me, wouldSend: wouldSend };
+}
+
+// Emails each guest who has no stamp in `header` once, at their latest RSVP,
+// and stamps that row. Stops near the daily quota; the rest go out next run.
+function sendToPendingGuests_(header, messageFn, label) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(FORMS['launch-rsvp'].tab);
+  if (!sheet || sheet.getLastRow() < 2) { console.log('No RSVPs yet.'); return { sent: 0, skipped: 0 }; }
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sentCol = stampColumn_(sheet, header);
+    const report = { sent: 0, skipped: 0 };
+    pendingGuests_(sheet, header).forEach(function (guest) {
+      if (MailApp.getRemainingDailyQuota() <= CONFIRMATION_QUOTA_FLOOR) { report.skipped++; return; }
+      MailApp.sendEmail(messageFn(guest.data.email, guest.data));
+      sheet.getRange(guest.row, sentCol).setValue(new Date());
+      report.sent++;
+    });
+    console.log(label + ': ' + report.sent + ' sent' +
+      (report.skipped ? ', ' + report.skipped + ' held back by the daily email limit (run again tomorrow)' : ''));
+    return report;
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 // Latest RSVP row for each valid address that has no stamp in `header` on any
@@ -355,6 +367,82 @@ function announcementMessage_(email, data) {
   return {
     to: email,
     subject: "It's official: NewSociety Live launch party, " + d.date,
+    body: lines.join('\n'),
+    htmlBody: html,
+    name: 'NewSociety Live'
+  };
+}
+
+// ---- "Follow us" email ----
+// Asks everyone on the launch party list to follow the NewSociety socials
+// while the date and venue are still being locked. Run previewFollowEmail()
+// first (one sample to the script owner, plus a count of who'd get it), then
+// sendFollowEmail(). Each guest gets it once; running it again only reaches
+// guests who RSVP'd after the last send.
+const FOLLOW_HEADER = 'Follow email sent';
+const SOCIALS = [
+  ['Instagram', '@newsociety1142', 'https://www.instagram.com/newsociety1142/'],
+  ['TikTok', '@newsociety22', 'https://www.tiktok.com/@newsociety22'],
+  ['X', '@NewSociety1142', 'https://x.com/NewSociety1142']
+];
+
+function previewFollowEmail() {
+  return previewToOwner_(FOLLOW_HEADER, followMessage_, 'sendFollowEmail()');
+}
+
+function sendFollowEmail() {
+  return sendToPendingGuests_(FOLLOW_HEADER, followMessage_, 'Follow email');
+}
+
+function followMessage_(email, data) {
+  const firstName = String(data.name || '').trim().split(/\s+/)[0] || 'there';
+  const site = 'https://newsociety.netlify.app';
+
+  const lines = [
+    "You're on the list for the NewSociety launch party.",
+    '',
+    "The date and venue are almost locked. You'll get them by email before they go public, and our socials are where you'll see everything around it: first looks at the venue, and what we're into every day.",
+    '',
+    'Follow along:',
+    SOCIALS.map(function (s) { return s[0] + ' ' + s[1] + ': ' + s[2]; }).join('\n'),
+    '',
+    "Every day we cover what everyone's about to be talking about: sports, music, anime, pop culture and fashion, fast and with an actual opinion.",
+    '',
+    'Bringing someone? Send them to ' + site + "/live.html so they're on the list too.",
+    '',
+    'See you soon,',
+    'Daniel and NewSociety',
+    '',
+    "You're getting this because this address was used to RSVP at " + site + '/live.html.'
+  ].filter(function (l, i, a) { return !(l === '' && a[i - 1] === ''); });
+
+  const esc = function (v) {
+    return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  };
+  const p = function (text, extra) {
+    return '<p style="font-size:15px;line-height:1.6;color:#c9c9cf;margin:0 0 14px;' + (extra || '') + '">' + text + '</p>';
+  };
+  const social = function (s) {
+    return '<tr><td style="padding:8px 18px 8px 0;font:12px/1.4 Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:#8470ff;vertical-align:middle;">' + s[0] + '</td>' +
+      '<td style="padding:8px 0;font-size:17px;line-height:1.4;"><a href="' + s[2] + '" style="color:#f4f3ef;text-decoration:none;font-weight:bold;">' + s[1] + ' →</a></td></tr>';
+  };
+  const html =
+    '<div style="display:none;max-height:0;overflow:hidden;">Follow NewSociety so you don\'t miss a thing.</div>' +
+    '<div style="font-family:Helvetica,Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#0a0a0c;color:#f4f3ef;">' +
+    '<p style="font:12px/1.4 Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;color:#8470ff;margin:0 0 16px;">NewSociety Live</p>' +
+    '<h1 style="font-size:28px;line-height:1.1;text-transform:uppercase;margin:0 0 20px;">You\'re on the list, ' + esc(firstName) + '.</h1>' +
+    p('Thanks for signing up for the NewSociety launch party. The date and venue are almost locked. You\'ll get them by email before they go public, and our socials are where you\'ll see everything around it: first looks at the venue, and what we\'re into every day.') +
+    p('<strong style="color:#f4f3ef;">Follow along so you don\'t miss it:</strong>', 'margin-bottom:6px;') +
+    '<table role="presentation" style="border-collapse:collapse;margin:0 0 22px;">' + SOCIALS.map(social).join('') + '</table>' +
+    p('Every day we cover what everyone\'s about to be talking about: sports, music, anime, pop culture and fashion, fast and with an actual opinion.') +
+    p('<strong style="color:#f4f3ef;">Bringing someone?</strong> Send them to <a href="' + site + '/live.html" style="color:#8470ff;">newsociety.netlify.app/live.html</a> so they\'re on the list too.', 'margin-bottom:24px;') +
+    p('See you soon,<br><strong style="color:#f4f3ef;">Daniel and NewSociety</strong>', 'margin-bottom:28px;') +
+    '<p style="font-size:12px;line-height:1.5;color:#808088;margin:0;">You\'re getting this because this address was used to RSVP at newsociety.netlify.app.</p>' +
+    '</div>';
+
+  return {
+    to: email,
+    subject: 'Before we announce the launch party…',
     body: lines.join('\n'),
     htmlBody: html,
     name: 'NewSociety Live'
