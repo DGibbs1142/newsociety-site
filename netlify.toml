@@ -49,3 +49,15 @@
   from = "/links"
   to = "/links.html"
   status = 200
+
+# Baseline security headers. The site has no login and no cookies, so these
+# are about protecting visitors from the page being framed, sniffed, or
+# leaking full URLs to the APIs it calls.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
