@@ -182,3 +182,51 @@ function attachMatchupLogos(card, awayLogo, homeLogo){
   }
   card.insertBefore(media, card.firstChild);
 }
+
+// ---- Last-good feed cache ----
+// Every pillar pulls from a live API, and those APIs go down or hit their
+// daily limit. Showing visitors placeholder "Sample Headline" cards makes a
+// working site look unfinished, so each feed stashes its last successful
+// payload here and re-renders that instead, labelled with its age.
+const feedCache = {
+  key(name){ return 'ns-feed-' + name; },
+  save(name, items){
+    try{
+      if(!Array.isArray(items) || !items.length) return;
+      localStorage.setItem(this.key(name), JSON.stringify({ at: Date.now(), items }));
+    }catch(err){ /* private mode or full storage — caching is optional */ }
+  },
+  // Anything older than three days is stale enough to be misleading.
+  load(name, maxAgeHours = 72){
+    try{
+      const raw = localStorage.getItem(this.key(name));
+      if(!raw) return null;
+      const parsed = JSON.parse(raw);
+      if(!parsed || !Array.isArray(parsed.items) || !parsed.items.length) return null;
+      if(Date.now() - parsed.at > maxAgeHours * 3600 * 1000) return null;
+      return parsed;
+    }catch(err){ return null; }
+  },
+  ago(at){
+    const mins = Math.max(1, Math.round((Date.now() - at) / 60000));
+    if(mins < 60) return mins + (mins === 1 ? ' minute ago' : ' minutes ago');
+    const hours = Math.round(mins / 60);
+    if(hours < 24) return hours + (hours === 1 ? ' hour ago' : ' hours ago');
+    const days = Math.round(hours / 24);
+    return days + (days === 1 ? ' day ago' : ' days ago');
+  }
+};
+
+// Honest empty state for when a feed fails and nothing is cached: one short
+// line in the grid, instead of six invented cards.
+function renderFeedUnavailable(gridId, titleId, titleText, message){
+  const grid = document.getElementById(gridId);
+  const title = document.getElementById(titleId);
+  if(title && titleText) title.textContent = titleText;
+  if(!grid) return;
+  grid.innerHTML = '';
+  const note = document.createElement('p');
+  note.className = 'feed-note';
+  note.textContent = message || 'This feed is taking a break. Refresh in a few minutes and it should be back.';
+  grid.appendChild(note);
+}

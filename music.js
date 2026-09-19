@@ -97,20 +97,17 @@ function renderCards(cards){
   if(title) title.textContent = 'Live from the charts.';
 }
 
-const DEMO_TRACKS = [
-  { status: 'NewSociety Sound · New Release', title: 'Sample New Release', body: 'Placeholder content shown because the live feed is unavailable.', url: '#' },
-  { status: 'NewSociety Sound · Trending', title: 'Sample Trending Track', body: 'Six cards fill this grid in the live version, mixing new releases and trending tracks straight from Deezer.', url: '#' },
-  { status: 'NewSociety Sound · New Release', title: 'Sample Album Drop', body: 'Card layout, spacing, and typography match the rest of the site.', url: '#' },
-  { status: 'NewSociety Sound · Trending', title: 'Sample Chart Climber', body: 'This grid always shows six cards, live or demo, so the layout never looks broken.', url: '#' },
-  { status: 'NewSociety Sound · New Release', title: 'Sample Fresh Single', body: 'Once the feed reconnects, these get replaced with real releases and chart data.', url: '#' },
-  { status: 'NewSociety Sound · Trending', title: 'Sample Playlist Pick', body: 'Check back shortly, or try the search below once the live feed is back.', url: '#' }
-];
-
 function renderError(message){
-  renderCards(DEMO_TRACKS);
-  const title = document.getElementById('newsSectionTitle');
-  if(title) title.textContent = 'Live from the charts. (demo preview)';
-  console.warn('Music feed error, showing demo content:', message);
+  console.warn('Music feed error:', message);
+  const cached = feedCache.load('music');
+  if(cached){
+    renderCards(cached.items);
+    const title = document.getElementById('newsSectionTitle');
+    if(title) title.textContent = 'Live from the booth. (last update ' + feedCache.ago(cached.at) + ')';
+    return;
+  }
+  renderFeedUnavailable('newsGrid', 'newsSectionTitle', 'Live from the booth.',
+    'The booth feed is quiet right now. Refresh in a few minutes for new releases.');
 }
 
 async function loadMusic(){
@@ -118,6 +115,7 @@ async function loadMusic(){
     const [albums, tracks] = await Promise.all([fetchChartAlbums(), fetchChartTracks()]);
     const combined = pickBalanced([albums, tracks], 6);
     if(!combined.length) throw new Error('No music content returned');
+    feedCache.save('music', combined);
     renderCards(combined);
   }catch(err){
     renderError(err.message);

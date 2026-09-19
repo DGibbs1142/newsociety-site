@@ -85,17 +85,17 @@ function renderAnime(mediaList){
   if(title) title.textContent = 'Live from the archive.';
 }
 
-const DEMO_ANIME = [
-  { title:{ english:'Sample Classic Pick' }, seasonYear:2004, averageScore:88, siteUrl:'#', description:'Placeholder content shown because the live feed is unavailable.' },
-  { title:{ english:'Sample Underrated Pick' }, seasonYear:2016, averageScore:73, siteUrl:'#', description:'Six cards fill this grid in the live version — a mix of classics, underrated picks, and trending titles pulled fresh from AniList.' },
-  { title:{ english:'Sample Trending Pick' }, seasonYear:2026, averageScore:85, siteUrl:'#', description:'Card layout, spacing, and typography match the rest of the site.' }
-];
-
 function renderError(message){
-  renderAnime(DEMO_ANIME);
-  const title = document.getElementById('newsSectionTitle');
-  if(title) title.textContent = 'Live from the archive. (demo preview)';
-  console.warn('Anime feed error, showing demo content:', message);
+  console.warn('Anime feed error:', message);
+  const cached = feedCache.load('anime');
+  if(cached){
+    renderAnime(cached.items);
+    const title = document.getElementById('newsSectionTitle');
+    if(title) title.textContent = 'Live from the archive. (last update ' + feedCache.ago(cached.at) + ')';
+    return;
+  }
+  renderFeedUnavailable('newsGrid', 'newsSectionTitle', 'Live from the archive.',
+    'The archive feed is quiet right now. Refresh in a few minutes for fresh picks.');
 }
 
 async function loadAnime(){
@@ -113,6 +113,7 @@ async function loadAnime(){
     if(errors) throw new Error(errors[0]?.message || 'AniList query error');
     const combined = [...data.classics.media, ...data.underrated.media, ...data.trending.media];
     if(!combined.length) throw new Error('No anime returned');
+    feedCache.save('anime', combined);
     renderAnime(combined);
   }catch(err){
     renderError(err.message);

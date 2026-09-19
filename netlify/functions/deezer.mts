@@ -68,7 +68,7 @@ export default async (req: Request, context: Context) => {
       "Cache-Control": `public, max-age=${Math.min(cacheSeconds, 600)}`,
       // Shared across edge locations (see gnews.mts) so Deezer sees one request
       // per chart/search/item per cache window rather than one per region.
-      "Netlify-CDN-Cache-Control": `public, durable, s-maxage=${cacheSeconds}, stale-while-revalidate=300`
+      "Netlify-CDN-Cache-Control": `public, durable, s-maxage=${cacheSeconds}, stale-while-revalidate=300, stale-if-error=86400`
     }
   });
 };

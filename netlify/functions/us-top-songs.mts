@@ -101,7 +101,7 @@ export default async (req: Request, context: Context) => {
       "Cache-Control": "public, max-age=1800",
       // Shared across all edge locations (see gnews.mts), so Apple and Deezer
       // are hit once per 30 minutes rather than once per region.
-      "Netlify-CDN-Cache-Control": "public, durable, s-maxage=1800, stale-while-revalidate=600"
+      "Netlify-CDN-Cache-Control": "public, durable, s-maxage=1800, stale-while-revalidate=600, stale-if-error=86400"
     }
   });
 };

@@ -58,20 +58,17 @@ function renderArticles(articles){
   if(title) title.textContent = 'Live from the wire.';
 }
 
-const DEMO_ARTICLES = [
-  { source:'Demo Wire', status: 'Demo Wire · now', publishedAt:new Date().toISOString(), title:'Sample Headline — Live Feed Coming Soon', body:'This is placeholder content shown because the live feed is unavailable.', shortBody:'This is placeholder content shown because the live feed is unavailable.', url:'#' },
-  { source:'Demo Wire', status: 'Demo Wire · now', publishedAt:new Date().toISOString(), title:'Another Sample Story For Layout Preview', body:'Six cards fill this grid in the live version, pulled fresh from GNews.', shortBody:'Six cards fill this grid in the live version, pulled fresh from GNews.', url:'#' },
-  { source:'Demo Wire', status: 'Demo Wire · now', publishedAt:new Date().toISOString(), title:'Third Placeholder Drop', body:'Card layout, spacing, and typography match the rest of the site.', shortBody:'Card layout, spacing, and typography match the rest of the site.', url:'#' },
-  { source:'Demo Wire', status: 'Demo Wire · now', publishedAt:new Date().toISOString(), title:'Fourth Placeholder Drop', body:'This grid always shows six cards, live or demo, so the layout never looks broken.', shortBody:'This grid always shows six cards, live or demo, so the layout never looks broken.', url:'#' },
-  { source:'Demo Wire', status: 'Demo Wire · now', publishedAt:new Date().toISOString(), title:'Fifth Placeholder Drop', body:'Once the feed reconnects, these get replaced with real headlines.', shortBody:'Once the feed reconnects, these get replaced with real headlines.', url:'#' },
-  { source:'Demo Wire', status: 'Demo Wire · now', publishedAt:new Date().toISOString(), title:'Sixth Placeholder Drop', body:'Check back shortly, or try the search below once the live feed is back.', shortBody:'Check back shortly, or try the search below once the live feed is back.', url:'#' }
-];
-
 function renderError(message){
-  renderArticles(DEMO_ARTICLES);
-  const title = document.getElementById('newsSectionTitle');
-  if(title) title.textContent = 'Live from the wire. (demo preview)';
-  console.warn('News feed error, showing demo content:', message);
+  console.warn('News feed error:', message);
+  const cached = feedCache.load('news');
+  if(cached){
+    renderArticles(cached.items);
+    const title = document.getElementById('newsSectionTitle');
+    if(title) title.textContent = 'Live from the wire. (last update ' + feedCache.ago(cached.at) + ')';
+    return;
+  }
+  renderFeedUnavailable('newsGrid', 'newsSectionTitle', 'Live from the wire.',
+    'The wire is quiet right now. Refresh in a few minutes for fresh headlines.');
 }
 
 async function loadNews(){
@@ -82,6 +79,7 @@ async function loadNews(){
     const data = await res.json();
     const articles = (data.articles || []).map(mapGNewsArticle);
     if(!articles.length) throw new Error('No articles returned');
+    feedCache.save('news', articles.slice(0, 6));
     renderArticles(articles.slice(0, 6));
   }catch(err){
     renderError(err.message);

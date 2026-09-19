@@ -3,7 +3,7 @@
 // X" answer that no single pillar page can give on its own. Deliberately
 // self-contained (doesn't load the pillar scripts themselves, to avoid the
 // naming collisions that would cause — several of them declare their own
-// same-named DEMO_ARTICLES/timeAgo/etc as top-level consts) so a bit of
+// same-named renderError/timeAgo/etc as top-level consts) so a bit of
 // fetch logic is duplicated here rather than reused directly.
 
 const ESPN_LEAGUE_PATHS = {

@@ -52,7 +52,7 @@ export default async (req: Request, context: Context) => {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (res.ok) {
     headers["Cache-Control"] = "public, max-age=300";
-    headers["Netlify-CDN-Cache-Control"] = "public, durable, s-maxage=600, stale-while-revalidate=300";
+    headers["Netlify-CDN-Cache-Control"] = "public, durable, s-maxage=600, stale-while-revalidate=300, stale-if-error=86400";
   } else {
     headers["Cache-Control"] = "no-store";
   }

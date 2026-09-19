@@ -144,20 +144,17 @@ function renderCards(cards){
   if(title) title.textContent = 'Live from the wire.';
 }
 
-const DEMO_CARDS = [
-  { status: 'Movie · 2026 · 7.8/10', heading: 'Sample Trending Movie', body: 'Placeholder content shown because the live feed is unavailable.', url: '#' },
-  { status: 'Deadline.com · 2h ago', heading: 'Sample Celebrity Headline', body: 'Six cards fill this grid in the live version, mixing trending titles, celebrity news, and more.', url: '#' },
-  { status: 'YouTube · 1.2M views', heading: 'Sample Viral Video', body: 'Card layout, spacing, and typography match the rest of the site.', url: '#' },
-  { status: 'Giphy · Trending', heading: 'Sample Trending GIF', body: 'This grid always shows six cards, live or demo, so the layout never looks broken.', url: '#' },
-  { status: 'TV · 2026 · 8.1/10', heading: 'Sample Trending Show', body: 'Once the feed reconnects, these get replaced with real trending content.', url: '#' },
-  { status: 'Wire.com · 4h ago', heading: 'Sample Pop Culture Headline', body: 'Check back shortly, or try the search below once the live feed is back.', url: '#' }
-];
-
 function renderError(message){
-  renderCards(DEMO_CARDS);
-  const title = document.getElementById('newsSectionTitle');
-  if(title) title.textContent = 'Live from the wire. (demo preview)';
-  console.warn('Pop Culture feed error, showing demo content:', message);
+  console.warn('Pop culture feed error:', message);
+  const cached = feedCache.load('pop-culture');
+  if(cached){
+    renderCards(cached.items);
+    const title = document.getElementById('newsSectionTitle');
+    if(title) title.textContent = 'Live from the wire. (last update ' + feedCache.ago(cached.at) + ')';
+    return;
+  }
+  renderFeedUnavailable('newsGrid', 'newsSectionTitle', 'Live from the wire.',
+    'This feed is quiet right now. Refresh in a few minutes for the latest drops.');
 }
 
 async function loadPopCulture(){
@@ -167,6 +164,7 @@ async function loadPopCulture(){
     ]);
     const combined = pickBalanced([titles, news, videos, gifs], 6);
     if(!combined.length) throw new Error('No pop culture content returned');
+    feedCache.save('pop-culture', combined);
     renderCards(combined);
   }catch(err){
     renderError(err.message);

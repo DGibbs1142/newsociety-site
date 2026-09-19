@@ -50,8 +50,8 @@ export default async (req: Request, context: Context) => {
   // (like a 429) are never cached, so a blip clears on the next request.
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (res.ok) {
-    headers["Cache-Control"] = "public, max-age=300";
-    headers["Netlify-CDN-Cache-Control"] = "public, durable, s-maxage=600, stale-while-revalidate=300";
+    headers["Cache-Control"] = "public, max-age=600";
+    headers["Netlify-CDN-Cache-Control"] = "public, durable, s-maxage=1800, stale-while-revalidate=600, stale-if-error=86400";
   } else {
     headers["Cache-Control"] = "no-store";
   }

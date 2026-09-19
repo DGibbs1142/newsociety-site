@@ -767,6 +767,19 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
 @media (max-width:600px){
   .drops-grid{ grid-template-columns:1fr; }
 }
+/* Shown in a feed grid when a live API is down and nothing is cached yet —
+   one honest line instead of invented cards. */
+.feed-note{
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 28px 24px;
+  border: 1px solid var(--line);
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: center;
+}
+
 .drop-card{
   position:relative;
   background:var(--bg);

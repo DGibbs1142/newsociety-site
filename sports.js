@@ -108,19 +108,24 @@ function renderEmptyLive(){
   grid.innerHTML = '<div class="drop-card"><span class="drop-status mono">Standing by</span><h4>No games in progress</h4><p>Check the latest drops below for what\'s scheduled and what just wrapped.</p></div>';
 }
 
-const DEMO_GAMES = [
-  { leagueLabel: 'NBA', status: { type: { description: 'Scheduled' } }, name: 'Sample Matchup A', competitions: [{ venue: { fullName: 'Sample Arena' } }], links: [{ href: '#' }] },
-  { leagueLabel: 'NFL', status: { type: { description: 'Scheduled' } }, name: 'Sample Matchup B', competitions: [{ venue: { fullName: 'Sample Stadium' } }], links: [{ href: '#' }] },
-  { leagueLabel: 'Premier League', status: { type: { description: 'Scheduled' } }, name: 'Sample Matchup C', competitions: [{ venue: { fullName: 'Sample Ground' } }], links: [{ href: '#' }] }
-];
-
 function renderError(message){
-  renderGames(DEMO_GAMES, 'newsGrid', 'newsSectionTitle', 'Live from the scoreboard. (demo preview)');
-  const liveTitle = document.getElementById('liveScoresTitle');
+  console.warn('Sports feed error:', message);
+  const cached = feedCache.load('sports');
   const liveGrid = document.getElementById('liveScoresGrid');
-  if(liveTitle) liveTitle.textContent = 'Live now. (demo preview)';
+  const liveTitle = document.getElementById('liveScoresTitle');
+  if(cached){
+    renderGames(cached.items, 'newsGrid', 'newsSectionTitle',
+      'Live from the scoreboard. (last update ' + feedCache.ago(cached.at) + ')');
+    // Scores go stale fastest, so the live strip is cleared rather than
+    // showing an old game as if it were still in progress.
+    if(liveTitle) liveTitle.textContent = 'Live scores are reconnecting.';
+    if(liveGrid) liveGrid.innerHTML = '';
+    return;
+  }
+  renderFeedUnavailable('newsGrid', 'newsSectionTitle', 'Live from the scoreboard.',
+    'The scoreboard feed is quiet right now. Refresh in a few minutes for the latest games.');
+  if(liveTitle) liveTitle.textContent = 'Live scores are reconnecting.';
   if(liveGrid) liveGrid.innerHTML = '';
-  console.warn('Sports feed error, showing demo content:', message);
 }
 
 async function loadSports(){
@@ -141,7 +146,9 @@ async function loadSports(){
       renderEmptyLive();
     }
 
-    renderGames(pickBalanced(rest, 6), 'newsGrid', 'newsSectionTitle', 'Live from the scoreboard.');
+    const scoreboard = pickBalanced(rest, 6);
+    feedCache.save('sports', scoreboard);
+    renderGames(scoreboard, 'newsGrid', 'newsSectionTitle', 'Live from the scoreboard.');
   }catch(err){
     renderError(err.message);
   }
