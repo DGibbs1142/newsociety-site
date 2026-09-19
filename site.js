@@ -1,3 +1,9 @@
+// The font stylesheet is requested with media="print" so it never blocks the
+// first paint, then promoted here once the page is parsed. This used to be an
+// inline onload attribute; moving it into a file is what lets the site send a
+// Content-Security-Policy that blocks inline script.
+document.querySelectorAll('link[data-font]').forEach(link => { link.media = 'all'; });
+
 // Ticker items — shared across every page. Each links to its own page now.
 const TICKER_ITEMS = [
   { label: 'Sports', href: '/sports.html' },

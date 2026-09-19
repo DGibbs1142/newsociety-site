@@ -6,7 +6,7 @@
 // Live API calls (cross-origin sources, and our own /api/* functions) are
 // never intercepted — they always go straight to the network.
 
-const CACHE_VERSION = 'newsociety-v6';
+const CACHE_VERSION = 'newsociety-v7';
 const APP_SHELL = [
   '/', '/index.html', '/sports.html', '/anime.html', '/pop-culture.html',
   '/fashion.html', '/music.html', '/current-events.html', '/detail.html',

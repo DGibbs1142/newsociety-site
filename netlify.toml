@@ -61,3 +61,9 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    # No page carries inline script (the font swap and the detail page's
+    # broken-image handler both moved into .js files), so script-src can stay
+    # strict. Styles still need 'unsafe-inline' for the style="" attributes
+    # sprinkled through the markup. Images come from a dozen third-party CDNs,
+    # so img-src allows any https source rather than listing them all.
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://graphql.anilist.co https://site.api.espn.com https://site.web.api.espn.com https://itunes.apple.com https://www.googleapis.com https://cloudflareinsights.com; upgrade-insecure-requests"

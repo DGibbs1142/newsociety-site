@@ -4,6 +4,19 @@
 // anilistId), this page makes its own live fetch for a genuinely deeper
 // breakdown instead of just repeating the card's mini-blurb.
 
+
+// Images from third-party APIs go missing often enough that each one hides
+// itself when it fails. The handler is attached here rather than with an
+// inline onerror attribute so the site can ship a Content-Security-Policy
+// that blocks inline script outright.
+function hideBrokenImages(container){
+  if(!container) return;
+  container.querySelectorAll('img[data-hide-if-broken]').forEach(img => {
+    img.addEventListener('error', () => img.remove());
+    if(img.complete && img.naturalWidth === 0) img.remove();
+  });
+}
+
 function escapeHtml(str){
   const div = document.createElement('div');
   div.textContent = str ?? '';
@@ -210,6 +223,7 @@ async function fetchAndRenderSportsBreakdown(){
     html += renderPlayerStats(data.boxscore?.players, competitors);
 
     document.getElementById('detailBreakdown').innerHTML = html;
+    hideBrokenImages(document.getElementById('detailBreakdown'));
 
     if(isLive){
       setTimeout(fetchAndRenderSportsBreakdown, 20000);
@@ -246,6 +260,7 @@ async function renderTitleBreakdown(){
     html += '</div>';
 
     document.getElementById('detailBreakdown').innerHTML = html;
+    hideBrokenImages(document.getElementById('detailBreakdown'));
   }catch(err){
     document.getElementById('detailBreakdown').innerHTML = '';
     console.warn('Title breakdown unavailable:', err.message);
@@ -285,6 +300,7 @@ async function renderAnimeBreakdown(){
     }
 
     document.getElementById('detailBreakdown').innerHTML = html;
+    hideBrokenImages(document.getElementById('detailBreakdown'));
   }catch(err){
     document.getElementById('detailBreakdown').innerHTML = '';
     console.warn('Anime breakdown unavailable:', err.message);
@@ -304,7 +320,7 @@ async function renderAthleteBreakdown(){
     let html = '<div class="section-label">// the breakdown</div><div class="breakdown-heading">NewSociety Player Profile</div>';
 
     const headshot = a.headshot?.href;
-    if(headshot) html += `<img src="${escapeHtml(headshot)}" alt="" style="width:140px; height:140px; object-fit:cover; border:1px solid var(--line); margin-bottom:24px; display:block;" onerror="this.remove()">`;
+    if(headshot) html += `<img src="${escapeHtml(headshot)}" alt="" style="width:140px; height:140px; object-fit:cover; border:1px solid var(--line); margin-bottom:24px; display:block;" data-hide-if-broken>`;
 
     html += '<div class="fact-grid">';
     if(a.position?.displayName) html += `<div class="fact-cell"><div class="label">Position</div><div class="value">${escapeHtml(a.position.displayName)}</div></div>`;
@@ -315,6 +331,7 @@ async function renderAthleteBreakdown(){
     html += '</div>';
 
     document.getElementById('detailBreakdown').innerHTML = html;
+    hideBrokenImages(document.getElementById('detailBreakdown'));
   }catch(err){
     document.getElementById('detailBreakdown').innerHTML = '';
     console.warn('Athlete breakdown unavailable:', err.message);
@@ -334,7 +351,7 @@ async function renderTeamBreakdown(){
     let html = '<div class="section-label">// the breakdown</div><div class="breakdown-heading">NewSociety Team Profile</div>';
 
     const logo = t.logos?.[0]?.href;
-    if(logo) html += `<img src="${escapeHtml(logo)}" alt="" style="width:100px; height:100px; object-fit:contain; margin-bottom:24px; display:block;" onerror="this.remove()">`;
+    if(logo) html += `<img src="${escapeHtml(logo)}" alt="" style="width:100px; height:100px; object-fit:contain; margin-bottom:24px; display:block;" data-hide-if-broken>`;
 
     const record = t.record?.items?.[0]?.summary;
     const nextEvent = t.nextEvent?.[0]?.name;
@@ -346,6 +363,7 @@ async function renderTeamBreakdown(){
     html += '</div>';
 
     document.getElementById('detailBreakdown').innerHTML = html;
+    hideBrokenImages(document.getElementById('detailBreakdown'));
   }catch(err){
     document.getElementById('detailBreakdown').innerHTML = '';
     console.warn('Team breakdown unavailable:', err.message);
@@ -390,6 +408,7 @@ async function renderMusicBreakdown(){
     }
 
     document.getElementById('detailBreakdown').innerHTML = html;
+    hideBrokenImages(document.getElementById('detailBreakdown'));
   }catch(err){
     document.getElementById('detailBreakdown').innerHTML = '';
     console.warn('Music breakdown unavailable:', err.message);
@@ -405,7 +424,7 @@ function renderNewsBreakdown(){
   let html = '<div class="section-label">// the breakdown</div><div class="breakdown-heading">NewSociety Rundown</div>';
 
   if(imageUrl){
-    html += `<img src="${escapeHtml(imageUrl)}" alt="" style="width:100%; max-width:640px; border:1px solid var(--line); margin-bottom:24px; display:block;" onerror="this.remove()">`;
+    html += `<img src="${escapeHtml(imageUrl)}" alt="" style="width:100%; max-width:640px; border:1px solid var(--line); margin-bottom:24px; display:block;" data-hide-if-broken>`;
   }
 
   const publishedDisplay = publishedAt
@@ -420,6 +439,7 @@ function renderNewsBreakdown(){
   html += '</div>';
 
   document.getElementById('detailBreakdown').innerHTML = html;
+    hideBrokenImages(document.getElementById('detailBreakdown'));
 }
 
 // --- Related Stories: a few more items from the same pillar, using the
