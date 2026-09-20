@@ -555,6 +555,168 @@ function welcomeMessage_(email) {
   };
 }
 
+// ---- Weekly newsletter ----
+// Edit NEWSLETTER_ISSUE, run previewNewsletter() to send yourself a copy and
+// see how many subscribers would get it, then run sendNewsletter(). Each
+// issue stamps its own column on the Newsletter tab ("Issue 01 sent"), so a
+// second run only reaches people who joined since, and nobody is sent the
+// same issue twice.
+const NEWSLETTER_ISSUE = {
+  number: 1,
+  dateline: 'Sunday, September 20, 2026',
+  subject: 'The Week in Culture — Ella Langley owns the chart, Spider-Man owns the box office',
+  intro: "Week one of NewSociety. Here's what actually mattered.",
+  blocks: [
+    {
+      tag: 'Sports', color: '#4fb3a9',
+      head: 'The Bears scored 59 points. In Week 1.',
+      body: 'Ninety-six combined points against the Panthers, overtime in Detroit, and the Ravens rolling in Indy. Week 1 did not ease anyone in, and nobody looks like the team we thought they were.'
+    },
+    {
+      tag: 'Music', color: '#5aa0e8',
+      head: 'Ella Langley is running the chart against herself.',
+      body: 'Two of the top three songs in the country are hers, with Drake wedged at number two between them. STELLA LEFTY’s "Boston" keeps climbing too, which is the story nobody’s telling yet.'
+    },
+    {
+      tag: 'Pop culture', color: '#e3a34b',
+      head: 'Spider-Man passed Star Wars.',
+      body: '"Brand New Day" became the highest-grossing movie ever at the domestic box office, ahead of "The Force Awakens." Spider-Man is now the only franchise with two films in America’s all-time top five.'
+    },
+    {
+      tag: 'Fashion', color: '#b58cff',
+      head: 'Fashion Month hit the road.',
+      body: 'New York, then London, Milan and Paris, back to back into early October. If you only follow one city, make it the one whose street style you actually want to wear.'
+    },
+    {
+      tag: 'Anime', color: '#e0679a',
+      head: 'Fall premieres start October 2.',
+      body: 'The Apothecary Diaries returns for season three, Black Clover and Tokyo Revengers land the next day, and the Magic Knight Rayearth reboot arrives October 7. Clear the queue now.'
+    }
+  ],
+  live: "We’re throwing a launch party. The date and venue are almost locked, and this list hears them before anyone else.",
+  closer: 'Which of these do you want more of? Reply and tell us. We read everything.'
+};
+
+function newsletterHeader_() {
+  const n = String(NEWSLETTER_ISSUE.number);
+  return 'Issue ' + (n.length < 2 ? '0' + n : n) + ' sent';
+}
+
+function previewNewsletter() {
+  requireIssue_();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(FORMS['newsletter'].tab);
+  const wouldSend = sheet ? newsletterRecipients_(sheet, newsletterHeader_()).length : 0;
+  const me = Session.getEffectiveUser().getEmail();
+  MailApp.sendEmail(newsletterMessage_(me));
+  console.log('Preview sent to ' + me + '. sendNewsletter() would email ' + wouldSend + ' subscriber(s).');
+  return { preview: me, wouldSend: wouldSend };
+}
+
+function sendNewsletter() {
+  requireIssue_();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(FORMS['newsletter'].tab);
+  if (!sheet || sheet.getLastRow() < 2) { console.log('No subscribers yet.'); return { sent: 0, skipped: 0 }; }
+  const header = newsletterHeader_();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sentCol = stampColumn_(sheet, header);
+    const report = { sent: 0, skipped: 0 };
+    newsletterRecipients_(sheet, header).forEach(function (sub) {
+      if (MailApp.getRemainingDailyQuota() <= CONFIRMATION_QUOTA_FLOOR) { report.skipped++; return; }
+      MailApp.sendEmail(newsletterMessage_(sub.email));
+      sheet.getRange(sub.row, sentCol).setValue(new Date());
+      report.sent++;
+    });
+    console.log(header + ': ' + report.sent + ' sent' +
+      (report.skipped ? ', ' + report.skipped + ' held back by the daily email limit (run again tomorrow)' : ''));
+    return report;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function requireIssue_() {
+  const i = NEWSLETTER_ISSUE;
+  if (!i.number || !String(i.subject || '').trim() || !(i.blocks || []).length) {
+    throw new Error('Fill in NEWSLETTER_ISSUE first (number, subject, and at least one block).');
+  }
+}
+
+// One row per valid address that has no stamp for this issue, newest row per
+// address (someone can sign up twice; they still only get one copy).
+function newsletterRecipients_(sheet, header) {
+  const lastRow = sheet.getLastRow();
+  const lastCol = Math.max(sheet.getLastColumn(), 1);
+  if (lastRow < 2) return [];
+  const head = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(String);
+  const emailAt = head.indexOf('Email');
+  const stampAt = head.indexOf(header);
+  if (emailAt < 0) return [];
+  const latest = {}, done = {};
+  sheet.getRange(2, 1, lastRow - 1, lastCol).getValues().forEach(function (v, i) {
+    const key = cleanEmail_(v[emailAt]);
+    if (!/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(key)) return;
+    if (stampAt >= 0 && v[stampAt] !== '' && v[stampAt] !== null) done[key] = true;
+    latest[key] = { row: i + 2, email: String(v[emailAt]).replace(/^'/, '').trim() };
+  });
+  return Object.keys(latest)
+    .filter(function (key) { return !done[key]; })
+    .map(function (key) { return latest[key]; });
+}
+
+function newsletterMessage_(email) {
+  const issue = NEWSLETTER_ISSUE;
+  const site = 'https://newsociety.netlify.app';
+  const num = String(issue.number).length < 2 ? '0' + issue.number : String(issue.number);
+
+  const lines = ['NewSociety · The Week in Culture', 'Issue ' + num + ' · ' + issue.dateline, '', issue.intro, ''];
+  issue.blocks.forEach(function (b) {
+    lines.push(b.tag.toUpperCase(), b.head, b.body, '');
+  });
+  lines.push('NewSociety Live', issue.live, site + '/live.html', '', issue.closer, '',
+    'Instagram ' + SOCIALS[0][2], 'TikTok ' + SOCIALS[1][2], 'X ' + SOCIALS[2][2], '',
+    'You signed up at ' + site + '. Reply to this email to be taken off the list.');
+
+  const esc = function (v) {
+    return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  };
+  const blockHtml = function (b) {
+    return '<tr><td style="padding:0 0 26px;">' +
+      '<p style="margin:0 0 8px;font:12px/1.4 Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:' + b.color + ';">' + esc(b.tag) + '</p>' +
+      '<h2 style="margin:0 0 8px;font-size:21px;line-height:1.25;color:#f4f3ef;font-weight:bold;">' + esc(b.head) + '</h2>' +
+      '<p style="margin:0;font-size:15px;line-height:1.6;color:#c9c9cf;">' + esc(b.body) + '</p></td></tr>';
+  };
+  const html =
+    '<div style="font-family:Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;padding:34px 26px 30px;background:#0a0a0c;color:#f4f3ef;">' +
+    '<table role="presentation" width="100%" style="border-collapse:collapse;">' +
+    '<tr><td style="padding:0 0 6px;"><p style="margin:0;font:12px/1.4 Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;color:#8470ff;">NewSociety · The Week in Culture</p></td></tr>' +
+    '<tr><td style="padding:0 0 20px;border-bottom:1px solid #232327;"><p style="margin:0;font:11px/1.4 Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:#808088;">Issue ' + num + ' · ' + esc(issue.dateline) + '</p></td></tr>' +
+    '<tr><td style="padding:22px 0 24px;"><p style="margin:0;font-size:16px;line-height:1.6;color:#c9c9cf;">' + esc(issue.intro) + '</p></td></tr>' +
+    issue.blocks.map(blockHtml).join('') +
+    '<tr><td style="padding:4px 0 24px;border-top:1px solid #232327;">' +
+    '<p style="margin:18px 0 12px;font:12px/1.4 Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:#8470ff;">NewSociety Live</p>' +
+    '<p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#c9c9cf;">' + esc(issue.live) + '</p>' +
+    '<a href="' + site + '/live.html" style="display:inline-block;background:#6e56ff;color:#fff;text-decoration:none;font:13px Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;padding:13px 22px;">Get on the list →</a></td></tr>' +
+    '<tr><td style="padding:0 0 26px;"><p style="margin:0;font-size:15px;line-height:1.6;color:#c9c9cf;">' + esc(issue.closer) + '</p></td></tr>' +
+    '<tr><td style="padding:18px 0 0;border-top:1px solid #232327;">' +
+    '<p style="margin:0 0 10px;font:12px/1.6 Menlo,monospace;color:#808088;">' +
+    '<a href="' + SOCIALS[0][2] + '" style="color:#8470ff;text-decoration:none;">Instagram</a> · ' +
+    '<a href="' + SOCIALS[1][2] + '" style="color:#8470ff;text-decoration:none;">TikTok</a> · ' +
+    '<a href="' + SOCIALS[2][2] + '" style="color:#8470ff;text-decoration:none;">X</a> · ' +
+    '<a href="' + site + '" style="color:#8470ff;text-decoration:none;">newsociety.netlify.app</a></p>' +
+    '<p style="margin:0;font-size:12px;line-height:1.5;color:#808088;">You signed up at newsociety.netlify.app. Reply to this email to be taken off the list.</p>' +
+    '</td></tr></table></div>';
+
+  return {
+    to: email,
+    subject: issue.subject,
+    body: lines.join('\n'),
+    htmlBody: html,
+    name: 'NewSociety'
+  };
+}
+
 // Column number of "Confirmation sent", adding the header to the first empty
 // column if this RSVPs tab was created before the column existed.
 function stampColumn_(sheet, label) {
