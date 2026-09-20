@@ -568,32 +568,33 @@ const NEWSLETTER_ISSUE = {
   intro: "Week one of NewSociety. Here's what actually mattered.",
   blocks: [
     {
-      tag: 'Sports', color: '#4fb3a9',
+      tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
       head: 'Ole Miss 24, LSU 19 \u2014 and Oxford let Kiffin hear every minute of it.',
       body: 'Trinidad Chambliss carved up his old coach\u2019s new team in front of a record 70,033 at Vaught-Hemingway, and LSU\u2019s late push died on a kick that sailed wide right. Add the Bears hanging 59 on the Panthers in Week 1 and this was the loudest week of the season so far.'
     },
     {
-      tag: 'Music', color: '#5aa0e8',
+      tag: 'Music', page: 'music.html', color: '#5aa0e8',
       head: 'Ella Langley is running the chart against herself.',
       body: 'Two of the top three songs in the country are hers, with Drake wedged at number two between them. STELLA LEFTY’s "Boston" keeps climbing too, which is the story nobody’s telling yet.'
     },
     {
-      tag: 'Pop culture', color: '#e3a34b',
+      tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
       head: 'Spider-Man passed Star Wars.',
       body: '"Brand New Day" became the highest-grossing movie ever at the domestic box office, ahead of "The Force Awakens." Spider-Man is now the only franchise with two films in America’s all-time top five.'
     },
     {
-      tag: 'Fashion', color: '#b58cff',
+      tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
       head: 'Fashion Month hit the road.',
       body: 'New York, then London, Milan and Paris, back to back into early October. If you only follow one city, make it the one whose street style you actually want to wear.'
     },
     {
-      tag: 'Anime', color: '#e0679a',
+      tag: 'Anime', page: 'anime.html', color: '#e0679a',
       head: 'Fall premieres start October 2.',
       body: 'The Apothecary Diaries returns for season three, Black Clover and Tokyo Revengers land the next day, and the Magic Knight Rayearth reboot arrives October 7. Clear the queue now.'
     }
   ],
   live: "We’re throwing a launch party. The date and venue are almost locked, and this list hears them before anyone else.",
+  liveRsvp: "You’re on the launch party list. The date and venue are almost locked, and you’ll hear them before anyone else.",
   closer: 'Which of these do you want more of? Reply and tell us. We read everything.'
 };
 
@@ -606,10 +607,13 @@ function previewNewsletter() {
   requireIssue_();
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(FORMS['newsletter'].tab);
   const wouldSend = sheet ? newsletterRecipients_(sheet, newsletterHeader_()).length : 0;
+  const wouldSendRsvps = rsvpNewsletterRecipients_().length;
   const me = Session.getEffectiveUser().getEmail();
   MailApp.sendEmail(newsletterMessage_(me));
-  console.log('Preview sent to ' + me + '. sendNewsletter() would email ' + wouldSend + ' subscriber(s).');
-  return { preview: me, wouldSend: wouldSend };
+  MailApp.sendEmail(newsletterMessage_(me, 'rsvp'));
+  console.log('Preview sent to ' + me + ' (a subscriber copy and an RSVP-guest copy). sendNewsletter() would email ' +
+    wouldSend + ' subscriber(s); sendNewsletterToRsvps() would email ' + wouldSendRsvps + ' RSVP guest(s).');
+  return { preview: me, wouldSend: wouldSend, wouldSendRsvps: wouldSendRsvps };
 }
 
 function sendNewsletter() {
@@ -634,6 +638,56 @@ function sendNewsletter() {
   } finally {
     lock.releaseLock();
   }
+}
+
+// Same issue, for launch-party RSVPs who aren't already on the Newsletter tab
+// (those people get it through sendNewsletter). RSVP guests only agreed to hear
+// about the party, so they get their own footer saying why they're receiving it.
+// Stamped in the same "Issue 01 sent" column on the RSVPs tab, so it can't go
+// to anyone twice.
+function sendNewsletterToRsvps() {
+  requireIssue_();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(FORMS['launch-rsvp'].tab);
+  if (!sheet || sheet.getLastRow() < 2) { console.log('No RSVPs yet.'); return { sent: 0, skipped: 0 }; }
+  const header = newsletterHeader_();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sentCol = stampColumn_(sheet, header);
+    const report = { sent: 0, skipped: 0 };
+    rsvpNewsletterRecipients_().forEach(function (guest) {
+      if (MailApp.getRemainingDailyQuota() <= CONFIRMATION_QUOTA_FLOOR) { report.skipped++; return; }
+      MailApp.sendEmail(newsletterMessage_(guest.data.email, 'rsvp'));
+      sheet.getRange(guest.row, sentCol).setValue(new Date());
+      report.sent++;
+    });
+    console.log(header + ' (RSVP guests): ' + report.sent + ' sent' +
+      (report.skipped ? ', ' + report.skipped + ' held back by the daily email limit (run again tomorrow)' : ''));
+    return report;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// RSVP guests with no "Issue NN sent" stamp, minus anyone on the Newsletter tab.
+function rsvpNewsletterRecipients_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const rsvps = ss.getSheetByName(FORMS['launch-rsvp'].tab);
+  if (!rsvps) return [];
+  const subs = ss.getSheetByName(FORMS['newsletter'].tab);
+  const onList = {};
+  if (subs && subs.getLastRow() > 1) {
+    const head = subs.getRange(1, 1, 1, Math.max(subs.getLastColumn(), 1)).getValues()[0].map(String);
+    const emailAt = head.indexOf('Email');
+    if (emailAt >= 0) {
+      subs.getRange(2, emailAt + 1, subs.getLastRow() - 1, 1).getValues().forEach(function (v) {
+        onList[cleanEmail_(v[0])] = true;
+      });
+    }
+  }
+  return pendingGuests_(rsvps, newsletterHeader_()).filter(function (guest) {
+    return !onList[cleanEmail_(guest.data.email)];
+  });
 }
 
 function requireIssue_() {
@@ -665,48 +719,67 @@ function newsletterRecipients_(sheet, header) {
     .map(function (key) { return latest[key]; });
 }
 
-function newsletterMessage_(email) {
+function newsletterMessage_(email, audience) {
   const issue = NEWSLETTER_ISSUE;
   const site = 'https://newsociety.netlify.app';
   const num = String(issue.number).length < 2 ? '0' + issue.number : String(issue.number);
+  const rsvp = audience === 'rsvp';
+  const liveText = rsvp && issue.liveRsvp ? issue.liveRsvp : issue.live;
+  const liveButton = rsvp ? 'Launch party details →' : 'Get on the list →';
+  const why = rsvp ? "You’re getting this because you RSVP’d to the NewSociety launch party."
+                   : 'You signed up at newsociety.netlify.app.';
+  // Each block's "page" is the pillar page that carries its story.
+  const linkFor = function (b) { return b.page ? site + '/' + b.page : site; };
 
   const lines = ['NewSociety · The Week in Culture', 'Issue ' + num + ' · ' + issue.dateline, '', issue.intro, ''];
   issue.blocks.forEach(function (b) {
-    lines.push(b.tag.toUpperCase(), b.head, b.body, '');
+    lines.push(b.tag.toUpperCase(), b.head, b.body, 'Read it: ' + linkFor(b), '');
   });
-  lines.push('NewSociety Live', issue.live, site + '/live.html', '', issue.closer, '',
+  lines.push('NewSociety Live', liveText, site + '/live.html', '', issue.closer, '',
     'Instagram ' + SOCIALS[0][2], 'TikTok ' + SOCIALS[1][2], 'X ' + SOCIALS[2][2], '',
-    'You signed up at ' + site + '. Reply to this email to be taken off the list.');
+    why + ' Reply to this email to be taken off the list.');
 
   const esc = function (v) {
     return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   };
+  // Black canvas, white text. Coloured accents stay on the pillar labels,
+  // "Read more" links and buttons only.
+  const BG = '#000000', TEXT = '#ffffff', LINE = '#2a2a2e';
   const blockHtml = function (b) {
-    return '<tr><td style="padding:0 0 26px;">' +
-      '<p style="margin:0 0 8px;font:12px/1.4 Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:' + b.color + ';">' + esc(b.tag) + '</p>' +
-      '<h2 style="margin:0 0 8px;font-size:21px;line-height:1.25;color:#f4f3ef;font-weight:bold;">' + esc(b.head) + '</h2>' +
-      '<p style="margin:0;font-size:15px;line-height:1.6;color:#c9c9cf;">' + esc(b.body) + '</p></td></tr>';
+    const href = linkFor(b);
+    return '<tr><td style="padding:0 0 28px;background:' + BG + ';">' +
+      '<p style="margin:0 0 8px;font:12px/1.4 Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:' + b.color + ';">' +
+      '<a href="' + href + '" style="color:' + b.color + ';text-decoration:none;">' + esc(b.tag) + '</a></p>' +
+      '<h2 style="margin:0 0 8px;font-size:21px;line-height:1.25;color:' + TEXT + ';font-weight:bold;">' +
+      '<a href="' + href + '" style="color:' + TEXT + ';text-decoration:none;">' + esc(b.head) + '</a></h2>' +
+      '<p style="margin:0 0 10px;font-size:15px;line-height:1.6;color:' + TEXT + ';">' + esc(b.body) + '</p>' +
+      '<p style="margin:0;font:12px/1.4 Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;">' +
+      '<a href="' + href + '" style="color:' + b.color + ';text-decoration:underline;">Read more →</a></p></td></tr>';
   };
   const html =
-    '<div style="font-family:Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;padding:34px 26px 30px;background:#0a0a0c;color:#f4f3ef;">' +
-    '<table role="presentation" width="100%" style="border-collapse:collapse;">' +
-    '<tr><td style="padding:0 0 6px;"><p style="margin:0;font:12px/1.4 Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;color:#8470ff;">NewSociety · The Week in Culture</p></td></tr>' +
-    '<tr><td style="padding:0 0 20px;border-bottom:1px solid #232327;"><p style="margin:0;font:11px/1.4 Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:#808088;">Issue ' + num + ' · ' + esc(issue.dateline) + '</p></td></tr>' +
-    '<tr><td style="padding:22px 0 24px;"><p style="margin:0;font-size:16px;line-height:1.6;color:#c9c9cf;">' + esc(issue.intro) + '</p></td></tr>' +
+    '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+    '<meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark"></head>' +
+    '<body bgcolor="' + BG + '" style="margin:0;padding:0;background:' + BG + ';color:' + TEXT + ';">' +
+    '<table role="presentation" width="100%" bgcolor="' + BG + '" style="border-collapse:collapse;background:' + BG + ';"><tr><td align="center" bgcolor="' + BG + '" style="background:' + BG + ';">' +
+    '<div style="font-family:Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;padding:34px 26px 30px;text-align:left;background:' + BG + ';color:' + TEXT + ';">' +
+    '<table role="presentation" width="100%" bgcolor="' + BG + '" style="border-collapse:collapse;background:' + BG + ';">' +
+    '<tr><td style="padding:0 0 6px;"><p style="margin:0;font:12px/1.4 Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;color:' + TEXT + ';">NewSociety · The Week in Culture</p></td></tr>' +
+    '<tr><td style="padding:0 0 20px;border-bottom:1px solid ' + LINE + ';"><p style="margin:0;font:11px/1.4 Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:' + TEXT + ';">Issue ' + num + ' · ' + esc(issue.dateline) + '</p></td></tr>' +
+    '<tr><td style="padding:22px 0 24px;"><p style="margin:0;font-size:16px;line-height:1.6;color:' + TEXT + ';">' + esc(issue.intro) + '</p></td></tr>' +
     issue.blocks.map(blockHtml).join('') +
-    '<tr><td style="padding:4px 0 24px;border-top:1px solid #232327;">' +
+    '<tr><td style="padding:4px 0 24px;border-top:1px solid ' + LINE + ';">' +
     '<p style="margin:18px 0 12px;font:12px/1.4 Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:#8470ff;">NewSociety Live</p>' +
-    '<p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#c9c9cf;">' + esc(issue.live) + '</p>' +
-    '<a href="' + site + '/live.html" style="display:inline-block;background:#6e56ff;color:#fff;text-decoration:none;font:13px Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;padding:13px 22px;">Get on the list →</a></td></tr>' +
-    '<tr><td style="padding:0 0 26px;"><p style="margin:0;font-size:15px;line-height:1.6;color:#c9c9cf;">' + esc(issue.closer) + '</p></td></tr>' +
-    '<tr><td style="padding:18px 0 0;border-top:1px solid #232327;">' +
-    '<p style="margin:0 0 10px;font:12px/1.6 Menlo,monospace;color:#808088;">' +
-    '<a href="' + SOCIALS[0][2] + '" style="color:#8470ff;text-decoration:none;">Instagram</a> · ' +
-    '<a href="' + SOCIALS[1][2] + '" style="color:#8470ff;text-decoration:none;">TikTok</a> · ' +
-    '<a href="' + SOCIALS[2][2] + '" style="color:#8470ff;text-decoration:none;">X</a> · ' +
-    '<a href="' + site + '" style="color:#8470ff;text-decoration:none;">newsociety.netlify.app</a></p>' +
-    '<p style="margin:0;font-size:12px;line-height:1.5;color:#808088;">You signed up at newsociety.netlify.app. Reply to this email to be taken off the list.</p>' +
-    '</td></tr></table></div>';
+    '<p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:' + TEXT + ';">' + esc(liveText) + '</p>' +
+    '<a href="' + site + '/live.html" style="display:inline-block;background:#6e56ff;color:#ffffff;text-decoration:none;font:13px Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;padding:13px 22px;">' + esc(liveButton) + '</a></td></tr>' +
+    '<tr><td style="padding:0 0 26px;"><p style="margin:0;font-size:15px;line-height:1.6;color:' + TEXT + ';">' + esc(issue.closer) + '</p></td></tr>' +
+    '<tr><td style="padding:18px 0 0;border-top:1px solid ' + LINE + ';">' +
+    '<p style="margin:0 0 10px;font:12px/1.6 Menlo,monospace;color:' + TEXT + ';">' +
+    '<a href="' + SOCIALS[0][2] + '" style="color:' + TEXT + ';text-decoration:underline;">Instagram</a> · ' +
+    '<a href="' + SOCIALS[1][2] + '" style="color:' + TEXT + ';text-decoration:underline;">TikTok</a> · ' +
+    '<a href="' + SOCIALS[2][2] + '" style="color:' + TEXT + ';text-decoration:underline;">X</a> · ' +
+    '<a href="' + site + '" style="color:' + TEXT + ';text-decoration:underline;">newsociety.netlify.app</a></p>' +
+    '<p style="margin:0;font-size:12px;line-height:1.5;color:' + TEXT + ';">' + esc(why) + ' Reply to this email to be taken off the list.</p>' +
+    '</td></tr></table></div></td></tr></table></body></html>';
 
   return {
     to: email,
