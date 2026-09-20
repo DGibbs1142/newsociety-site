@@ -14,6 +14,9 @@
 // (via MailApp). Leave false until the script has been re-authorized for
 // sending mail and a new deployment version is live.
 const SEND_RSVP_CONFIRMATIONS = true;
+// Newsletter signups get a welcome email the moment they join, so the first
+// real issue isn't the first thing they hear from us.
+const SEND_NEWSLETTER_WELCOME = true;
 // Consumer Gmail allows about 100 recipients a day; stop short of that so a
 // spike (or someone scripting the form) can't use up the whole quota.
 const CONFIRMATION_QUOTA_FLOOR = 10;
@@ -138,6 +141,11 @@ function doPost(e) {
     if (body.form === 'launch-rsvp' && SEND_RSVP_CONFIRMATIONS) {
       // Never let an email problem undo or block saving the RSVP.
       try { sendRsvpConfirmation_(sheet, sheet.getLastRow(), data); } catch (err) { console.error('confirmation email failed', err); }
+    }
+
+    if (body.form === 'newsletter' && SEND_NEWSLETTER_WELCOME) {
+      // Same rule: a mail problem must never lose the signup.
+      try { sendNewsletterWelcome_(sheet, sheet.getLastRow(), data); } catch (err) { console.error('welcome email failed', err); }
     }
   } finally {
     lock.releaseLock();
@@ -446,6 +454,104 @@ function followMessage_(email, data) {
     body: lines.join('\n'),
     htmlBody: html,
     name: 'NewSociety Live'
+  };
+}
+
+// ---- Newsletter welcome ----
+// One email per address, the first time it subscribes, stamped in a
+// "Welcome sent" column on the Newsletter tab. Anyone can type any address
+// into a public form, so the same guards as the RSVP confirmation apply:
+// the address must look valid, sending stops near the daily quota, and a
+// failure leaves the stamp blank so the person can still be welcomed later.
+const WELCOME_HEADER = 'Welcome sent';
+
+function sendNewsletterWelcome_(sheet, row, data) {
+  const email = String(data.email || '').trim();
+  if (!/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(email)) return 'skipped: invalid address';
+  const sentCol = stampColumn_(sheet, WELCOME_HEADER);
+  if (alreadyConfirmed_(sheet, sentCol, email)) return 'skipped: already welcomed';
+  if (MailApp.getRemainingDailyQuota() <= CONFIRMATION_QUOTA_FLOOR) return 'skipped: quota floor';
+  MailApp.sendEmail(welcomeMessage_(email));
+  sheet.getRange(row, sentCol).setValue(new Date());
+  return 'sent';
+}
+
+// One-time catch-up for addresses that subscribed before this email existed.
+function sendMissingWelcomes() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(FORMS['newsletter'].tab);
+  if (!sheet || sheet.getLastRow() < 2) { console.log('No subscribers yet.'); return { sent: 0 }; }
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sentCol = stampColumn_(sheet, WELCOME_HEADER);
+    const lastRow = sheet.getLastRow();
+    const header = sheet.getRange(1, 1, 1, sentCol).getValues()[0].map(String);
+    const emailAt = header.indexOf('Email');
+    const rows = sheet.getRange(2, 1, lastRow - 1, sentCol).getValues();
+    const latest = {}, done = {};
+    rows.forEach(function (v, i) {
+      const key = cleanEmail_(v[emailAt]);
+      if (!key) return;
+      if (v[sentCol - 1] !== '' && v[sentCol - 1] !== null) done[key] = true;
+      latest[key] = { row: i + 2, email: String(v[emailAt]).replace(/^'/, '').trim() };
+    });
+    const report = { sent: 0, skipped: [] };
+    Object.keys(latest).forEach(function (key) {
+      if (done[key]) return;
+      const result = sendNewsletterWelcome_(sheet, latest[key].row, { email: latest[key].email });
+      if (result === 'sent') report.sent++; else report.skipped.push(result);
+    });
+    console.log('Catch-up welcomes: ' + report.sent + ' sent' +
+      (report.skipped.length ? ', skipped: ' + report.skipped.join('; ') : ''));
+    return report;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function welcomeMessage_(email) {
+  const site = 'https://newsociety.netlify.app';
+  const lines = [
+    "You're on the list.",
+    '',
+    'Once a week we send the culture that actually mattered: sports, music, anime, pop culture, fashion and the news cycle, with an actual opinion. No filler, no daily inbox spam.',
+    '',
+    'Follow along in between:',
+    SOCIALS.map(function (s) { return s[0] + ' ' + s[1] + ': ' + s[2]; }).join('\n'),
+    '',
+    'The feed never stops: ' + site,
+    '',
+    '— NewSociety',
+    '',
+    "You're getting this because this address was used to sign up at " + site + ". Reply to this email to be taken off the list."
+  ].filter(function (l, i, a) { return !(l === '' && a[i - 1] === ''); });
+
+  const p = function (text, extra) {
+    return '<p style="font-size:15px;line-height:1.6;color:#c9c9cf;margin:0 0 14px;' + (extra || '') + '">' + text + '</p>';
+  };
+  const social = function (s) {
+    return '<tr><td style="padding:7px 18px 7px 0;font:12px/1.4 Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:#8470ff;vertical-align:middle;">' + s[0] + '</td>' +
+      '<td style="padding:7px 0;font-size:16px;line-height:1.4;"><a href="' + s[2] + '" style="color:#f4f3ef;text-decoration:none;font-weight:bold;">' + s[1] + ' →</a></td></tr>';
+  };
+  const html =
+    '<div style="display:none;max-height:0;overflow:hidden;">One email a week, and nothing else.</div>' +
+    '<div style="font-family:Helvetica,Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#0a0a0c;color:#f4f3ef;">' +
+    '<p style="font:12px/1.4 Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;color:#8470ff;margin:0 0 16px;">NewSociety</p>' +
+    '<h1 style="font-size:28px;line-height:1.1;text-transform:uppercase;margin:0 0 20px;">You\'re on the list.</h1>' +
+    p('Once a week we send the culture that actually mattered: sports, music, anime, pop culture, fashion and the news cycle, with an actual opinion. No filler, no daily inbox spam.') +
+    p('<strong style="color:#f4f3ef;">Follow along in between:</strong>', 'margin-bottom:6px;') +
+    '<table role="presentation" style="border-collapse:collapse;margin:0 0 22px;">' + SOCIALS.map(social).join('') + '</table>' +
+    '<p style="margin:0 0 28px;"><a href="' + site + '" style="display:inline-block;background:#6e56ff;color:#fff;text-decoration:none;font:13px Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;padding:13px 22px;border-radius:2px;">Watch the Feed →</a></p>' +
+    '<p style="font-size:12px;line-height:1.5;color:#808088;margin:0;">You\'re getting this because this address was used to sign up at newsociety.netlify.app. Reply to this email to be taken off the list.</p>' +
+    '</div>';
+
+  return {
+    to: email,
+    subject: "You're on the list — NewSociety",
+    body: lines.join('\n'),
+    htmlBody: html,
+    name: 'NewSociety'
   };
 }
 
