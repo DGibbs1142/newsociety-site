@@ -564,13 +564,13 @@ function welcomeMessage_(email) {
 const NEWSLETTER_ISSUE = {
   number: 1,
   dateline: 'Sunday, September 20, 2026',
-  subject: 'The Week in Culture — Ella Langley owns the chart, Spider-Man owns the box office',
+  subject: 'The Week in Culture \u2014 Ole Miss stuns LSU, Ella Langley owns the chart',
   intro: "Week one of NewSociety. Here's what actually mattered.",
   blocks: [
     {
       tag: 'Sports', color: '#4fb3a9',
-      head: 'The Bears scored 59 points. In Week 1.',
-      body: 'Ninety-six combined points against the Panthers, overtime in Detroit, and the Ravens rolling in Indy. Week 1 did not ease anyone in, and nobody looks like the team we thought they were.'
+      head: 'Ole Miss 24, LSU 19 \u2014 and Oxford let Kiffin hear every minute of it.',
+      body: 'Trinidad Chambliss carved up his old coach\u2019s new team in front of a record 70,033 at Vaught-Hemingway, and LSU\u2019s late push died on a kick that sailed wide right. Add the Bears hanging 59 on the Panthers in Week 1 and this was the loudest week of the season so far.'
     },
     {
       tag: 'Music', color: '#5aa0e8',
