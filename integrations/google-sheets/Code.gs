@@ -565,37 +565,37 @@ const NEWSLETTER_ISSUE = {
   number: 1,
   dateline: 'Sunday, September 20, 2026',
   subject: 'The Week in Culture \u2014 Ole Miss stuns LSU, Ella Langley owns the chart',
-  intro: "Week one of NewSociety. Here's what actually mattered.",
+  intro: 'Week one of NewSociety. No filler, just what mattered.',
   blocks: [
     {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'Ole Miss 24, LSU 19 \u2014 and Oxford let Kiffin hear every minute of it.',
-      body: 'Trinidad Chambliss carved up his old coach\u2019s new team in front of a record 70,033 at Vaught-Hemingway, and LSU\u2019s late push died on a kick that sailed wide right. Add the Bears hanging 59 on the Panthers in Week 1 and this was the loudest week of the season so far.'
+      head: 'Ole Miss 24, LSU 19. Oxford made Kiffin hear every second.',
+      body: 'Trinidad Chambliss shredded his old coach\u2019s new team in front of a record 70,033 at Vaught-Hemingway. LSU\u2019s late push died on a kick that sailed wide right. Oh, and the Bears hung 59 on the Panthers in Week 1. Loudest week of the season so far.'
     },
     {
       tag: 'Music', page: 'music.html', color: '#5aa0e8',
-      head: 'Ella Langley is running the chart against herself.',
-      body: 'Two of the top three songs in the country are hers, with Drake wedged at number two between them. STELLA LEFTY’s "Boston" keeps climbing too, which is the story nobody’s telling yet.'
+      head: 'Ella Langley is racing herself up the chart.',
+      body: 'Two of the top three songs in the country are hers. Drake is stuck at number two, wedged between them. And STELLA LEFTY\u2019s "Boston" keeps climbing, the story nobody\u2019s telling yet.'
     },
     {
       tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
-      head: 'Spider-Man passed Star Wars.',
-      body: '"Brand New Day" became the highest-grossing movie ever at the domestic box office, ahead of "The Force Awakens." Spider-Man is now the only franchise with two films in America’s all-time top five.'
+      head: 'Spider-Man just dethroned Star Wars.',
+      body: '"Brand New Day" is now the highest-grossing movie ever at the domestic box office, passing "The Force Awakens." It\u2019s also the only franchise with two films in America\u2019s all-time top five.'
     },
     {
       tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
-      head: 'Fashion Month hit the road.',
-      body: 'New York, then London, Milan and Paris, back to back into early October. If you only follow one city, make it the one whose street style you actually want to wear.'
+      head: 'Fashion Month is on.',
+      body: 'New York, London, Milan, Paris, back to back into early October. Only have time for one city? Pick the one whose street style you\u2019d actually wear.'
     },
     {
       tag: 'Anime', page: 'anime.html', color: '#e0679a',
-      head: 'Fall premieres start October 2.',
-      body: 'The Apothecary Diaries returns for season three, Black Clover and Tokyo Revengers land the next day, and the Magic Knight Rayearth reboot arrives October 7. Clear the queue now.'
+      head: 'Fall anime starts October 2.',
+      body: 'The Apothecary Diaries is back for season three. Black Clover and Tokyo Revengers land the next day, and the Magic Knight Rayearth reboot arrives October 7. Clear your queue.'
     }
   ],
-  live: "We’re throwing a launch party. The date and venue are almost locked, and this list hears them before anyone else.",
-  liveRsvp: "You’re on the launch party list. The date and venue are almost locked, and you’ll hear them before anyone else.",
-  closer: 'Which of these do you want more of? Reply and tell us. We read everything.'
+  live: 'Launch party incoming. The date and venue are almost locked, and this list hears first.',
+  liveRsvp: 'You\u2019re on the launch party list. The date and venue are almost locked, and you\u2019ll hear first.',
+  closer: 'What do you want more of? Hit reply. We read every one.'
 };
 
 function newsletterHeader_() {
