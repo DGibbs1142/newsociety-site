@@ -562,35 +562,35 @@ function welcomeMessage_(email) {
 // second run only reaches people who joined since, and nobody is sent the
 // same issue twice.
 const NEWSLETTER_ISSUE = {
-  number: 1,
-  dateline: 'Sunday, September 20, 2026',
-  subject: 'The Week in Culture \u2014 Ole Miss stuns LSU, Ella Langley owns the chart',
-  intro: 'Week one of NewSociety. No filler, just what mattered.',
+  number: 2,
+  dateline: 'Sunday, September 27, 2026',
+  subject: 'The Week in Culture \u2014 Taylor breaks a Spotify record, Boston sweeps, the VMAs land tonight',
+  intro: 'Week two. A record, a sweep, and three things worth your Sunday.',
   blocks: [
     {
-      tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'Ole Miss 24, LSU 19. Oxford made Kiffin hear every second.',
-      body: 'Trinidad Chambliss shredded his old coach\u2019s new team in front of a record 70,033 at Vaught-Hemingway. LSU\u2019s late push died on a kick that sailed wide right. Oh, and the Bears hung 59 on the Panthers in Week 1. Loudest week of the season so far.'
-    },
-    {
       tag: 'Music', page: 'music.html', color: '#5aa0e8',
-      head: 'Ella Langley is racing herself up the chart.',
-      body: 'Two of the top three songs in the country are hers. Drake is stuck at number two, wedged between them. And STELLA LEFTY\u2019s "Boston" keeps climbing, the story nobody\u2019s telling yet.'
+      head: 'Taylor Swift set a Spotify record on a year-old album.',
+      body: '\u201CThe Life of a Showgirl: The Encore\u201D added four songs on Friday and all four landed in the Apple Music top 10. \u201CPatient Zero\u201D took the record for biggest single-day streams by a female artist. The video premieres inside the VMAs tonight on CBS.'
     },
     {
-      tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
-      head: 'Spider-Man just dethroned Star Wars.',
-      body: '"Brand New Day" is now the highest-grossing movie ever at the domestic box office, passing "The Force Awakens." It\u2019s also the only franchise with two films in America\u2019s all-time top five.'
-    },
-    {
-      tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
-      head: 'Fashion Month is on.',
-      body: 'New York, London, Milan, Paris, back to back into early October. Only have time for one city? Pick the one whose street style you\u2019d actually wear.'
+      tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
+      head: 'Boston swept a doubleheader and took the Wild Card math with it.',
+      body: 'Down 3-0 in the second of game one, they won it 4-3 \u2014 Roman Anthony went 3-for-3 with a triple and two doubles. Then they shut the Cubs out 2-0 in the nightcap behind five scoreless innings from David Peterson. Two wins in one day in the last week of September.'
     },
     {
       tag: 'Anime', page: 'anime.html', color: '#e0679a',
-      head: 'Fall anime starts October 2.',
-      body: 'The Apothecary Diaries is back for season three. Black Clover and Tokyo Revengers land the next day, and the Magic Knight Rayearth reboot arrives October 7. Clear your queue.'
+      head: 'Mushoku Tensei ends today. The new season starts Friday.',
+      body: 'Season three closes with episode 14, \u201CResolve.\u201D Then it all restarts: The Apothecary Diaries on October 2, Black Clover and Tokyo Revengers on the 3rd, Blue Box on the 4th, and the Magic Knight Rayearth reboot on the 7th.'
+    },
+    {
+      tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
+      head: 'Fincher is making a Cliff Booth movie, and the trailer is here.',
+      body: 'The first look at \u201CThe Further Mis-Adventures of Cliff Booth\u201D arrived Wednesday, in IMAX from November 25. Brad Bird\u2019s \u201CRAY GUNN\u201D got its first trailer the same morning. Two directors swinging at genre on the same day.'
+    },
+    {
+      tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
+      head: 'Milan did the talking this week.',
+      body: 'Cardi B turned up for Off-White\u2019s 10x10 Icons Reimagined \u2014 a house taking stock of its own decade, and the guest list telling you who it thinks it\u2019s for. Olandria walked for Blumarine. Paris closes the month into early October.'
     }
   ],
   live: 'Launch party incoming. The date and venue are almost locked, and this list hears first.',
