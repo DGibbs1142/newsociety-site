@@ -563,34 +563,34 @@ function welcomeMessage_(email) {
 // same issue twice.
 const NEWSLETTER_ISSUE = {
   number: 2,
-  dateline: 'Sunday, September 27, 2026',
-  subject: 'The Week in Culture \u2014 Taylor breaks a Spotify record, Boston sweeps, the VMAs land tonight',
-  intro: 'Week two. A record, a sweep, and three things worth your Sunday.',
+  dateline: 'Wednesday, September 30, 2026',
+  subject: 'The Week in Culture \u2014 Madonna takes seven, the playoffs start, fall anime lands Friday',
+  intro: 'Week two. The VMAs landed, the baseball season ended and restarted inside three days, and your anime queue refills on Friday.',
   blocks: [
     {
       tag: 'Music', page: 'music.html', color: '#5aa0e8',
-      head: 'Taylor Swift set a Spotify record on a year-old album.',
-      body: '\u201CThe Life of a Showgirl: The Encore\u201D added four songs on Friday and all four landed in the Apple Music top 10. \u201CPatient Zero\u201D took the record for biggest single-day streams by a female artist. The video premieres inside the VMAs tonight on CBS.'
+      head: 'Madonna won seven VMAs. Taylor Swift won something that didn\u2019t exist before.',
+      body: 'Madonna was the night\u2019s biggest winner with seven, including artist of the year and best collaboration for \u201CBring Your Love\u201D with Sabrina Carpenter. Swift accepted MTV\u2019s first-ever Artist Director Honors, then premiered the \u201CPatient Zero\u201D video \u2014 she directed it, Colin Farrell and Dakota Johnson star, and Emmanuel Lubezki shot it.'
     },
     {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'Boston swept a doubleheader and took the Wild Card math with it.',
-      body: 'Down 3-0 in the second of game one, they won it 4-3 \u2014 Roman Anthony went 3-for-3 with a triple and two doubles. Then they shut the Cubs out 2-0 in the nightcap behind five scoreless innings from David Peterson. Two wins in one day in the last week of September.'
+      head: 'The regular season ended Sunday. The playoffs started Tuesday.',
+      body: 'Boston got in as the last AL Wild Card and ran straight into the Yankees, who shut them out 9-0 in game one. The White Sox walked into Houston as the six seed and won 6-3. Atlanta beat Philadelphia 5-3. Best-of-three, no days off \u2014 the team that swept a doubleheader last week is already a loss from going home.'
     },
     {
       tag: 'Anime', page: 'anime.html', color: '#e0679a',
-      head: 'Mushoku Tensei ends today. The new season starts Friday.',
-      body: 'Season three closes with episode 14, \u201CResolve.\u201D Then it all restarts: The Apothecary Diaries on October 2, Black Clover and Tokyo Revengers on the 3rd, Blue Box on the 4th, and the Magic Knight Rayearth reboot on the 7th.'
+      head: 'Mushoku Tensei ended Sunday. The new season starts Friday.',
+      body: 'Season three closed with episode 14, \u201CResolve.\u201D Then it all restarts: The Apothecary Diaries season three and Tokyo Revengers: War of the Three Titans both land October 2, Black Clover season two on the 3rd, Blue Box season two on the 4th.'
     },
     {
       tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
       head: 'Fincher is making a Cliff Booth movie, and the trailer is here.',
-      body: 'The first look at \u201CThe Further Mis-Adventures of Cliff Booth\u201D arrived Wednesday, in IMAX from November 25. Brad Bird\u2019s \u201CRAY GUNN\u201D got its first trailer the same morning. Two directors swinging at genre on the same day.'
+      body: 'The first look at \u201CThe Further Mis-Adventures of Cliff Booth\u201D arrived last Wednesday, in IMAX from November 25. Brad Bird\u2019s \u201CRAY GUNN\u201D got its first trailer the same morning. Two directors swinging at genre on the same day.'
     },
     {
       tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
-      head: 'Milan did the talking this week.',
-      body: 'Cardi B turned up for Off-White\u2019s 10x10 Icons Reimagined \u2014 a house taking stock of its own decade, and the guest list telling you who it thinks it\u2019s for. Olandria walked for Blumarine. Paris closes the month into early October.'
+      head: 'Milan did the talking. Paris has the floor now.',
+      body: 'Cardi B turned up for Off-White\u2019s 10x10 Icons Reimagined \u2014 a house taking stock of its own decade, and the guest list telling you who it thinks it\u2019s for. Olandria walked for Blumarine. Paris runs into early October.'
     }
   ],
   live: 'Launch party incoming. The date and venue are almost locked, and this list hears first.',
