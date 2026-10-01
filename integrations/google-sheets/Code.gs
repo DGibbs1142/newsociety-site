@@ -562,35 +562,35 @@ function welcomeMessage_(email) {
 // second run only reaches people who joined since, and nobody is sent the
 // same issue twice.
 const NEWSLETTER_ISSUE = {
-  number: 2,
-  dateline: 'Wednesday, September 30, 2026',
-  subject: 'The Week in Culture \u2014 Madonna takes seven, the playoffs start, fall anime lands Friday',
-  intro: 'Week two. The VMAs landed, the baseball season ended and restarted inside three days, and your anime queue refills on Friday.',
+  number: 3,
+  dateline: 'Sunday, October 4, 2026',
+  subject: 'The Week in Culture \u2014 a 121-loss team is still playing, and fall anime landed all at once',
+  intro: 'Two weeks folded into one. The team nobody took seriously is still alive, your queue refilled in three days, and a Space Age house in Paris got a new voice.',
   blocks: [
     {
-      tag: 'Music', page: 'music.html', color: '#5aa0e8',
-      head: 'Madonna won seven VMAs. Taylor Swift won something that didn\u2019t exist before.',
-      body: 'Madonna was the night\u2019s biggest winner with seven, including artist of the year and best collaboration for \u201CBring Your Love\u201D with Sabrina Carpenter. Swift accepted MTV\u2019s first-ever Artist Director Honors, then premiered the \u201CPatient Zero\u201D video \u2014 she directed it, Colin Farrell and Dakota Johnson star, and Emmanuel Lubezki shot it.'
-    },
-    {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'The regular season ended Sunday. The playoffs started Tuesday.',
-      body: 'Boston got in as the last AL Wild Card and ran straight into the Yankees, who shut them out 9-0 in game one. The White Sox walked into Houston as the six seed and won 6-3. Atlanta beat Philadelphia 5-3. Best-of-three, no days off \u2014 the team that swept a doubleheader last week is already a loss from going home.'
+      head: 'Two years ago the White Sox lost 121 games. They just swept Houston out of October.',
+      body: 'They won 6-3, then 7-3, both in Houston, and took the Wild Card Series without needing a third game. It is the same franchise that set the modern loss record in 2024. They opened the Division Series in Cleveland on Friday. In the other half of the bracket the Yankees ended Boston in two, 9-0 and 9-2 \u2014 a rivalry series that was never actually a series.'
     },
     {
       tag: 'Anime', page: 'anime.html', color: '#e0679a',
-      head: 'Mushoku Tensei ended Sunday. The new season starts Friday.',
-      body: 'Season three closed with episode 14, \u201CResolve.\u201D Then it all restarts: The Apothecary Diaries season three and Tokyo Revengers: War of the Three Titans both land October 2, Black Clover season two on the 3rd, Blue Box season two on the 4th.'
+      head: 'Mushoku Tensei ended, and the fall season replaced it inside a week.',
+      body: 'Season three closed with episode 14, \u201CResolve.\u201D Then everything arrived at once: The Apothecary Diaries season three and Tokyo Revengers: War of the Three Titans on October 2, Black Clover season two on the 3rd, Blue Box season two on the 4th. Four returns in three days. The gap between seasons barely exists anymore.'
+    },
+    {
+      tag: 'Music', page: 'music.html', color: '#5aa0e8',
+      head: 'Madonna won seven VMAs. Taylor Swift won something that did not exist before.',
+      body: 'Madonna was the night\u2019s biggest winner with seven, including artist of the year and best collaboration for \u201CBring Your Love\u201D with Sabrina Carpenter. Swift accepted MTV\u2019s first-ever Artist Director Honors, then premiered the \u201CPatient Zero\u201D video she directed herself \u2014 Colin Farrell and Dakota Johnson star, Emmanuel Lubezki shot it.'
+    },
+    {
+      tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
+      head: 'Courr\u00E8ges handed its codes to a designer from the Phoebe Philo school.',
+      body: 'Drew Henry showed his first collection for the house at the Palais de Tokyo on Wednesday \u2014 ribbed knits, vinyl, the A-line dress, all pulled toward something looser and louder than the brand usually allows. Henry trained at Central Saint Martins and worked under Phoebe Philo at Celine and at her own label. Paris closes out the month.'
     },
     {
       tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
       head: 'Fincher is making a Cliff Booth movie, and the trailer is here.',
-      body: 'The first look at \u201CThe Further Mis-Adventures of Cliff Booth\u201D arrived last Wednesday, in IMAX from November 25. Brad Bird\u2019s \u201CRAY GUNN\u201D got its first trailer the same morning. Two directors swinging at genre on the same day.'
-    },
-    {
-      tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
-      head: 'Milan did the talking. Paris has the floor now.',
-      body: 'Cardi B turned up for Off-White\u2019s 10x10 Icons Reimagined \u2014 a house taking stock of its own decade, and the guest list telling you who it thinks it\u2019s for. Olandria walked for Blumarine. Paris runs into early October.'
+      body: 'The first look at \u201CThe Further Mis-Adventures of Cliff Booth\u201D arrived in late September, in IMAX from November 25. Brad Bird\u2019s \u201CRAY GUNN\u201D got its first trailer the same morning. Two directors swinging at genre on the same day.'
     }
   ],
   live: 'Launch party incoming. The date and venue are almost locked, and this list hears first.',
