@@ -569,8 +569,8 @@ const NEWSLETTER_ISSUE = {
   blocks: [
     {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'Two years ago the White Sox lost 121 games. They just swept Houston out of October.',
-      body: 'They won 6-3, then 7-3, both in Houston, and took the Wild Card Series without needing a third game. It is the same franchise that set the modern loss record in 2024. They opened the Division Series in Cleveland on Friday. In the other half of the bracket the Yankees ended Boston in two, 9-0 and 9-2 \u2014 a rivalry series that was never actually a series.'
+      head: 'Two years ago the White Sox lost 121 games. They are two wins from the ALCS.',
+      body: 'They won 6-3, then 7-3, both in Houston, and took the Wild Card Series without needing a third game \u2014 the same franchise that set the modern loss record in 2024. Then they went into Cleveland on Saturday and shut the Guardians out 3-0 to open the Division Series. The Yankees ended Boston 9-0 and 9-2, then lost their own opener 1-0 in Tampa.'
     },
     {
       tag: 'Anime', page: 'anime.html', color: '#e0679a',
@@ -585,7 +585,7 @@ const NEWSLETTER_ISSUE = {
     {
       tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
       head: 'Courr\u00E8ges handed its codes to a designer from the Phoebe Philo school.',
-      body: 'Drew Henry showed his first collection for the house at the Palais de Tokyo on Wednesday \u2014 ribbed knits, vinyl, the A-line dress, all pulled toward something looser and louder than the brand usually allows. Henry trained at Central Saint Martins and worked under Phoebe Philo at Celine and at her own label. Paris closes out the month.'
+      body: 'Drew Henry showed his first collection for the house at the Palais de Tokyo on Wednesday \u2014 ribbed knits, vinyl, the A-line dress, all pulled toward something looser and louder than the brand usually allows. Henry trained at Central Saint Martins and worked under Phoebe Philo at Celine and at her own label. Paris wraps this week.'
     },
     {
       tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
