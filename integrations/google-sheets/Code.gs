@@ -562,35 +562,35 @@ function welcomeMessage_(email) {
 // second run only reaches people who joined since, and nobody is sent the
 // same issue twice.
 const NEWSLETTER_ISSUE = {
-  number: 3,
-  dateline: 'Sunday, October 4, 2026',
-  subject: 'The Week in Culture \u2014 a 121-loss team is still playing, and fall anime landed all at once',
-  intro: 'Two weeks folded into one. The team nobody took seriously is still alive, your queue refilled in three days, and a Space Age house in Paris got a new voice.',
+  number: 4,
+  dateline: 'Sunday, October 11, 2026',
+  subject: 'The Week in Culture \u2014 Anne Hathaway disappears on purpose, and the NBA redraws its map',
+  intro: 'Five movies in one year will do that to a person. Plus a league that rearranged itself over the summer, a fall anime slate that landed all at once, and a band fifty years in that cannot stop adding dates.',
   blocks: [
     {
+      tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
+      head: 'Anne Hathaway made five movies this year, then vanished into a puff of smoke.',
+      body: 'On the day Verity opened she posted a video talking about heading to the premiere, then disappeared mid-sentence in a cartoon cloud while a member of her team wandered in asking where she went. It was the punchline to a joke she had been building all press tour. She is 43, pregnant with her third, and says her schedule is her kids\u2019 schedule now. Verity went to number one anyway.'
+    },
+    {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'Two years ago the White Sox lost 121 games. They are two wins from the ALCS.',
-      body: 'They won 6-3, then 7-3, both in Houston, and took the Wild Card Series without needing a third game \u2014 the same franchise that set the modern loss record in 2024. Then they went into Cleveland on Saturday and shut the Guardians out 3-0 to open the Division Series. The Yankees ended Boston 9-0 and 9-2, then lost their own opener 1-0 in Tampa.'
+      head: 'The NBA spent the summer rearranging itself. We find out on October 21.',
+      body: 'LeBron James left the Lakers for Philadelphia on a two-year, eight-million-dollar deal \u2014 about four million a season for a man who had been making fifty. Minnesota sent Naz Reid and a stack of first-round picks to Charlotte for LaMelo Ball, finally putting a real point guard next to Anthony Edwards. Two very different bets, both of them expensive, and neither one answers for anything until the season opens.'
     },
     {
       tag: 'Anime', page: 'anime.html', color: '#e0679a',
-      head: 'Mushoku Tensei ended, and the fall season replaced it inside a week.',
-      body: 'Season three closed with episode 14, \u201CResolve.\u201D Then everything arrived at once: The Apothecary Diaries season three and Tokyo Revengers: War of the Three Titans on October 2, Black Clover season two on the 3rd, Blue Box season two on the 4th. Four returns in three days. The gap between seasons barely exists anymore.'
+      head: 'The fall season did not trickle in. It landed all at once.',
+      body: 'Mushoku Tensei closed out season three, and inside seventy-two hours The Apothecary Diaries season three and Tokyo Revengers: War of the Three Titans arrived on October 2, Black Clover season two on the 3rd, and Blue Box season two on the 4th. Dandivine followed on the 7th, A Certain Dark Item on the 9th. Four returns in three days, then two more before the week was out.'
     },
     {
       tag: 'Music', page: 'music.html', color: '#5aa0e8',
-      head: 'Madonna won seven VMAs. Taylor Swift won something that did not exist before.',
-      body: 'Madonna was the night\u2019s biggest winner with seven, including artist of the year and best collaboration for \u201CBring Your Love\u201D with Sabrina Carpenter. Swift accepted MTV\u2019s first-ever Artist Director Honors, then premiered the \u201CPatient Zero\u201D video she directed herself \u2014 Colin Farrell and Dakota Johnson star, Emmanuel Lubezki shot it.'
+      head: 'Rush said they were finished. They are fifty-eight shows into saying otherwise.',
+      body: 'The Fifty Something tour has Geddy Lee and Alex Lifeson playing together for the first time since Neil Peart died, with German drummer Anika Nilles behind the kit. It opened in Los Angeles in June and now runs through Vancouver in December across twenty-four cities, expanded again and again because people kept buying the tickets.'
     },
     {
       tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
-      head: 'Courr\u00E8ges handed its codes to a designer from the Phoebe Philo school.',
-      body: 'Drew Henry showed his first collection for the house at the Palais de Tokyo on Wednesday \u2014 ribbed knits, vinyl, the A-line dress, all pulled toward something looser and louder than the brand usually allows. Henry trained at Central Saint Martins and worked under Phoebe Philo at Celine and at her own label. Paris wraps this week.'
-    },
-    {
-      tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
-      head: 'Fincher is making a Cliff Booth movie, and the trailer is here.',
-      body: 'The first look at \u201CThe Further Mis-Adventures of Cliff Booth\u201D arrived in late September, in IMAX from November 25. Brad Bird\u2019s \u201CRAY GUNN\u201D got its first trailer the same morning. Two directors swinging at genre on the same day.'
+      head: 'Teyana Taylor is getting her own Jordan.',
+      body: 'The Teyana Taylor x Air Jordan 16 is expected in summer 2027, which is a long time to make people wait for something they already want. She has spent almost twenty years doing about five jobs at once \u2014 singing, dancing, directing, acting, styling \u2014 and a signature shoe reads less like a launch than like the industry finally catching up.'
     }
   ],
   live: 'Launch party incoming. The date and venue are almost locked, and this list hears first.',
