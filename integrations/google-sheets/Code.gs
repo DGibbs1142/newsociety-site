@@ -562,35 +562,35 @@ function welcomeMessage_(email) {
 // second run only reaches people who joined since, and nobody is sent the
 // same issue twice.
 const NEWSLETTER_ISSUE = {
-  number: 4,
-  dateline: 'Sunday, October 11, 2026',
-  subject: 'The Week in Culture \u2014 Anne Hathaway disappears on purpose, and the NBA redraws its map',
-  intro: 'Five movies in one year will do that to a person. Plus a league that rearranged itself over the summer, a fall anime slate that landed all at once, and a band fifty years in that cannot stop adding dates.',
+  number: 5,
+  dateline: 'Sunday, October 18, 2026',
+  subject: 'The Week in Culture \u2014 Kyrie after 586 days, Tinashe after a decade, and a designer after five years away',
+  intro: 'A theme turned up on its own this week. Almost everything worth writing about took a long time to get here.',
   blocks: [
     {
-      tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
-      head: 'Anne Hathaway made five movies this year, then vanished into a puff of smoke.',
-      body: 'On the day Verity opened she posted a video talking about heading to the premiere, then disappeared mid-sentence in a cartoon cloud while a member of her team wandered in asking where she went. It was the punchline to a joke she had been building all press tour. She is 43, pregnant with her third, and says her schedule is her kids\u2019 schedule now. Verity went to number one anyway.'
-    },
-    {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'The NBA reshuffled itself over the summer. Baseball spent the week throwing out the bracket.',
-      body: 'LeBron James left the Lakers for Philadelphia on a two-year, eight-million-dollar deal \u2014 about four million a season for a man who had been making fifty. Minnesota sent Naz Reid and a stack of first-round picks to Charlotte for LaMelo Ball, finally putting a real point guard next to Anthony Edwards. Neither bet answers for anything until the season opens October 21. Baseball, meanwhile, spent the week discarding favorites: Tampa Bay swept the Yankees in three, and Cleveland lost the first two at home to the White Sox before winning three straight to take the series. The Championship round starts now \u2014 Dodgers at Brewers tonight, Guardians at Rays tomorrow.'
-    },
-    {
-      tag: 'Anime', page: 'anime.html', color: '#e0679a',
-      head: 'The fall season did not trickle in. It landed all at once.',
-      body: 'Mushoku Tensei closed out season three, and inside seventy-two hours The Apothecary Diaries season three and Tokyo Revengers: War of the Three Titans arrived on October 2, Black Clover season two on the 3rd, and Blue Box season two on the 4th. Dandivine followed on the 7th, A Certain Dark Item on the 9th. Four returns in three days, then two more before the week was out.'
+      head: 'Kyrie Irving played again after 586 days.',
+      body: 'He tore the ACL in March 2025. He came back in Dallas preseason and led the team in scoring with 17 points in 22 minutes. The first floor he stepped onto also had Cooper Flagg on it, which makes one night a comeback and a handoff at the same time. Five hundred and eighty-six days is a year and a half of rehab appointments nobody filmed, for twenty-two minutes nobody is going to forget.'
     },
     {
       tag: 'Music', page: 'music.html', color: '#5aa0e8',
-      head: 'Rush said they were finished. They are fifty-eight shows into saying otherwise.',
-      body: 'The Fifty Something tour has Geddy Lee and Alex Lifeson playing together for the first time since Neil Peart died, with German drummer Anika Nilles behind the kit. It opened in Los Angeles in June and now runs through Vancouver in December across twenty-four cities, expanded again and again because people kept buying the tickets.'
+      head: 'Tinashe made the top 10 for the first time. It only took her more than a decade.',
+      body: '\u201CPopstar\u201D debuted at No. 6 on the Billboard 200 \u2014 her highest-charting album ever and her first top 10, after years of being the artist other artists quietly cite. The same week, Taylor Swift took \u201CPatient Zero\u201D to No. 1 on the Hot 100 and kept \u201CThe Life of a Showgirl\u201D on top of the album chart. Both of those are the music business working exactly as advertised. Only one of them is a surprise.'
     },
     {
       tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
-      head: 'Teyana Taylor is getting her own Jordan.',
-      body: 'The Teyana Taylor x Air Jordan 16 is expected in summer 2027, which is a long time to make people wait for something they already want. She has spent almost twenty years doing about five jobs at once \u2014 singing, dancing, directing, acting, styling \u2014 and a signature shoe reads less like a launch than like the industry finally catching up.'
+      head: 'Kris Brock came back to Paris five years after walking away.',
+      body: 'He showed BROCK, a new label under his own name, half a decade after stepping back from the brand that made him. Fashion does not usually hold a door open that long. Jimmy Choo turned thirty the same month and marked it with Pearls of Wisdom, a capsule from creative director Sandra Choi built around the house motif.'
+    },
+    {
+      tag: 'Anime', page: 'anime.html', color: '#e0679a',
+      head: 'Chainsaw Man turned four, and the Assassins Arc is still in production.',
+      body: 'Four years since it first aired and the next arc has not landed. Being a fan of this one is mostly an exercise in patience, and somehow nobody has left. The fall slate that arrived all at once in early October has settled in by now, and Dragon Ball Super: Beerus revealed its ending theme, \u201CKan Peki No Peki\u201D by VK Blanka.'
+    },
+    {
+      tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
+      head: 'New York Comic Con turned twenty, and a book people have carried since 2018 finally has a cast.',
+      body: 'NYCC closed its twentieth year at the Javits Center. The panel worth watching was Children of Blood and Bone \u2014 Amandla Stenberg on joining the cast, Chiwetel Ejiofor breaking down King Saran, Thuso Mbedu describing how she learned to fight with the staff. Twenty years ago this convention was a room full of people apologizing for what they were into. Now it is the room everybody is trying to get into.'
     }
   ],
   live: 'Launch party incoming. The date and venue are almost locked, and this list hears first.',
