@@ -147,10 +147,62 @@ function initSiteNotice(){
   }
 }
 
+// A one-time nudge pointing new visitors at search and save-for-later —
+// both are easy to miss since neither has any onboarding of its own.
+// Built entirely in JS (rather than markup added to every page) so it
+// doesn't need touching all 21 HTML files, and shown at most once ever per
+// visitor via localStorage. Skipped on 404.html (not a real landing
+// moment) and links.html (no header/search there at all).
+const ONBOARDING_KEY = 'newsociety_onboarding_seen';
+
+function markOnboardingSeen(){
+  try{ localStorage.setItem(ONBOARDING_KEY, '1'); }catch(e){}
+}
+
+function dismissOnboardingTip(){
+  const tip = document.querySelector('.onboarding-tip');
+  if(tip){
+    tip.classList.remove('in');
+    setTimeout(() => tip.remove(), 300);
+  }
+  markOnboardingSeen();
+}
+
+function initOnboardingTip(){
+  let alreadySeen;
+  try{ alreadySeen = localStorage.getItem(ONBOARDING_KEY); }catch(e){ return; }
+  if(alreadySeen) return;
+
+  const page = document.body.getAttribute('data-page') || '';
+  if(page === '404.html' || page === 'links.html') return;
+
+  // Using the feature at all — before the tip even appears — counts as
+  // discovering it, so stop watching rather than interrupt them mid-task.
+  document.addEventListener('focusin', (e) => {
+    if(e.target.closest && e.target.closest('.nav-search')) dismissOnboardingTip();
+  });
+  document.addEventListener('click', (e) => {
+    if(e.target.closest && e.target.closest('.save-btn')) dismissOnboardingTip();
+  });
+
+  setTimeout(() => {
+    if(document.querySelector('.nav-search input')){
+      const tip = document.createElement('div');
+      tip.className = 'onboarding-tip';
+      tip.setAttribute('role', 'status');
+      tip.innerHTML = '<p>Search anything up top, and tap <span class="onboarding-star">☆</span> on any card to save it for later.</p><button type="button" class="btn btn-ghost onboarding-tip-dismiss">Got it</button>';
+      document.body.appendChild(tip);
+      tip.querySelector('.onboarding-tip-dismiss').addEventListener('click', dismissOnboardingTip);
+      requestAnimationFrame(() => tip.classList.add('in'));
+    }
+  }, 1500);
+}
+
 buildTicker();
 initMenu();
 initThemeToggle();
 initSiteNotice();
+initOnboardingTip();
 document.addEventListener('DOMContentLoaded', initReveal);
 
 if('serviceWorker' in navigator){

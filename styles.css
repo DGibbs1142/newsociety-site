@@ -277,6 +277,39 @@ nav.links a.current{ color:var(--text); }
 }
 .site-notice-close:hover{ color:var(--text); }
 
+/* First-visit nudge pointing at search + save-for-later — see
+   initOnboardingTip() in site.js. Built entirely in JS, so there's no
+   matching markup here, just the look. Starts hidden via opacity/transform
+   and fades in once JS adds the .in class. */
+.onboarding-tip{
+  position:fixed;
+  left:24px;
+  bottom:24px;
+  z-index:40;
+  max-width:320px;
+  background:var(--bg-card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px;
+  box-shadow:0 12px 32px rgba(var(--scrim-rgb),0.35);
+  opacity:0;
+  transform:translateY(12px);
+  pointer-events:none;
+  transition:opacity 0.25s ease, transform 0.25s ease;
+}
+.onboarding-tip.in{ opacity:1; transform:translateY(0); pointer-events:auto; }
+.onboarding-tip p{
+  margin:0 0 12px;
+  font-size:13px;
+  line-height:1.5;
+  color:var(--text);
+}
+.onboarding-tip .onboarding-star{ color:var(--accent-text); }
+.onboarding-tip-dismiss{ padding:6px 14px; font-size:12px; }
+@media (max-width:600px){
+  .onboarding-tip{ left:16px; right:16px; bottom:16px; max-width:none; }
+}
+
 /* menu button — hidden on desktop, shown by the 1140px query above */
 .nav-toggle{
   display:none;
