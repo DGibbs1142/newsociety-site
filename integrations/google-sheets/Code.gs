@@ -574,8 +574,8 @@ const NEWSLETTER_ISSUE = {
     },
     {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'The NBA spent the summer rearranging itself. We find out on October 21.',
-      body: 'LeBron James left the Lakers for Philadelphia on a two-year, eight-million-dollar deal \u2014 about four million a season for a man who had been making fifty. Minnesota sent Naz Reid and a stack of first-round picks to Charlotte for LaMelo Ball, finally putting a real point guard next to Anthony Edwards. Two very different bets, both of them expensive, and neither one answers for anything until the season opens.'
+      head: 'The NBA reshuffled itself over the summer. Baseball spent the week throwing out the bracket.',
+      body: 'LeBron James left the Lakers for Philadelphia on a two-year, eight-million-dollar deal \u2014 about four million a season for a man who had been making fifty. Minnesota sent Naz Reid and a stack of first-round picks to Charlotte for LaMelo Ball, finally putting a real point guard next to Anthony Edwards. Neither bet answers for anything until the season opens October 21. Baseball, meanwhile, spent the week discarding favorites: Tampa Bay swept the Yankees in three, and Cleveland lost the first two at home to the White Sox before winning three straight to take the series. The Championship round starts now \u2014 Dodgers at Brewers tonight, Guardians at Rays tomorrow.'
     },
     {
       tag: 'Anime', page: 'anime.html', color: '#e0679a',
