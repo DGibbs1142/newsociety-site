@@ -74,8 +74,83 @@ function initMenu(){
   window.matchMedia('(min-width: 1141px)').addEventListener('change', (e) => { if(e.matches) setOpen(false); });
 }
 
+// theme-init.js already set data-theme before paint if the visitor had
+// picked a theme before; this just wires up the button and keeps the
+// browser-chrome theme-color meta tag in sync with whichever mode is
+// actually showing (explicit choice, falling back to the OS preference).
+function initThemeToggle(){
+  const btn = document.querySelector('.theme-toggle');
+  if(!btn) return;
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+
+  const currentTheme = () => {
+    const explicit = document.documentElement.getAttribute('data-theme');
+    if(explicit) return explicit;
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  };
+  const sync = (theme) => {
+    if(metaTheme) metaTheme.content = theme === 'light' ? '#ffffff' : '#0a0a0c';
+    btn.setAttribute('aria-label', theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
+  };
+
+  sync(currentTheme());
+
+  btn.addEventListener('click', () => {
+    try{
+      const next = currentTheme() === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      try{ localStorage.setItem('newsociety-theme', next); }catch(e){}
+      sync(next);
+    }catch(err){
+      redirectHome('The theme switch hit a snag, so we sent you back to the homepage.');
+    }
+  });
+}
+
+// Used by initThemeToggle (and anything else that wants a safe fallback
+// instead of leaving the page in a broken state): shows the reason on the
+// homepage directly, or carries it there as a query param from anywhere
+// else, where initSiteNotice picks it up.
+function redirectHome(reason){
+  const onIndex = (document.body.getAttribute('data-page') || '') === 'index.html';
+  if(onIndex){
+    showSiteNotice(reason);
+  }else{
+    window.location.href = '/?reason=' + encodeURIComponent(reason);
+  }
+}
+
+function showSiteNotice(message){
+  const notice = document.getElementById('siteNotice');
+  const text = document.getElementById('siteNoticeText');
+  if(!notice || !text) return;
+  text.textContent = message;
+  notice.hidden = false;
+}
+
+// Only present on index.html. Surfaces a ?reason= param left by
+// redirectHome(), then strips it from the URL so refreshing or sharing the
+// link doesn't re-show the notice.
+function initSiteNotice(){
+  const notice = document.getElementById('siteNotice');
+  if(!notice) return;
+  const closeBtn = document.getElementById('siteNoticeClose');
+  if(closeBtn) closeBtn.addEventListener('click', () => { notice.hidden = true; });
+
+  const params = new URLSearchParams(window.location.search);
+  const reason = params.get('reason');
+  if(reason){
+    showSiteNotice(reason);
+    params.delete('reason');
+    const query = params.toString();
+    history.replaceState(null, '', window.location.pathname + (query ? '?' + query : '') + window.location.hash);
+  }
+}
+
 buildTicker();
 initMenu();
+initThemeToggle();
+initSiteNotice();
 document.addEventListener('DOMContentLoaded', initReveal);
 
 if('serviceWorker' in navigator){

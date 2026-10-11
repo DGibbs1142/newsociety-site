@@ -14,6 +14,48 @@
   --accent-text: #8470ff;
   --live: #ff3b30;
   --radius: 2px;
+  /* RGB channels (not a color) so the nav blur and the save-button overlay
+     can rgba() it at their own opacity — flips with the theme below instead
+     of staying hardcoded to a dark scrim on a light background. */
+  --scrim-rgb: 10,10,12;
+}
+
+/* ---------- LIGHT THEME ----------
+   Dark is the default (the :root above), so light only needs to override
+   what actually differs — --accent, --live and --radius work on both and
+   stay put. Defined twice on purpose: once behind the OS's own light
+   preference (guarded so an explicit dark choice below can still win), and
+   once for :root[data-theme="light"], which is the explicit toggle choice
+   and overrides the OS either way. --accent-text flips to a *darker* purple
+   here — the dark-mode comment above explains why a lighter tint was
+   needed there; on a white background the same logic runs in reverse. */
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg: #ffffff;
+    --bg-elevated: #f3f3f5;
+    --bg-card: #f7f7f8;
+    --line: #e2e2e6;
+    --line-soft: #ececef;
+    --text: #15151a;
+    --text-muted: #4b4b54;
+    --text-dim: #6c6c76;
+    --accent-soft: #6e56ff15;
+    --accent-text: #5a3fe0;
+    --scrim-rgb: 255,255,255;
+  }
+}
+:root[data-theme="light"]{
+  --bg: #ffffff;
+  --bg-elevated: #f3f3f5;
+  --bg-card: #f7f7f8;
+  --line: #e2e2e6;
+  --line-soft: #ececef;
+  --text: #15151a;
+  --text-muted: #4b4b54;
+  --text-dim: #6c6c76;
+  --accent-soft: #6e56ff15;
+  --accent-text: #5a3fe0;
+  --scrim-rgb: 255,255,255;
 }
 
 *{ margin:0; padding:0; box-sizing:border-box; }
@@ -65,7 +107,7 @@ header.nav{
   position:sticky;
   top:0;
   z-index:50;
-  background:rgba(10,10,12,0.86);
+  background:rgba(var(--scrim-rgb),0.86);
   backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
 }
@@ -174,6 +216,66 @@ nav.links a.current{ color:var(--text); }
 @media (max-width:480px){
   .nav-cta{ display:none; }
 }
+
+/* light/dark toggle — visible at every width, sits beside the hamburger */
+.theme-toggle{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  width:36px;
+  height:36px;
+  margin-left:12px;
+  background:none;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  color:var(--text-muted);
+  cursor:pointer;
+  transition:border-color 0.2s ease, color 0.2s ease;
+}
+.theme-toggle:hover{ border-color:var(--text-muted); color:var(--text); }
+/* Dark (the default): show the sun — click it to switch TO light.
+   Light: show the moon — click it to switch TO dark. Two cases, same as
+   the color tokens above: OS preference (guarded against an explicit
+   choice), then the explicit [data-theme] choice, which always wins. */
+.theme-toggle .icon-moon{ display:none; }
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]) .theme-toggle .icon-sun{ display:none; }
+  :root:not([data-theme="dark"]) .theme-toggle .icon-moon{ display:block; }
+}
+:root[data-theme="light"] .theme-toggle .icon-sun{ display:none; }
+:root[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
+
+/* Shown on the homepage when something sent the visitor back here with an
+   explanation (e.g. the theme toggle hit an error) — see redirectHome() in
+   site.js. Hidden by default via the [hidden] attribute. */
+.site-notice{
+  background:var(--accent-soft);
+  border-bottom:1px solid var(--line);
+}
+.site-notice-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:12px 24px;
+}
+.site-notice-inner p{
+  margin:0;
+  font-size:14px;
+  color:var(--text);
+}
+.site-notice-close{
+  flex-shrink:0;
+  background:none;
+  border:none;
+  color:var(--text-muted);
+  cursor:pointer;
+  font-size:16px;
+  line-height:1;
+  padding:4px;
+}
+.site-notice-close:hover{ color:var(--text); }
 
 /* menu button — hidden on desktop, shown by the 1140px query above */
 .nav-toggle{
@@ -820,7 +922,7 @@ section{ padding:100px 0; border-bottom:1px solid var(--line); }
   display:flex;
   align-items:center;
   justify-content:center;
-  background:rgba(10,10,12,0.72);
+  background:rgba(var(--scrim-rgb),0.72);
   border:1px solid var(--line);
   border-radius:50%;
   color:var(--text-muted);
