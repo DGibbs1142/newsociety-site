@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<script src="theme-init.js"></script>
+<title>Push Admin — NewSociety</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+<meta name="theme-color" content="#0a0a0c">
+<link rel="icon" href="icons/icon-32.png" sizes="32x32" type="image/png">
+</head>
+<body data-page="admin-push.html">
+<main id="main">
+
+<section class="page-hero">
+  <div class="wrap" style="max-width:480px;">
+    <div class="eyebrow">Admin — not linked anywhere, noindex</div>
+    <h1 class="page-title display" style="font-size:32px;">Send a push notification</h1>
+    <p class="page-sub">Goes out immediately to everyone currently subscribed via the "Notify Me" button on <a href="live.html" style="color:var(--accent-text);">live.html</a>.</p>
+
+    <form class="live-form" id="pushAdminForm" style="margin-top:28px; grid-template-columns:1fr;">
+      <div class="field">
+        <label for="adminSecret">Admin secret</label>
+        <input id="adminSecret" type="password" autocomplete="off" required>
+      </div>
+      <div class="field">
+        <label for="pushTitle">Title</label>
+        <input id="pushTitle" type="text" maxlength="80" required>
+      </div>
+      <div class="field">
+        <label for="pushBody">Body</label>
+        <textarea id="pushBody" maxlength="200" rows="3" required></textarea>
+      </div>
+      <div class="field">
+        <label for="pushUrl">Link (optional — defaults to /)</label>
+        <input id="pushUrl" type="text" placeholder="/live.html">
+      </div>
+      <button type="submit" class="btn btn-primary" id="pushAdminSubmit">Send</button>
+    </form>
+    <p class="search-status mono" id="pushAdminStatus" style="margin-top:16px;"></p>
+  </div>
+</section>
+
+</main>
+
+<script src="admin-push.js" defer></script>
+</body>
+</html>

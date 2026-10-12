@@ -310,6 +310,10 @@ nav.links a.current{ color:var(--text); }
   .onboarding-tip{ left:16px; right:16px; bottom:16px; max-width:none; }
 }
 
+/* "Notify Me" button on live.html once a push subscription is active —
+   see push.js. */
+.btn.subscribed{ border-color:var(--accent); color:var(--accent-text); }
+
 /* menu button — hidden on desktop, shown by the 1140px query above */
 .nav-toggle{
   display:none;

@@ -53,3 +53,33 @@ self.addEventListener('fetch', (event) => {
       .catch(() => caches.match(request))
   );
 });
+
+// Push payloads are always our own JSON ({ title, body, url }) sent from
+// push-send.mts or push-live-check.mts — never third-party, so no origin
+// check is needed here the way there is in the fetch handler above.
+self.addEventListener('push', (event) => {
+  let data = {};
+  try{ data = event.data ? event.data.json() : {}; }catch(e){}
+  const title = data.title || 'NewSociety';
+  event.waitUntil(self.registration.showNotification(title, {
+    body: data.body || '',
+    icon: '/icons/icon-192.png',
+    badge: '/icons/icon-192.png',
+    data: { url: data.url || '/' }
+  }));
+});
+
+// Focuses an already-open tab on the target page rather than always opening
+// a new one, same idea as most native notification handling.
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const targetUrl = event.notification.data?.url || '/';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+      for (const client of windowClients){
+        if(client.url === new URL(targetUrl, self.location.origin).href && 'focus' in client) return client.focus();
+      }
+      if(clients.openWindow) return clients.openWindow(targetUrl);
+    })
+  );
+});
