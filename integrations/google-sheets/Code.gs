@@ -564,13 +564,13 @@ function welcomeMessage_(email) {
 const NEWSLETTER_ISSUE = {
   number: 5,
   dateline: 'Sunday, October 18, 2026',
-  subject: 'The Week in Culture \u2014 Kyrie after 586 days, Tinashe after a decade, and a designer after five years away',
+  subject: 'The Week in Culture \u2014 the Brewers waited 44 years, Kyrie waited 586 days, Tinashe waited a decade',
   intro: 'A theme turned up on its own this week. Almost everything worth writing about took a long time to get here.',
   blocks: [
     {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'Kyrie Irving played again after 586 days.',
-      body: 'He tore the ACL in March 2025. He came back in Dallas preseason and led the team in scoring with 17 points in 22 minutes. The first floor he stepped onto also had Cooper Flagg on it, which makes one night a comeback and a handoff at the same time. Five hundred and eighty-six days is a year and a half of rehab appointments nobody filmed, for twenty-two minutes nobody is going to forget.'
+      head: 'The Brewers swept the team that swept them. Nobody had ever done that before.',
+      body: 'Los Angeles swept Milwaukee out of the NLCS last year. This year Milwaukee returned it exactly \u2014 four games to none \u2014 and it is the first time in postseason history that a team has swept the opponent that swept it the season before. It sends the Brewers to the World Series for the first time since 1982. Forty-four years. In the same stretch Kyrie Irving played again after 586 days out with a torn ACL, led Dallas in scoring in his first game back, and did it on a floor that also had Cooper Flagg standing on it.'
     },
     {
       tag: 'Music', page: 'music.html', color: '#5aa0e8',
