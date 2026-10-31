@@ -585,7 +585,7 @@ const NEWSLETTER_ISSUE = {
     {
       tag: 'Anime', page: 'anime.html', color: '#e0679a',
       head: 'January is shaping up as a sequel season.',
-      body: 'One-Punch Man, Sakamoto Days, MASHLE and Akane-banashi are all lined up to return. The fall slate that arrived all at once in early October has barely settled and the next wave is already scheduled. Meanwhile One Piece turned up inside Fortnite and JISOO from BLACKPINK cosplayed Lucy from Cyberpunk Edgerunners. Anime stopped staying in its lane a long time ago.'
+      body: 'Sakamoto Days, MASHLE, Akane-banashi and Shangri-La Frontier are all lined up to return. The fall slate that arrived all at once in early October has barely settled and the next wave is already scheduled. Meanwhile One Piece turned up inside Fortnite and JISOO from BLACKPINK cosplayed Lucy from Cyberpunk Edgerunners. Anime stopped staying in its lane a long time ago.'
     },
     {
       tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
