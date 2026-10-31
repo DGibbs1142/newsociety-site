@@ -562,35 +562,35 @@ function welcomeMessage_(email) {
 // second run only reaches people who joined since, and nobody is sent the
 // same issue twice.
 const NEWSLETTER_ISSUE = {
-  number: 5,
-  dateline: 'Sunday, October 18, 2026',
-  subject: 'The Week in Culture \u2014 the Brewers waited 44 years, Kyrie waited 586 days, Tinashe waited a decade',
-  intro: 'A theme turned up on its own this week. Almost everything worth writing about took a long time to get here.',
+  number: 6,
+  dateline: 'Sunday, November 1, 2026',
+  subject: 'The Week in Culture \u2014 a first World Series, a first Game 7, and country\u2019s first clean sweep',
+  intro: 'Three things happened this week that had never happened before. That is more firsts than most months manage.',
   blocks: [
     {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'The Brewers swept the team that swept them. Nobody had ever done that before.',
-      body: 'Los Angeles swept Milwaukee out of the NLCS last year. This year Milwaukee returned it exactly \u2014 four games to none \u2014 and it is the first time in postseason history that a team has swept the opponent that swept it the season before. It sends the Brewers to the World Series for the first time since 1982. Forty-four years. In the same stretch Kyrie Irving played again after 586 days out with a torn ACL, led Dallas in scoring in his first game back, and did it on a floor that also had Cooper Flagg standing on it.'
+      head: 'Milwaukee won the World Series for the first time in the franchise\u2019s existence.',
+      body: 'Four games to one over Tampa Bay, clinched on October 28, and it is the first title the Brewers have ever won \u2014 not a drought ended, the first one. William Contreras took series MVP. It is also the first baseball championship the city has had since 1957. They got there by sweeping the Dodgers, the team that had swept them out of the same round a year earlier, which had never been done before either.'
     },
     {
       tag: 'Music', page: 'music.html', color: '#5aa0e8',
-      head: 'Tinashe made the top 10 for the first time. It only took her more than a decade.',
-      body: '\u201CPopstar\u201D debuted at No. 6 on the Billboard 200 \u2014 her highest-charting album ever and her first top 10, after years of being the artist other artists quietly cite. The same week, Taylor Swift took \u201CPatient Zero\u201D to No. 1 on the Hot 100 and kept \u201CThe Life of a Showgirl\u201D on top of the album chart. Both of those are the music business working exactly as advertised. Only one of them is a surprise.'
-    },
-    {
-      tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
-      head: 'Kris Brock came back to Paris five years after walking away.',
-      body: 'He showed BROCK, a new label under his own name, half a decade after stepping back from the brand that made him. Fashion does not usually hold a door open that long. Jimmy Choo turned thirty the same month and marked it with Pearls of Wisdom, a capsule from creative director Sandra Choi built around the house motif.'
-    },
-    {
-      tag: 'Anime', page: 'anime.html', color: '#e0679a',
-      head: 'Chainsaw Man turned four, and the Assassins Arc is still in production.',
-      body: 'Four years since it first aired and the next arc has not landed. Being a fan of this one is mostly an exercise in patience, and somehow nobody has left. The fall slate that arrived all at once in early October has settled in by now, and Dragon Ball Super: Beerus revealed its ending theme, \u201CKan Peki No Peki\u201D by VK Blanka.'
+      head: 'Country holds the entire top five of the Hot 100. That has never happened.',
+      body: 'Billboard confirmed all five of the chart\u2019s top positions belong to country songs for the first time in the Hot 100\u2019s history. Whatever you make of the genre, a clean sweep of the top five is not a fluke of one big single. It is the kind of result that only shows up when something underneath has already moved.'
     },
     {
       tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
-      head: 'New York Comic Con turned twenty, and a book people have carried since 2018 finally has a cast.',
-      body: 'NYCC closed its twentieth year at the Javits Center. The panel worth watching was Children of Blood and Bone \u2014 Amandla Stenberg on joining the cast, Chiwetel Ejiofor breaking down King Saran, Thuso Mbedu describing how she learned to fight with the staff. Twenty years ago this convention was a room full of people apologizing for what they were into. Now it is the room everybody is trying to get into.'
+      head: '\u201CYou Can See Everything\u201D is winning the weekend.',
+      body: 'It took the top Friday spot with $3.56 million, holding off Clayface. Two weeks ago the same film was sitting at 99 percent on the audience score, which is a number you almost never see on anything. The crowd worked it out well before the box office did.'
+    },
+    {
+      tag: 'Anime', page: 'anime.html', color: '#e0679a',
+      head: 'January is shaping up as a sequel season.',
+      body: 'One-Punch Man, Sakamoto Days, MASHLE and Akane-banashi are all lined up to return. The fall slate that arrived all at once in early October has barely settled and the next wave is already scheduled. Meanwhile One Piece turned up inside Fortnite and JISOO from BLACKPINK cosplayed Lucy from Cyberpunk Edgerunners. Anime stopped staying in its lane a long time ago.'
+    },
+    {
+      tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
+      head: 'Two opposite theories about what a shop is for.',
+      body: 'New Balance put out a Made in America 990v7 in muted grey \u2014 the least attention-seeking release strategy in footwear, and one that has worked for them for years. At the other end, a French luxury house handed part of a store over to an exhibition of the Surrealist painter Roland Topor. One sells by saying almost nothing. The other sells by turning the room into a gallery.'
     }
   ],
   live: 'Launch party incoming. The date and venue are almost locked, and this list hears first.',
