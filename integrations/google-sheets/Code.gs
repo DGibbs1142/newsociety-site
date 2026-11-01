@@ -575,7 +575,7 @@ const NEWSLETTER_ISSUE = {
     {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
       head: 'The WNBA needed a seventh game to find a champion, and a team in its second season won it.',
-      body: 'Golden State beat Atlanta 68-63 on October 31 to win the first Game 7 in WNBA Finals history. The Finals only went best-of-seven last year, and that series ended in four, so this was a game nobody had ever played. The Valkyries trailed by six at the half and won the second half 44-33. Gabby Williams scored 30, Kiah Stokes took 13 rebounds, and Atlanta pulled within three inside the final eleven seconds before Veronica Burton closed it out from the line. Golden State played its first game in May 2025 and reached the playoffs that same year, which no expansion team had done. Atlanta joined the league in 2008 and has now lost four Finals without winning one.'
+      body: 'Golden State beat Atlanta 68-63 on October 31 to win the first Game 7 in WNBA Finals history. The Finals only went best-of-seven last year, and that series ended in four, so this was a game nobody had ever played. The Valkyries trailed by six at the half and won the second half 44-33, and Finals MVP Gabby Williams is most of the reason: 2 points before the break, 28 after it, including three three-pointers inside one minute of the third quarter. Kiah Stokes took 13 rebounds, and Atlanta pulled within three inside the final eleven seconds before Veronica Burton closed it out from the line. Golden State played its first game in May 2025 and reached the playoffs that same year, which no expansion team had done. Atlanta joined the league in 2008 and has now lost four Finals without winning one.'
     },
     {
       tag: 'Music', page: 'music.html', color: '#5aa0e8',

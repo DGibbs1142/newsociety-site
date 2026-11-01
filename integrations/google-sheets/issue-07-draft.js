@@ -25,7 +25,7 @@ const NEWSLETTER_ISSUE = {
     {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
       head: 'An expansion team won a championship in its second season.',
-      body: 'Golden State closed Atlanta out 68-63 in the first Game 7 the WNBA Finals has ever needed. The franchise played its first game in May 2025, became the first expansion team to reach the playoffs in its debut season, and won the title the year after that. Gabby Williams scored 30 in the decider. Atlanta has been in the league since 2008 and has now been to four Finals without winning any of them. Expansion teams are normally handed a decade of patience and a rebuilding plan. This one declined both.'
+      body: 'Golden State closed Atlanta out 68-63 in the first Game 7 the WNBA Finals has ever needed. The franchise played its first game in May 2025, became the first expansion team to reach the playoffs in its debut season, and won the title the year after that. Finals MVP Gabby Williams scored 30 in the decider, 28 of them after halftime. Atlanta has been in the league since 2008 and has now been to four Finals without winning any of them. Expansion teams are normally handed a decade of patience and a rebuilding plan. This one declined both.'
     },
     {
       tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
