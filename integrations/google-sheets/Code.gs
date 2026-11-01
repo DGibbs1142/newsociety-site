@@ -573,6 +573,11 @@ const NEWSLETTER_ISSUE = {
       body: 'Four games to one over Tampa Bay, clinched on October 28, and it is the first title the Brewers have ever won \u2014 not a drought ended, the first one. William Contreras took series MVP. It is also the first baseball championship the city has had since 1957. They got there by sweeping the Dodgers, the team that had swept them out of the same round a year earlier, which had never been done before either.'
     },
     {
+      tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
+      head: 'The WNBA needed a seventh game to find a champion, and a team in its second season won it.',
+      body: 'Golden State beat Atlanta 68-63 on October 31 to win the first Game 7 in WNBA Finals history. The Finals only went best-of-seven last year, and that series ended in four, so this was a game nobody had ever played. The Valkyries trailed by six at the half and won the second half 44-33. Gabby Williams scored 30, Kiah Stokes took 13 rebounds, and Atlanta pulled within three inside the final eleven seconds before Veronica Burton closed it out from the line. Golden State played its first game in May 2025 and reached the playoffs that same year, which no expansion team had done. Atlanta joined the league in 2008 and has now lost four Finals without winning one.'
+    },
+    {
       tag: 'Music', page: 'music.html', color: '#5aa0e8',
       head: 'Country holds the entire top five of the Hot 100. That has never happened.',
       body: 'Billboard confirmed all five of the chart\u2019s top positions belong to country songs for the first time in the Hot 100\u2019s history. Whatever you make of the genre, a clean sweep of the top five is not a fluke of one big single. It is the kind of result that only shows up when something underneath has already moved.'

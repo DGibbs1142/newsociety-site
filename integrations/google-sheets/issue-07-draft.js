@@ -7,9 +7,14 @@
 //
 // Paste this ONLY after Issue 06 has gone out.
 //
-// STILL TO FILL: the Sports block. It leads on the WNBA champion, which is
-// decided by Game 7 on the night of October 31. The head/body below are
-// marked FILL-AFTER-GAME-7. Do not send with those markers in place.
+// SPORTS BLOCK IS FILLED (Game 7 final: Golden State 68, Atlanta 63).
+//
+// HEADS UP - OVERLAP WITH ISSUE 06. Game 7 finished the night of Oct 31, in
+// time to make Issue 06, so Issue 06 now carries it as a second Sports block.
+// This block keeps the story but takes the expansion-team angle instead of the
+// first-Game-7 angle, so the two do not read as a reprint. Even so, by Nov 8
+// this is week-old news: before pasting, consider re-pointing BOTH this block
+// and the subject line ("a champion at last") at something from that week.
 // ===========================================================================
 const NEWSLETTER_ISSUE = {
   number: 7,
@@ -19,8 +24,8 @@ const NEWSLETTER_ISSUE = {
   blocks: [
     {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'FILL-AFTER-GAME-7',
-      body: 'FILL-AFTER-GAME-7. Known and safe to state: the WNBA Finals went to a seventh game for the first time in the league\u2019s thirty seasons, Golden State hosted Atlanta on October 31 at 3-3, and the six games before it were split down the middle \u2014 a 97-71 Atlanta blowout in Game 3, a 64-55 defensive grind in Game 5, and an opener decided by four. Add the winner and one line on how they took it.'
+      head: 'An expansion team won a championship in its second season.',
+      body: 'Golden State closed Atlanta out 68-63 in the first Game 7 the WNBA Finals has ever needed. The franchise played its first game in May 2025, became the first expansion team to reach the playoffs in its debut season, and won the title the year after that. Gabby Williams scored 30 in the decider. Atlanta has been in the league since 2008 and has now been to four Finals without winning any of them. Expansion teams are normally handed a decade of patience and a rebuilding plan. This one declined both.'
     },
     {
       tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
