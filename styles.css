@@ -1470,3 +1470,121 @@ footer{
   font-size:11px;
   color:var(--text-dim);
 }
+
+/* ---- /newsletter: the public archive of The Week in Culture ---- */
+/* The page exists to let someone read the writing before handing over an
+   email, so the signup sits directly under the hero and the issues run in
+   full underneath it, newest first. */
+.nl-join{
+  margin-top:-16px;
+  margin-bottom:64px;
+}
+.nl-join-inner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:24px 48px;
+  flex-wrap:wrap;
+  padding:28px 0;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.nl-join-copy{
+  max-width:380px;
+  margin-top:10px;
+  font-size:14.5px;
+  line-height:1.6;
+  color:var(--text-muted);
+}
+.nl-archive{ padding-bottom:88px; }
+.nl-index{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:20px;
+  margin-bottom:64px;
+}
+.nl-index a{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  padding:10px 16px;
+  font-size:12px;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  background:var(--bg-card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  transition:border-color 0.2s ease;
+}
+.nl-index a:hover{ border-color:var(--text-muted); }
+.nl-index a span{ color:var(--text-dim); letter-spacing:0.04em; }
+
+.issue{
+  padding-top:44px;
+  border-top:1px solid var(--line);
+}
+.issue + .issue{ margin-top:72px; }
+.issue-head{
+  display:flex;
+  align-items:baseline;
+  gap:16px;
+  flex-wrap:wrap;
+  font-size:12px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+}
+.issue-no{ color:var(--accent-text); }
+.issue-date{ color:var(--text-dim); }
+.issue-subject{
+  max-width:19ch;
+  margin-top:18px;
+  font-size:clamp(30px, 5vw, 46px);
+  line-height:1.04;
+  text-wrap:balance;
+}
+.issue-intro{
+  max-width:60ch;
+  margin-top:20px;
+  font-size:17px;
+  line-height:1.65;
+  color:var(--text-muted);
+}
+.issue-blocks{
+  margin-top:40px;
+  display:grid;
+  gap:32px;
+}
+.nl-block{
+  padding-left:20px;
+  /* the tag colour carries through to the rule, so each pillar is
+     identifiable before you read the label */
+  border-left:2px solid var(--tag, var(--line));
+}
+.nl-tag{
+  display:inline-block;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--tag, var(--accent-text));
+}
+.nl-tag:hover{ text-decoration:underline; }
+.nl-head{
+  max-width:46ch;
+  margin-top:10px;
+  font-size:21px;
+  line-height:1.3;
+  font-weight:600;
+  text-wrap:balance;
+}
+.nl-body{
+  max-width:68ch;
+  margin-top:12px;
+  font-size:16px;
+  line-height:1.7;
+  color:var(--text-muted);
+}
+@media (max-width:760px){
+  .issue-subject{ max-width:none; }
+  .nl-block{ padding-left:16px; }
+}

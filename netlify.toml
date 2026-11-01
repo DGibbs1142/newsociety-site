@@ -50,6 +50,13 @@
   to = "/links.html"
   status = 200
 
+# Same for the public newsletter archive, so replies and bios can link to a
+# short address that survives the page being renamed.
+[[redirects]]
+  from = "/newsletter"
+  to = "/newsletter.html"
+  status = 200
+
 # Baseline security headers. The site has no login and no cookies, so these
 # are about protecting visitors from the page being framed, sniffed, or
 # leaking full URLs to the APIs it calls.
