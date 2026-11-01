@@ -43,6 +43,15 @@
   <p class="links-sub">Culture moves fast. <span>We move faster.</span></p>
   <p class="mono links-pillars">Sports · Anime · Pop Culture · Fashion · Music · News</p>
 
+  <p class="links-pitch">The Week in Culture — one email every Sunday. The handful of stories that actually mattered, written like someone watched them happen.</p>
+  <form class="signup-form links-signup" name="newsletter" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="newsletter">
+    <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+    <label for="signup-email" class="visually-hidden">Email address</label>
+    <input id="signup-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
+    <button type="submit" class="btn btn-primary">Get Sunday’s issue →</button>
+  </form>
+
   <nav class="links-list" aria-label="NewSociety links">
     <a href="/" class="links-item links-item-primary">
       <span class="links-item-label">Watch the Feed</span>
@@ -69,14 +78,6 @@
       <span class="mono links-item-meta">Create, host, or work with us</span>
     </a>
   </nav>
-
-  <form class="signup-form links-signup" name="newsletter" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
-    <input type="hidden" name="form-name" value="newsletter">
-    <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
-    <label for="signup-email" class="visually-hidden">Email address</label>
-    <input id="signup-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
-    <button type="submit" class="btn btn-primary">Join the list →</button>
-  </form>
 
   <p class="mono links-foot">© 2026 NewSociety — Culture, Uncut</p>
 </main>

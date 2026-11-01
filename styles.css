@@ -1426,6 +1426,13 @@ footer{
   color:var(--text-dim);
   text-wrap:balance;
 }
+.links-pitch{
+  margin-top:22px;
+  font-size:14px;
+  line-height:1.5;
+  color:var(--text-muted);
+  text-wrap:balance;
+}
 .links-list{
   width:100%;
   margin-top:36px;
@@ -1455,7 +1462,7 @@ footer{
   flex:none;
   width:100%;
   max-width:none;
-  margin-top:28px;
+  margin-top:16px;
 }
 .links-foot{
   margin-top:auto;
