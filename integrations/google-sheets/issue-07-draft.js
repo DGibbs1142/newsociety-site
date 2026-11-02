@@ -1,31 +1,51 @@
 // ===========================================================================
 // ISSUE 07 - STAGING DRAFT. DO NOT PASTE YET.
 //
-// Code.gs holds exactly ONE NEWSLETTER_ISSUE object. Issue 06 is in there now
-// and sends Sunday November 1. Pasting this before that send would overwrite
-// Issue 06 and nobody would ever receive it.
+// Code.gs holds exactly ONE NEWSLETTER_ISSUE object. Paste this only after the
+// previous issue has sent, or you overwrite an issue nobody ever receives.
+// Issue 06 sent Sunday November 1. This one is dated Sunday November 8.
 //
-// Paste this ONLY after Issue 06 has gone out.
+// ---------------------------------------------------------------------------
+// DE-DUPLICATED 2026-11-02. The Sports block used to be the WNBA Game 7 /
+// expansion-team story. Game 7 finished the night of Oct 31, in time to make
+// Issue 06, which carries it as a full block WITH the Finals MVP line - so this
+// issue was set to reprint it. The Sports block, the subject line ("a champion
+// at last") and the intro's second sentence all pointed at it and have all been
+// re-pointed. Do not put the WNBA back in here.
+// ---------------------------------------------------------------------------
 //
-// SPORTS BLOCK IS FILLED (Game 7 final: Golden State 68, Atlanta 63).
+// STILL TO FIX BEFORE SENDING - two blocks belong to the WRONG WEEK.
+// This issue covers Nov 2-8. These two are both Oct 31 stories, which is Issue
+// 06's week, and will be eight days old by the time this lands:
 //
-// HEADS UP - OVERLAP WITH ISSUE 06. Game 7 finished the night of Oct 31, in
-// time to make Issue 06, so Issue 06 now carries it as a second Sports block.
-// This block keeps the story but takes the expansion-team angle instead of the
-// first-Game-7 angle, so the two do not read as a reprint. Even so, by Nov 8
-// this is week-old news: before pasting, consider re-pointing BOTH this block
-// and the subject line ("a champion at last") at something from that week.
+//   * MUSIC  - Harryween / the X-Factor song. Night 29 of the MSG residency,
+//              Oct 31. Replace with something from Nov 2-8, or re-point it at
+//              the residency ending rather than that one night.
+//   * FASHION - Halloween costumes as a style event. Oct 31. Same problem, and
+//              harder to save: by Nov 8 nobody wants a Halloween round-up.
+//              Replace it.
+//
+// Pop culture (Dune) is fine - the IMAX re-release starts Nov 13 and the finale
+// is Dec 18, so it reads forward, not back. Anime is fine - productions in
+// progress, no date to go stale.
+//
+// VERIFIED FOR THE NEW SPORTS BLOCK (2026-11-02, from the teams' own accounts):
+//   @okcthunder - No. 0 retirement set for February 7, 2027.
+//   @NBA - 11-year OKC career, 2016-17 MVP, 8x All-NBA, franchise leader in
+//          PTS, REB, AST, STL, GP and MIN.
+// Deliberately says NOTHING about whether he is currently on a roster - sources
+// contradicted each other on that, so it is left out rather than guessed.
 // ===========================================================================
 const NEWSLETTER_ISSUE = {
   number: 7,
   dateline: 'Sunday, November 8, 2026',
-  subject: 'The Week in Culture \u2014 a champion at last, Dune\u2019s last chapter, and a night everyone dressed as someone else',
-  intro: 'A lot of long runs reached their final stretch this week. One of them ended in a game that had never been played before.',
+  subject: 'The Week in Culture \u2014 a number going to the rafters, Dune\u2019s last chapter, and anime\u2019s move to the big screen',
+  intro: 'A lot of long runs reached their final stretch this week. One of them is getting a banner, and one of them is finally getting an ending people spent decades calling unfilmable.',
   blocks: [
     {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'An expansion team won a championship in its second season.',
-      body: 'Golden State closed Atlanta out 68-63 in the first Game 7 the WNBA Finals has ever needed. The franchise played its first game in May 2025, became the first expansion team to reach the playoffs in its debut season, and won the title the year after that. Finals MVP Gabby Williams scored 30 in the decider, 28 of them after halftime. Atlanta has been in the league since 2008 and has now been to four Finals without winning any of them. Expansion teams are normally handed a decade of patience and a rebuilding plan. This one declined both.'
+      head: 'Oklahoma City is putting Russell Westbrook\u2019s number in the rafters.',
+      body: 'The Thunder set February 7 as the date for No. 0. Eleven seasons, the 2017 MVP, eight All-NBA teams \u2014 and he still leads the franchise in points, rebounds, assists, steals, games played and minutes. All six at once, years after he last wore the jersey. Players usually get honoured for winning. He is being honoured for carrying, which is a harder thing to fit on a banner, and it is most of why that number means what it does in that building.'
     },
     {
       tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
