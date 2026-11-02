@@ -83,6 +83,7 @@ parts = [SHELL_HEAD, NAV, '''
 
 <section class="wrap nl-archive">
   <div class="section-label">// the archive</div>
+  <p class="nl-archive-note">The run goes 01 straight to 03 on purpose. Issue 02 was written for a Sunday that got away from us, and rather than send it late we folded its stories into Issue 03.</p>
   <nav class="nl-index mono" aria-label="Jump to an issue">
 ''']
 

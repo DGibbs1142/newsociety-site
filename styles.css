@@ -1497,6 +1497,13 @@ footer{
   color:var(--text-muted);
 }
 .nl-archive{ padding-bottom:88px; }
+.nl-archive-note{
+  max-width:620px;
+  margin-top:10px;
+  font-size:14.5px;
+  line-height:1.6;
+  color:var(--text-muted);
+}
 .nl-index{
   display:flex;
   flex-wrap:wrap;
