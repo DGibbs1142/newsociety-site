@@ -14,20 +14,44 @@
 // re-pointed. Do not put the WNBA back in here.
 // ---------------------------------------------------------------------------
 //
-// STILL TO FIX BEFORE SENDING - two blocks belong to the WRONG WEEK.
-// This issue covers Nov 2-8. These two are both Oct 31 stories, which is Issue
-// 06's week, and will be eight days old by the time this lands:
+// MUSIC AND FASHION REPLACED 2026-11-02. Both were Oct 31 stories sitting in an
+// issue that covers Nov 2-8, so both would have landed eight days old. Note the
+// old Music fallback ("re-point it at the residency ending") was dead too: the
+// MSG residency ENDED Oct 31, 30 shows from Aug 26, so the ending is also Issue
+// 06's week. The draft also had the Harryween night wrong - Elvis was Oct 30,
+// the Oct 31 finale was Pizza Rat. Do not put either back in.
 //
-//   * MUSIC  - Harryween / the X-Factor song. Night 29 of the MSG residency,
-//              Oct 31. Replace with something from Nov 2-8, or re-point it at
-//              the residency ending rather than that one night.
-//   * FASHION - Halloween costumes as a style event. Oct 31. Same problem, and
-//              harder to save: by Nov 8 nobody wants a Halloween round-up.
-//              Replace it.
+// VERIFIED FOR THE NEW MUSIC BLOCK (2026-11-02, ABC News CMA nominees piece):
+//   CMA Awards are Wed Nov 18 2026, Bridgestone Arena, Nashville, on ABC.
+//   Lainey Wilson hosts AND is nominated for Entertainer of the Year.
+//   Entertainer field: Combs, Cody Johnson, Langley, Stapleton, Wilson.
+//   Langley: Album of the Year "Dandelion"; "Be Her" and "Choosin' Texas" in
+//   both Single and Song. Swift: Single of the Year "I Knew It, I Knew You".
+// Says Swift and Langley "share the lead in nominations" with NO count - the
+// source names them as leaders but never prints a number. Do not add one.
+// The block deliberately calls back to Issue 01 (Langley "racing herself up the
+// chart") and Issue 06 (country holding the whole Hot 100 top five).
+//
+// VERIFIED FOR THE NEW FASHION BLOCK (2026-11-02, CFDA + WWD):
+//   2026 CFDA Fashion Awards, Mon Nov 2, American Museum of Natural History.
+//   Keke Palmer hosting. Pre-announced honours: Vaccarello (Saint Laurent)
+//   International Designer, Tory Burch Positive Change, Peter Marino Fashion
+//   Icon, van Lamsweerde + Matadin Geoffrey Beene Lifetime Achievement.
+//
+// ONE THING STILL OPEN BEFORE SENDING:
+//   The CFDA ceremony is the night of Nov 2. Only the honorary awards above
+//   were known when this was written - the competitive categories (American
+//   Womenswear / Menswear Designer of the Year, Accessory, Emerging) are
+//   decided on the night. By Nov 8 they are six-day-old public news. Check the
+//   results and work the headline winner into the Fashion block, and confirm
+//   the ceremony went ahead as scheduled before leaving the past tense in.
 //
 // Pop culture (Dune) is fine - the IMAX re-release starts Nov 13 and the finale
 // is Dec 18, so it reads forward, not back. Anime is fine - productions in
 // progress, no date to go stale.
+//
+// BLOCK COUNT: this issue runs 5 blocks. Issue 06 ran 6 (it carried two Sports).
+// Not wrong, just lighter - add a sixth near the send if the week produces one.
 //
 // VERIFIED FOR THE NEW SPORTS BLOCK (2026-11-02, from the teams' own accounts):
 //   @okcthunder - No. 0 retirement set for February 7, 2027.
@@ -54,8 +78,8 @@ const NEWSLETTER_ISSUE = {
     },
     {
       tag: 'Music', page: 'music.html', color: '#5aa0e8',
-      head: 'Harry Styles covered his own X-Factor audition song, sixteen years later.',
-      body: 'At Harryween, night 29 of his Madison Square Garden residency, he opened the show dressed as Elvis and somewhere in the night sang Stevie Wonder\u2019s \u201CIsn\u2019t She Lovely\u201D \u2014 the song he auditioned with on the X-Factor in 2010, at sixteen. A residency is usually where a career goes to settle down. He has turned his into the main event instead.'
+      head: 'Ella Langley is up for Entertainer of the Year, and the CMAs are ten days out.',
+      body: 'We opened this newsletter in September with her racing herself up the chart. She goes to Nashville on November 18 sharing the lead in nominations with Taylor Swift, up for Entertainer of the Year against Luke Combs, Cody Johnson, Chris Stapleton and Lainey Wilson \u2014 who is also hosting. \u201CDandelion\u201D is up for Album of the Year, and both \u201CBe Her\u201D and \u201CChoosin\u2019 Texas\u201D are up for Single and Song. Last week country held the entire top five of the Hot 100. This is the room where that gets counted.'
     },
     {
       tag: 'Anime', page: 'anime.html', color: '#e0679a',
@@ -64,8 +88,8 @@ const NEWSLETTER_ISSUE = {
     },
     {
       tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
-      head: 'Halloween is the only night of the year that is genuinely a style event.',
-      body: 'Karol G went out as the Corpse Bride. Zendaya built her look as an homage to Halle Berry\u2019s X-Men premiere, and Halle Berry publicly approved. Harry Styles opened his own show as Elvis. No brief, no buyers, no runway \u2014 just people deciding who they wanted to be for one night, and everyone else reading the choice. It is the closest thing fashion has to an open submission.'
+      head: 'American fashion handed out its awards in a room full of dinosaurs.',
+      body: 'The CFDA Awards were held at the American Museum of Natural History on Monday, Keke Palmer hosting. A few of the night\u2019s awards were settled before anyone walked in: Anthony Vaccarello took International Designer of the Year for Saint Laurent, Tory Burch the Positive Change Award, and the architect Peter Marino was named Fashion Icon. Lifetime achievement went to Inez van Lamsweerde and Vinoodh Matadin, who have spent thirty years photographing this industry \u2014 which is the rarer kind of award, because fashion is much better at celebrating the people in front of the camera.'
     }
   ],
   live: 'Launch party incoming. The date and venue are almost locked, and this list hears first.',
