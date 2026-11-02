@@ -44,6 +44,17 @@
   status = 404
   force = true
 
+# The Apps Script source and the newsletter staging drafts live in the repo but
+# are not part of the site, and nothing links them. An unsent issue sitting at a
+# guessable path is the one that matters: /newsletter publishes issues that have
+# already gone out, deliberately, and a draft leaking ahead of its send is a
+# different thing entirely.
+[[redirects]]
+  from = "/integrations/*"
+  to = "/"
+  status = 404
+  force = true
+
 # Clean address for the link-in-bio page the social profiles point at.
 [[redirects]]
   from = "/links"
