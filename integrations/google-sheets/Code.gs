@@ -562,40 +562,35 @@ function welcomeMessage_(email) {
 // second run only reaches people who joined since, and nobody is sent the
 // same issue twice.
 const NEWSLETTER_ISSUE = {
-  number: 6,
-  dateline: 'Sunday, November 1, 2026',
-  subject: 'The Week in Culture \u2014 a first World Series, a first Game 7, and country\u2019s first clean sweep',
-  intro: 'Three things happened this week that had never happened before. That is more firsts than most months manage.',
+  number: 7,
+  dateline: 'Sunday, November 8, 2026',
+  subject: 'The Week in Culture \u2014 a number going to the rafters, Dune\u2019s last chapter, and anime\u2019s move to the big screen',
+  intro: 'A lot of long runs reached their final stretch this week. One of them is getting a banner, and one of them is finally getting an ending people spent decades calling unfilmable.',
   blocks: [
     {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'Milwaukee won the World Series for the first time in the franchise\u2019s existence.',
-      body: 'Four games to one over Tampa Bay, clinched on October 28, and it is the first title the Brewers have ever won \u2014 not a drought ended, the first one. William Contreras took series MVP. It is also the first baseball championship the city has had since 1957. They got there by sweeping the Dodgers, the team that had swept them out of the same round a year earlier, which had never been done before either.'
-    },
-    {
-      tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'The WNBA needed a seventh game to find a champion, and a team in its second season won it.',
-      body: 'Golden State beat Atlanta 68-63 on October 31 to win the first Game 7 in WNBA Finals history. The Finals only went best-of-seven last year, and that series ended in four, so this was a game nobody had ever played. The Valkyries trailed by six at the half and won the second half 44-33, and Finals MVP Gabby Williams is most of the reason: 2 points before the break, 28 after it, including three three-pointers inside one minute of the third quarter. Kiah Stokes took 13 rebounds, and Atlanta pulled within three inside the final eleven seconds before Veronica Burton closed it out from the line. Golden State played its first game in May 2025 and reached the playoffs that same year, which no expansion team had done. Atlanta joined the league in 2008 and has now lost four Finals without winning one.'
-    },
-    {
-      tag: 'Music', page: 'music.html', color: '#5aa0e8',
-      head: 'Country holds the entire top five of the Hot 100. That has never happened.',
-      body: 'Billboard confirmed all five of the chart\u2019s top positions belong to country songs for the first time in the Hot 100\u2019s history. Whatever you make of the genre, a clean sweep of the top five is not a fluke of one big single. It is the kind of result that only shows up when something underneath has already moved.'
+      head: 'Oklahoma City is putting Russell Westbrook\u2019s number in the rafters.',
+      body: 'The Thunder set February 7 as the date for No. 0. Eleven seasons, the 2017 MVP, eight All-NBA teams \u2014 and he still leads the franchise in points, rebounds, assists, steals, games played and minutes. All six at once, years after he last wore the jersey. Players usually get honoured for winning. He is being honoured for carrying, which is a harder thing to fit on a banner, and it is most of why that number means what it does in that building.'
     },
     {
       tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
-      head: '\u201CYou Can See Everything\u201D is winning the weekend.',
-      body: 'It took the top Friday spot with $3.56 million, holding off Clayface. Two weeks ago the same film was sitting at 99 percent on the audience score, which is a number you almost never see on anything. The crowd worked it out well before the box office did.'
+      head: 'Dune is heading for its last chapter, and the first two go back to IMAX first.',
+      body: 'The final trailer for Dune: Part Three landed this week, and it puts Chani at the centre of a story that no longer lines up with the book it came from. Before the finale arrives on December 18, Parts One and Two return to IMAX for one week starting November 13, with a sneak peek of Part Three attached. Three films to close out a story people spent decades calling unfilmable.'
+    },
+    {
+      tag: 'Music', page: 'music.html', color: '#5aa0e8',
+      head: 'Ella Langley is up for Entertainer of the Year, and the CMAs are ten days out.',
+      body: 'We opened this newsletter in September with her racing herself up the chart. She goes to Nashville on November 18 sharing the lead in nominations with Taylor Swift, up for Entertainer of the Year against Luke Combs, Cody Johnson, Chris Stapleton and Lainey Wilson \u2014 who is also hosting. \u201CDandelion\u201D is up for Album of the Year, and both \u201CBe Her\u201D and \u201CChoosin\u2019 Texas\u201D are up for Single and Song. Last week country held the entire top five of the Hot 100. This is the room where that gets counted.'
     },
     {
       tag: 'Anime', page: 'anime.html', color: '#e0679a',
-      head: 'January is shaping up as a sequel season.',
-      body: 'Sakamoto Days, MASHLE, Akane-banashi and Shangri-La Frontier are all lined up to return. The fall slate that arrived all at once in early October has barely settled and the next wave is already scheduled. Meanwhile One Piece turned up inside Fortnite and JISOO from BLACKPINK cosplayed Lucy from Cyberpunk Edgerunners. Anime stopped staying in its lane a long time ago.'
+      head: 'Anime keeps buying tickets to the cinema.',
+      body: 'Solo Leveling: Beyond the System is officially in production as a theatrical feature. The Rascal Does Not Dream series gets its conclusion in theatres for three nights in February. And Kojima Productions released a first trailer for Death Stranding Isolations, an anime series set inside the game\u2019s world. The jump from streaming to the big screen has stopped being a one-off.'
     },
     {
       tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
-      head: 'Two opposite theories about what a shop is for.',
-      body: 'New Balance put out a Made in America 990v7 in muted grey \u2014 the least attention-seeking release strategy in footwear, and one that has worked for them for years. At the other end, a French luxury house handed part of a store over to an exhibition of the Surrealist painter Roland Topor. One sells by saying almost nothing. The other sells by turning the room into a gallery.'
+      head: 'Diotima won American womenswear again, in a room full of dinosaurs.',
+      body: 'The CFDA Awards were at the American Museum of Natural History on Monday, Keke Palmer hosting, and Rachel Scott took Womenswear Designer of the Year \u2014 her second in three years, for a label whose crochet is all made in Jamaica. Ralph Lauren took menswear, a year after winning womenswear, which is a strange sentence about a label that started in 1967. And lifetime achievement went to Inez van Lamsweerde and Vinoodh Matadin for thirty years of photographing this industry \u2014 the rarer kind of award, because fashion is much better at celebrating the people in front of the camera.'
     }
   ],
   live: 'Launch party incoming. The date and venue are almost locked, and this list hears first.',
