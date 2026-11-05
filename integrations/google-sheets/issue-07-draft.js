@@ -38,20 +38,33 @@
 //   International Designer, Tory Burch Positive Change, Peter Marino Fashion
 //   Icon, van Lamsweerde + Matadin Geoffrey Beene Lifetime Achievement.
 //
-// ONE THING STILL OPEN BEFORE SENDING:
-//   The CFDA ceremony is the night of Nov 2. Only the honorary awards above
-//   were known when this was written - the competitive categories (American
-//   Womenswear / Menswear Designer of the Year, Accessory, Emerging) are
-//   decided on the night. By Nov 8 they are six-day-old public news. Check the
-//   results and work the headline winner into the Fashion block, and confirm
-//   the ceremony went ahead as scheduled before leaving the past tense in.
+// FASHION BLOCK CLOSED OUT 2026-11-05. The ceremony went ahead Monday Nov 2 as
+// scheduled, so the past tense is safe. The competitive winners are now public
+// and the block leads with them instead of the honorary list:
+//   Womenswear   Rachel Scott (Diotima) - her 2nd, after 2024
+//   Menswear     Ralph Lauren - who won WOMENSWEAR in 2025
+//   Accessory    Ana Khouri      Emerging  Colleen Allen
+// Confirmed against the CFDA's own release (PR Newswire) AND The Impression.
+// DATE TRAP: the PR Newswire release is datelined Nov 3 because it went out the
+// next morning; the ceremony was the evening of Monday Nov 2. Keep "Monday".
+// Diotima detail verified separately: Rachel Scott is Jamaican-born, the label's
+// crochet is all made in Jamaica by artisans she treats as co-designers, and the
+// signature starched-crochet look comes from traditional Jamaican doilies.
+// Not used, to keep the block to the length of the others: Anthony Vaccarello
+// (International Designer, his decade at Saint Laurent - cut because it is an
+// INTERNATIONAL award in a block about American fashion), Gap Inc. (Innovation),
+// Eva Chen (Media), Linda Fargo (Founder's), Susan Cianciolo (Isabel Toledo).
 //
 // Pop culture (Dune) is fine - the IMAX re-release starts Nov 13 and the finale
 // is Dec 18, so it reads forward, not back. Anime is fine - productions in
 // progress, no date to go stale.
 //
-// BLOCK COUNT: this issue runs 5 blocks. Issue 06 ran 6 (it carried two Sports).
-// Not wrong, just lighter - add a sixth near the send if the week produces one.
+// BLOCK COUNT: 5 blocks, which is the standard full set. Every issue ever sent
+// has used these same five tags - Sports, Pop culture, Music, Anime, Fashion.
+// There has never been a News block, and the news pillar's page is
+// current-events.html, not news.html. Issue 06's 6th block was a second Sports,
+// not a sixth pillar. A sixth here would mean doubling up a pillar, so this
+// issue is complete at 5 - add one only if the week genuinely produces it.
 //
 // VERIFIED FOR THE NEW SPORTS BLOCK (2026-11-02, from the teams' own accounts):
 //   @okcthunder - No. 0 retirement set for February 7, 2027.
@@ -88,8 +101,8 @@ const NEWSLETTER_ISSUE = {
     },
     {
       tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
-      head: 'American fashion handed out its awards in a room full of dinosaurs.',
-      body: 'The CFDA Awards were held at the American Museum of Natural History on Monday, Keke Palmer hosting. A few of the night\u2019s awards were settled before anyone walked in: Anthony Vaccarello took International Designer of the Year for Saint Laurent, Tory Burch the Positive Change Award, and the architect Peter Marino was named Fashion Icon. Lifetime achievement went to Inez van Lamsweerde and Vinoodh Matadin, who have spent thirty years photographing this industry \u2014 which is the rarer kind of award, because fashion is much better at celebrating the people in front of the camera.'
+      head: 'Diotima won American womenswear again, in a room full of dinosaurs.',
+      body: 'The CFDA Awards were at the American Museum of Natural History on Monday, Keke Palmer hosting, and Rachel Scott took Womenswear Designer of the Year \u2014 her second in three years, for a label whose crochet is all made in Jamaica. Ralph Lauren took menswear, a year after winning womenswear, which is a strange sentence about a label that started in 1967. And lifetime achievement went to Inez van Lamsweerde and Vinoodh Matadin for thirty years of photographing this industry \u2014 the rarer kind of award, because fashion is much better at celebrating the people in front of the camera.'
     }
   ],
   live: 'Launch party incoming. The date and venue are almost locked, and this list hears first.',
