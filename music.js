@@ -254,6 +254,7 @@ function renderChartSlide(){
     const img = document.createElement('img');
     img.src = track.artworkUrl || '';
     img.alt = '';
+    img.loading = 'lazy'; img.decoding = 'async';
     img.onerror = () => img.remove();
 
     const info = document.createElement('span');
