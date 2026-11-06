@@ -127,6 +127,8 @@ function toggleSavedItem(item){
   if(idx >= 0) items.splice(idx, 1);
   else items.unshift(item);
   localStorage.setItem(SAVED_STORAGE_KEY, JSON.stringify(items));
+  // Saves also count toward "Trending on NewSociety" (engagement.js).
+  if(window.nsEngagement) window.nsEngagement.trackSave(item, idx < 0);
   return idx < 0; // true if the item is now saved
 }
 
@@ -153,6 +155,8 @@ function attachSaveButton(card, item){
     sync();
   });
   card.appendChild(btn);
+  // Every card that can be saved can also be shared (engagement.js).
+  if(window.nsEngagement) window.nsEngagement.attachCardShare(card, item);
   return btn;
 }
 

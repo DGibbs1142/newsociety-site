@@ -71,10 +71,12 @@
     <h1 class="page-title display" id="detailTitle">Loading…</h1>
     <p class="page-sub mono" id="detailStatus" style="text-transform:uppercase; letter-spacing:0.06em; font-size:13px;"></p>
     <div class="detail-actions" style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap;">
+      <button type="button" class="btn btn-primary" id="shareDetailBtn" style="display:none;">↗ Share</button>
       <button type="button" class="btn btn-ghost" id="saveDetailBtn" style="display:none;">☆ Save for later</button>
       <a href="#" target="_blank" rel="noopener" class="btn btn-ghost" id="shareXBtn" style="display:none;">Share on X</a>
       <button type="button" class="btn btn-ghost" id="copyLinkBtn" style="display:none;">Copy Link</button>
     </div>
+    <div class="reaction-bar" id="reactionBar" role="group" aria-label="React to this story" hidden></div>
   </div>
 </section>
 
@@ -148,6 +150,7 @@
 </footer>
 
 <script src="detail-link.js" defer></script>
+<script src="engagement.js" defer></script>
 <script src="detail.js" defer></script>
 <script src="site.js" defer></script>
 
