@@ -1,6 +1,6 @@
 // The live poll on each page. To run a new poll, change the question/options
 // AND give it a new id — votes are stored by id, so a new id starts at zero
-// and the old results stay in storage untouched. Keep options to 2–5.
+// and the old results stay in storage untouched. Keep options to 2–6.
 //
 // Keys are the page's filename without .html (index = homepage).
 export interface Poll {
@@ -11,9 +11,9 @@ export interface Poll {
 
 export const POLLS: Record<string, Poll> = {
   index: {
-    id: "home-2026-11-beat",
+    id: "home-2026-11-beat-v2",
     question: "Which beat should we cover more?",
-    options: ["Sports", "Anime", "Pop Culture", "Music", "Fashion"]
+    options: ["Sports", "Anime", "Pop Culture", "Music", "Fashion", "Current Events"]
   },
   sports: {
     id: "sports-2026-11-weekend",
