@@ -131,8 +131,8 @@
         <h2 class="section-title display">Any team, any player.</h2>
       </div>
     </div>
-    <form class="search-form reveal" id="keywordSearchForm">
-      <input type="text" id="keywordSearchInput" placeholder="Search by team or player name…" required>
+    <form class="search-form reveal" id="keywordSearchForm" action="search.html" method="get">
+      <input type="text" id="keywordSearchInput" name="q" placeholder="Search by team or player name…" required>
       <button type="submit" class="btn btn-primary">Search</button>
     </form>
     <p class="search-status mono" id="keywordSearchStatus"></p>
