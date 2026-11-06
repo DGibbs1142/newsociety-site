@@ -510,7 +510,7 @@ async function fetchRelatedPopCulture(){
 }
 
 async function fetchRelatedFashion(){
-  const res = await fetch('/api/gnews?op=search&q=fashion&max=8');
+  const res = await fetch('/api/gnews?op=search&q=fashion&max=10');
   if(!res.ok) return [];
   const data = await res.json();
   return (data.articles || [])
@@ -546,7 +546,7 @@ async function fetchRelatedMusic(){
 }
 
 async function fetchRelatedNews(){
-  const res = await fetch('/api/gnews?op=headlines&category=general&max=8');
+  const res = await fetch('/api/gnews?op=headlines&category=general&max=10');
   if(!res.ok) return [];
   const data = await res.json();
   return (data.articles || [])
