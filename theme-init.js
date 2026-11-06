@@ -11,3 +11,15 @@
     }
   }catch(e){}
 })();
+
+// Scroll-reveal opt-in. Sections marked .reveal are only hidden (and faded in
+// on scroll by site.js) when this class is present, so the content is still
+// visible if scripts fail, for crawlers and link previews, and for visitors
+// who ask for reduced motion.
+(function(){
+  try{
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window){
+      document.documentElement.classList.add('js-reveal');
+    }
+  }catch(e){}
+})();

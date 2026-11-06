@@ -36,6 +36,7 @@ function buildTicker(){
 }
 
 function initReveal(){
+  if(!document.documentElement.classList.contains('js-reveal')) return;
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if(e.isIntersecting){
