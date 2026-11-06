@@ -1595,3 +1595,111 @@ footer{
   .issue-subject{ max-width:none; }
   .nl-block{ padding-left:16px; }
 }
+
+/* ---------- ENGAGEMENT (engagement.js) ---------- */
+/* Card share button sits just left of the save star, same chip style. */
+.share-btn{
+  position:absolute;
+  top:12px;
+  right:52px;
+  width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(var(--scrim-rgb),0.72);
+  border:1px solid var(--line);
+  border-radius:50%;
+  color:var(--text-muted);
+  font-size:14px;
+  line-height:1;
+  cursor:pointer;
+  z-index:2;
+  transition:color 0.2s ease, border-color 0.2s ease;
+}
+.share-btn:hover{ color:var(--text); border-color:var(--text-muted); }
+
+/* Reactions under the detail page's action buttons. */
+.reaction-bar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+.reaction-bar[hidden]{ display:none; }
+.reaction-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 16px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:var(--bg-elevated);
+  color:var(--text);
+  cursor:pointer;
+  transition:border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+.reaction-btn:hover{ border-color:var(--text-muted); }
+.reaction-btn.active{ border-color:var(--accent); background:var(--accent-soft); }
+.reaction-btn.active .reaction-count{ color:var(--accent-text); }
+.reaction-emoji{ font-size:18px; line-height:1; }
+.reaction-count{ font-size:13px; color:var(--text-muted); min-width:1ch; }
+.reaction-btn.pop{ animation:reaction-pop 0.35s ease; }
+@keyframes reaction-pop{
+  0%{ transform:scale(1); }
+  40%{ transform:scale(1.18); }
+  100%{ transform:scale(1); }
+}
+
+/* Quick poll: options become result bars once you've voted. */
+.poll-options{
+  display:grid;
+  gap:10px;
+  max-width:640px;
+}
+.poll-option{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  width:100%;
+  padding:16px 20px;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--bg-elevated);
+  color:var(--text);
+  font:inherit;
+  font-size:15px;
+  text-align:left;
+  cursor:pointer;
+  overflow:hidden;
+  transition:border-color 0.2s ease;
+}
+.poll-option::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:var(--pct, 0%);
+  background:var(--accent-soft);
+  transition:width 0.6s ease;
+}
+.poll-option > span{ position:relative; }
+.poll-option:not(:disabled):hover{ border-color:var(--accent); }
+.poll-option:disabled{ cursor:default; }
+.poll-option.chosen{ border-color:var(--accent); }
+.poll-option.chosen .poll-label::after{ content:"  ✓"; color:var(--accent-text); }
+.poll-pct{ font-size:13px; color:var(--text-muted); }
+.poll-option.chosen .poll-pct{ color:var(--accent-text); }
+.poll-note{
+  margin-top:14px;
+  font-size:12px;
+  letter-spacing:0.04em;
+  color:var(--text-dim);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .reaction-btn.pop{ animation:none; }
+  .poll-option::before{ transition:none; }
+}
+#pollSection[hidden], #trendingSection[hidden]{ display:none; }
