@@ -86,3 +86,19 @@
     # sprinkled through the markup. Images come from a dozen third-party CDNs,
     # so img-src allows any https source rather than listing them all.
     Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' https://graphql.anilist.co https://site.api.espn.com https://site.web.api.espn.com https://itunes.apple.com https://www.googleapis.com https://cloudflareinsights.com; upgrade-insecure-requests"
+
+# Long-lived caching for files that never change in place. Netlify's
+# default makes browsers re-check every asset on every visit. The font
+# files are not content-hashed, so if one is ever replaced it must get a
+# new filename (and styles.css updated) or returning visitors keep the old
+# copy for up to a year. Icons and share images change rarely, so a week.
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
