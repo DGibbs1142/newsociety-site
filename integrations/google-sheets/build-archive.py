@@ -10,7 +10,12 @@ def esc(s): return html.escape(s, quote=False)
 def headline(subject): return re.sub(r'^The Week in Culture\s*[—-]\s*', '', subject)
 def num(n): return '%02d' % n
 
-SHELL_HEAD = '''<!DOCTYPE html>
+# The page <head> (fonts, share image, CSP-safe scripts) is taken from the
+# newsletter.html already in the repo, the same way NAV and FOOT come from
+# press.html, so later edits to the head are kept instead of being reverted
+# by a stale copy in this script. FALLBACK_HEAD is used only if the page is
+# missing.
+FALLBACK_HEAD = '''<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -24,19 +29,19 @@ SHELL_HEAD = '''<!DOCTYPE html>
 <link rel="canonical" href="https://newsociety.netlify.app/newsletter.html">
 <meta property="og:title" content="The Week in Culture — NewSociety">
 <meta property="og:description" content="Every issue of the NewSociety newsletter. One email every Sunday on sports, anime, pop culture, fashion and music.">
-<meta property="og:image" content="https://newsociety.netlify.app/icons/og-image.png">
+<meta property="og:image" content="https://newsociety.netlify.app/icons/og-newsletter.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="NewSociety — Culture moves fast. We move faster.">
+<meta property="og:image:alt" content="NewSociety The Week in Culture: One email every Sunday.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Week in Culture — NewSociety">
 <meta name="twitter:description" content="Every issue of the NewSociety newsletter. One email every Sunday on sports, anime, pop culture, fashion and music.">
-<meta name="twitter:image" content="https://newsociety.netlify.app/icons/og-image.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" data-font>
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+<meta name="twitter:image" content="https://newsociety.netlify.app/icons/og-newsletter.png">
+<meta name="twitter:image:alt" content="NewSociety The Week in Culture: One email every Sunday.">
+<link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
+<link rel="alternate" type="application/rss+xml" title="The Week in Culture — NewSociety" href="feed.xml">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0a0a0c">
 <link rel="icon" href="icons/icon-32.png" sizes="32x32" type="image/png">
@@ -46,6 +51,12 @@ SHELL_HEAD = '''<!DOCTYPE html>
 <body data-page="newsletter.html">
 <a class="skip-link" href="#main">Skip to content</a>
 '''
+
+try:
+    _cur = io.open(REPO + '/newsletter.html', encoding='utf-8').read()
+    SHELL_HEAD = _cur[:_cur.index('<header class="nav">')]
+except (OSError, ValueError):
+    SHELL_HEAD = FALLBACK_HEAD
 
 NAV = io.open(REPO + '/press.html', encoding='utf-8').read()
 NAV = NAV[NAV.index('<header class="nav">'):NAV.index('</header>') + len('</header>')]
@@ -83,6 +94,7 @@ parts = [SHELL_HEAD, NAV, '''
 
 <section class="wrap nl-archive">
   <div class="section-label">// the archive</div>
+  <p class="nl-feed mono"><a href="feed.xml">Follow by RSS</a></p>
   <p class="nl-archive-note">The run goes 01 straight to 03 on purpose. Issue 02 was written for a Sunday that got away from us, and rather than send it late we folded its stories into Issue 03.</p>
   <nav class="nl-index mono" aria-label="Jump to an issue">
 ''']
@@ -129,3 +141,7 @@ parts.append(FOOT)
 io.open(REPO + '/newsletter.html', 'w', encoding='utf-8').write(''.join(parts))
 print('wrote newsletter.html — %d issues, %d blocks'
       % (len(issues), sum(len(i['blocks']) for i in issues)))
+
+# Rebuild the RSS feed from the page just written.
+import os, subprocess
+subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'build-feed.py'), REPO], check=True)

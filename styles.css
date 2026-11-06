@@ -1799,3 +1799,7 @@ footer{
    Those pages then skip the identical footer signup a screen below. */
 .cta .cta-signup{ margin:28px auto 18px; }
 body:has(.cta-signup) .footer-signup{ display:none; }
+
+/* "Follow by RSS" under the newsletter archive label */
+.nl-feed{ margin-top:8px; font-size:12.5px; letter-spacing:0.06em; text-transform:uppercase; }
+.nl-feed a{ color:var(--accent-text); text-decoration:underline; text-underline-offset:3px; }
