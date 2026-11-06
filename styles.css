@@ -550,6 +550,16 @@ h1.page-title{
   line-height:1.75;
   max-width:640px;
 }
+/* The global reset makes links inherit colour with no underline, which
+   leaves links inside running text indistinguishable from the words
+   around them. Give them both a colour and an underline. */
+.about-copy a{
+  color:var(--accent-text);
+  text-decoration:underline;
+  text-underline-offset:3px;
+  text-decoration-thickness:1px;
+}
+.about-copy a:hover{ text-decoration-thickness:2px; }
 .about-media{
   aspect-ratio:4/3;
   background:var(--bg-elevated);
@@ -1453,9 +1463,11 @@ footer{
 .links-item:hover{ border-color:var(--text-muted); transform:translateY(-1px); }
 .links-item-label{ font-size:16px; font-weight:600; }
 .links-item-meta{ font-size:12px; color:var(--text-muted); }
-.links-item-primary{ background:var(--accent); border-color:var(--accent); }
-.links-item-primary .links-item-meta{ color:rgba(255,255,255,0.8); }
-.links-item-primary:hover{ background:#5c43f0; border-color:#5c43f0; }
+/* A deeper purple than --accent so white text clears 4.5:1 in both themes
+   (on --accent itself the label measured 4.26:1 dark, 3.84:1 light). */
+.links-item-primary{ background:#5a3fe0; border-color:#5a3fe0; color:#fff; }
+.links-item-primary .links-item-meta{ color:rgba(255,255,255,0.88); }
+.links-item-primary:hover{ background:#4a30c8; border-color:#4a30c8; }
 /* .signup-form grows via flex-basis in the footer row; in this column
    layout that basis would become a 360px height */
 .links-signup{
@@ -1576,6 +1588,13 @@ footer{
   color:var(--tag, var(--accent-text));
 }
 .nl-tag:hover{ text-decoration:underline; }
+/* The pillar colours are picked for the dark page; on white they fall to
+   ~2.5:1. Darken the label text in light mode (the left rule keeps the
+   original colour). */
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]) .nl-tag{ color:color-mix(in srgb, var(--tag, var(--accent-text)) 55%, #000); }
+}
+:root[data-theme="light"] .nl-tag{ color:color-mix(in srgb, var(--tag, var(--accent-text)) 55%, #000); }
 .nl-head{
   max-width:46ch;
   margin-top:10px;
