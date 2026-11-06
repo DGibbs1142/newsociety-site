@@ -3,6 +3,7 @@
 // passthrough) keeps this from becoming a free relay for arbitrary GNews
 // traffic.
 import type { Context, Config } from "@netlify/functions";
+import { getStore } from "@netlify/blobs";
 
 const GNEWS_BASE = "https://gnews.io/api/v4";
 const ALLOWED_CATEGORIES = ["general", "entertainment"];
@@ -20,6 +21,8 @@ export default async (req: Request, context: Context) => {
   const op = url.searchParams.get("op");
   const max = url.searchParams.get("max") || "10";
   let target: string;
+  // Identifies the query without the API key, for the last-good store.
+  let cacheKey: string;
 
   if (op === "headlines") {
     const category = url.searchParams.get("category") || "general";
@@ -30,10 +33,12 @@ export default async (req: Request, context: Context) => {
       });
     }
     target = `${GNEWS_BASE}/top-headlines?category=${category}&lang=en&country=us&max=${encodeURIComponent(max)}&apikey=${apiKey}`;
+    cacheKey = `headlines/${category}/${max}`;
   } else if (op === "search") {
     const q = url.searchParams.get("q") || "";
     const page = url.searchParams.get("page") || "1";
     target = `${GNEWS_BASE}/search?q=${encodeURIComponent(q)}&lang=en&max=${encodeURIComponent(max)}&page=${encodeURIComponent(page)}&apikey=${apiKey}`;
+    cacheKey = `search/${encodeURIComponent(q.toLowerCase())}/${max}/${page}`;
   } else {
     return new Response(JSON.stringify({ error: "Unknown op" }), {
       status: 400,
@@ -41,21 +46,52 @@ export default async (req: Request, context: Context) => {
     });
   }
 
-  const res = await fetch(target);
-  const data = await res.json();
-  // Browsers keep a good response for 5 minutes. Netlify's durable cache
-  // shares one copy across every edge location for 10 minutes, so GNews
-  // gets one request per query per 10 minutes instead of one per region —
-  // regional-only caching is what tripped GNews's rate limit. Error responses
-  // (like a 429) are never cached, so a blip clears on the next request.
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (res.ok) {
-    headers["Cache-Control"] = "public, max-age=600";
-    headers["Netlify-CDN-Cache-Control"] = "public, durable, s-maxage=1800, stale-while-revalidate=600, stale-if-error=86400";
-  } else {
-    headers["Cache-Control"] = "no-store";
+  // The free GNews plan has a small daily quota, and every deploy empties
+  // Netlify's CDN cache, so 429s happen. Every good answer is kept in Blobs;
+  // when GNews refuses or times out, the last good answer for the same query
+  // is served instead of an error, flagged with X-NewSociety-Stale.
+  const store = getStore("gnews-last-good");
+  let res: Response | null = null;
+  let data: any = null;
+  try{
+    res = await fetch(target, { signal: AbortSignal.timeout(8000) });
+    data = await res.json();
+  }catch{
+    res = null;
   }
-  return new Response(JSON.stringify(data), { status: res.status, headers });
+
+  if (res && res.ok) {
+    try{ await store.setJSON(cacheKey, { at: Date.now(), data }); }catch{}
+    return new Response(JSON.stringify(data), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        // Browsers keep a good response for 10 minutes; Netlify's durable
+        // cache shares one copy across every edge location.
+        "Cache-Control": "public, max-age=600",
+        "Netlify-CDN-Cache-Control": "public, durable, s-maxage=1800, stale-while-revalidate=600, stale-if-error=86400"
+      }
+    });
+  }
+
+  let saved: { at: number; data: any } | null = null;
+  try{ saved = await store.get(cacheKey, { type: "json" }); }catch{}
+  if (saved?.data) {
+    return new Response(JSON.stringify(saved.data), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        // Short, so fresh news replaces this as soon as the quota resets.
+        "Cache-Control": "public, max-age=120",
+        "X-NewSociety-Stale": new Date(saved.at).toISOString()
+      }
+    });
+  }
+
+  return new Response(JSON.stringify(data || { error: "GNews unavailable" }), {
+    status: res ? res.status : 504,
+    headers: { "Content-Type": "application/json", "Cache-Control": "no-store" }
+  });
 };
 
 export const config: Config = {

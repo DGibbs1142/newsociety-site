@@ -35,7 +35,12 @@ type Entry = {
 };
 
 export default async (req: Request, context: Context) => {
-  const [appleRes, deezerRes] = await Promise.allSettled([fetch(APPLE_FEED), fetch(DEEZER_CHART)]);
+  const [appleRes, deezerRes] = await Promise.allSettled([
+    // A source that hangs would otherwise hold the whole chart for up to
+    // 30s (seen in production); give up on it after 8s and blend the other.
+    fetch(APPLE_FEED, { signal: AbortSignal.timeout(8000) }),
+    fetch(DEEZER_CHART, { signal: AbortSignal.timeout(8000) })
+  ]);
 
   const appleResults = appleRes.status === "fulfilled" && appleRes.value.ok
     ? (await appleRes.value.json())?.feed?.results || []

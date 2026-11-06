@@ -80,7 +80,7 @@ async function homeLatestPopCulture(){
 
 async function homeLatestFashion(){
   try{
-    const res = await fetch('/api/gnews?op=search&q=fashion&max=1');
+    const res = await fetch('/api/gnews?op=search&q=fashion&max=10');
     if(!res.ok) return null;
     const data = await res.json();
     const a = data.articles?.[0];
@@ -125,7 +125,7 @@ async function homeLatestMusic(){
 
 async function homeLatestNews(){
   try{
-    const res = await fetch('/api/gnews?op=headlines&category=general&max=1');
+    const res = await fetch('/api/gnews?op=headlines&category=general&max=10');
     if(!res.ok) return null;
     const data = await res.json();
     const a = data.articles?.[0];
