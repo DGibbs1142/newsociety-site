@@ -338,31 +338,78 @@ nav.links a.current{ color:var(--text); }
 .onboarding-tip{
   position:fixed;
   left:24px;
-  bottom:24px;
+  bottom:calc(24px + env(safe-area-inset-bottom, 0px));
   z-index:40;
-  max-width:320px;
+  max-width:360px;
+  display:flex;
+  align-items:center;
+  gap:10px;
   background:var(--bg-card);
   border:1px solid var(--line);
   border-radius:var(--radius);
-  padding:16px;
-  box-shadow:0 12px 32px rgba(var(--scrim-rgb),0.35);
+  padding:8px 8px 8px 14px;
+  box-shadow:0 8px 24px rgba(var(--scrim-rgb),0.3);
   opacity:0;
-  transform:translateY(12px);
+  transform:translateY(8px);
   pointer-events:none;
   transition:opacity 0.25s ease, transform 0.25s ease;
 }
 .onboarding-tip.in{ opacity:1; transform:translateY(0); pointer-events:auto; }
 .onboarding-tip p{
-  margin:0 0 12px;
-  font-size:13px;
-  line-height:1.5;
+  margin:0;
+  font-size:12.5px;
+  line-height:1.4;
   color:var(--text);
 }
 .onboarding-tip .onboarding-star{ color:var(--accent-text); }
-.onboarding-tip-dismiss{ padding:6px 14px; font-size:12px; }
-@media (max-width:600px){
-  .onboarding-tip{ left:16px; right:16px; bottom:16px; max-width:none; }
+.onboarding-tip-dismiss{
+  flex:none;
+  width:32px;
+  height:32px;
+  display:grid;
+  place-items:center;
+  background:transparent;
+  border:0;
+  color:var(--text-muted);
+  font-size:20px;
+  line-height:1;
+  cursor:pointer;
 }
+.onboarding-tip-dismiss:hover{ color:var(--text); }
+@media (max-width:600px){
+  .onboarding-tip{ left:16px; right:16px; bottom:calc(12px + env(safe-area-inset-bottom, 0px)); max-width:none; }
+}
+
+/* Story blocks are <section>s, so they picked up the site-wide section
+   rule (100px top and bottom padding plus a divider), which spaced every
+   story in the archive far apart. Same for the story pages' related list. */
+.nl-block{ padding-top:0; padding-bottom:0; border-bottom:0; }
+.story-more{ padding-bottom:0; border-bottom:0; }
+
+/* Newsletter archive: older issues collapsed to subject + headlines
+   (initArchive() in site.js), and a back-to-top button. */
+.issue-collapsed .issue-intro,
+.issue-collapsed .nl-body,
+.issue-collapsed .nl-share{ display:none; }
+.issue-collapsed .issue-blocks{ gap:14px; margin-top:24px; }
+.issue-collapsed .nl-head{ font-size:17px; margin-top:6px; }
+.issue-expand{ margin-top:24px; }
+.back-to-top{
+  position:fixed;
+  right:max(16px, env(safe-area-inset-right, 0px));
+  bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index:30;
+  padding:10px 14px;
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--text);
+  background:var(--bg-card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:0 8px 24px rgba(var(--scrim-rgb),0.25);
+}
+.back-to-top:hover{ border-color:var(--text-muted); }
 
 /* "Notify Me" button on live.html once a push subscription is active —
    see push.js. */
