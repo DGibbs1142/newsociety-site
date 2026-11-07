@@ -16,10 +16,13 @@ function buildTicker(){
   if(!track) return;
   const currentPage = document.body.getAttribute('data-page') || '';
   const full = [...TICKER_ITEMS, ...TICKER_ITEMS, ...TICKER_ITEMS, ...TICKER_ITEMS];
-  full.forEach(item => {
+  full.forEach((item, i) => {
     const a = document.createElement('a');
     a.textContent = item.label;
     a.href = item.href;
+    // The list repeats so the scrolling loop has no gap. On touch screens
+    // the strip doesn't scroll by itself, so the repeats are hidden there.
+    if(i >= TICKER_ITEMS.length) a.classList.add('ticker-dup');
     // Links are root-absolute so the ticker still works on the 404 page,
     // which Netlify can serve from any depth; compare without the slash.
     if(currentPage && item.href.replace(/^\//, '').startsWith(currentPage)){
@@ -27,6 +30,12 @@ function buildTicker(){
     }
     track.appendChild(a);
   });
+  // On touch screens, start the swipeable strip at the current pillar.
+  const bar = track.closest('.ticker-bar');
+  const current = track.querySelector('a.current:not(.ticker-dup)');
+  if(bar && current && window.matchMedia('(hover: none)').matches){
+    bar.scrollLeft = Math.max(0, current.offsetLeft - 16);
+  }
 }
 
 function initReveal(){
@@ -230,6 +239,29 @@ function initArchive(){
     btn.textContent = 'Read the full issue';
     btn.addEventListener('click', () => open(issue));
     issue.appendChild(btn);
+  });
+
+  // Share a whole issue: the phone's share sheet, otherwise copy its link.
+  issues.forEach(issue => {
+    const head = issue.querySelector('.issue-head');
+    if(!head || !issue.id) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'issue-share mono';
+    btn.textContent = 'Share';
+    const no = issue.querySelector('.issue-no')?.textContent.trim() || 'this issue';
+    btn.setAttribute('aria-label', 'Share ' + no);
+    btn.addEventListener('click', async () => {
+      const url = location.origin + location.pathname + '#' + issue.id;
+      const title = 'The Week in Culture, ' + no;
+      if(navigator.share){
+        try{ await navigator.share({ title, url }); return; }catch(e){ if(e && e.name === 'AbortError') return; }
+      }
+      try{ await navigator.clipboard.writeText(url); btn.textContent = 'Link copied'; }
+      catch(e){ btn.textContent = url; }
+      setTimeout(() => { btn.textContent = 'Share'; }, 2500);
+    });
+    head.appendChild(btn);
   });
 
   const openFromHash = () => {
