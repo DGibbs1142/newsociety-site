@@ -50,7 +50,12 @@
     <button type="submit" class="btn btn-primary">Get Sunday’s issue →</button>
   </form>
 
-  <nav class="links-list" aria-label="NewSociety links">
+  <div class="links-latest" id="linksLatest" hidden role="region" aria-labelledby="linksLatestTitle">
+  <h2 class="mono links-latest-title" id="linksLatestTitle">This week</h2>
+  <div class="links-list" id="linksLatestList"></div>
+</div>
+
+<nav class="links-list" aria-label="NewSociety links">
     <a href="/" class="links-item links-item-primary">
       <span class="links-item-label">Watch the Feed</span>
       <span class="mono links-item-meta">newsociety.netlify.app</span>
@@ -84,6 +89,7 @@
   <p class="mono links-foot">© 2026 NewSociety — Culture, Uncut</p>
 </main>
 
+<script src="/pillar-newsletter.js" defer></script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "07674b847fc94b21a8946d015b3c1fc9"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>

@@ -6,7 +6,7 @@
 // On the homepage the same archive read fills "This week's issue" instead:
 // the newest issue's subject plus its first three stories.
 async function readArchive(){
-  const res = await fetch('newsletter.html', { cache: 'no-cache' });
+  const res = await fetch('/newsletter.html', { cache: 'no-cache' });
   if(!res.ok) return null;
   return new DOMParser().parseFromString(await res.text(), 'text/html');
 }
@@ -42,6 +42,37 @@ async function readArchive(){
       list.appendChild(a);
     });
     section.hidden = false;
+  }catch(e){ /* leave the section hidden */ }
+})();
+
+// Link-in-bio page (/links): the newest issue's first three stories as
+// link buttons, so someone arriving from a social profile sees what we
+// covered this week before the standing links.
+(async function(){
+  const section = document.getElementById('linksLatest');
+  const list = document.getElementById('linksLatestList');
+  if(!section || !list) return;
+  try{
+    const doc = await readArchive();
+    const issue = doc && doc.querySelector('article.issue');
+    if(!issue) return;
+    const no = issue.querySelector('.issue-no')?.textContent.trim() || '';
+    [...issue.querySelectorAll('.nl-block')].slice(0, 3).forEach(b => {
+      const head = b.querySelector('.nl-head')?.textContent.trim();
+      if(!head) return;
+      const a = document.createElement('a');
+      a.className = 'links-item links-item-story';
+      a.href = '/' + (b.querySelector('.nl-share')?.getAttribute('href') || 'newsletter.html#' + issue.id);
+      const label = document.createElement('span');
+      label.className = 'links-item-label';
+      label.textContent = head;
+      const meta = document.createElement('span');
+      meta.className = 'mono links-item-meta';
+      meta.textContent = [b.querySelector('.nl-tag')?.textContent.trim(), no].filter(Boolean).join(' · ');
+      a.append(label, meta);
+      list.appendChild(a);
+    });
+    if(list.children.length) section.hidden = false;
   }catch(e){ /* leave the section hidden */ }
 })();
 
