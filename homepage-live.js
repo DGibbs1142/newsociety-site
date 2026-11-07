@@ -154,6 +154,13 @@ async function loadHomepageLive(){
     return;
   }
 
+  // Followed pillars (site.js) lead the strip; otherwise the usual order.
+  const followed = (typeof getFollowedPillars === 'function' ? getFollowedPillars() : [])
+    .map(page => ({ 'sports.html': 'Sports', 'anime.html': 'Anime', 'pop-culture.html': 'Pop Culture',
+      'fashion.html': 'Fashion', 'music.html': 'Music', 'current-events.html': 'Current Events' })[page]);
+  const rank = item => { const i = followed.indexOf(item.pillar); return i === -1 ? followed.length : i; };
+  results.sort((a, b) => rank(a) - rank(b));
+
   grid.innerHTML = '';
   results.forEach(item => {
     const card = document.createElement('a');

@@ -1889,3 +1889,10 @@ body:has(.cta-signup) .footer-signup{ display:none; }
 .links-latest:not([hidden]) + .links-list{ margin-top:28px; }
 .links-latest-title{ font-size:12px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-dim); text-align:center; }
 .links-item-story .links-item-label{ font-size:15px; line-height:1.35; text-align:center; text-wrap:balance; }
+
+/* Follow a pillar (initFollow in site.js) */
+.follow-btn{ margin-top:22px; }
+.follow-btn[aria-pressed="true"]{ border-color:var(--accent); color:var(--accent-text); }
+.follow-note{ margin-top:10px; font-size:11.5px; letter-spacing:0.04em; color:var(--text-dim); }
+.pillars-hint{ margin-top:16px; }
+.pillar-following{ display:inline-block; margin-left:10px; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent-text); border:1px solid var(--accent-text); padding:2px 6px; }
