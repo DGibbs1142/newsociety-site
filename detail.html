@@ -104,8 +104,15 @@
       <div class="section-label" style="margin-bottom:20px;">// join the feed</div>
       <h2 class="display">Don't watch the news.<br>Watch the feed.</h2>
       <p>One email every Sunday — the handful of stories that actually mattered, written like someone watched them happen. Plus new drops daily across sports, anime, pop culture, fashion and music.</p>
+      <form class="signup-form cta-signup" name="newsletter" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="newsletter">
+        <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+        <label for="cta-signup-email" class="visually-hidden">Email address</label>
+        <input id="cta-signup-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
+        <button type="submit" class="btn btn-primary">Get Sunday’s issue →</button>
+      </form>
       <div class="cta-actions">
-        <a href="newsletter.html" class="btn btn-primary">Get Sunday’s issue →</a>
+        <a href="newsletter.html" class="btn btn-ghost">Read past issues</a>
         <a href="https://www.tiktok.com/@newsociety22" class="btn btn-ghost" target="_blank" rel="noopener">TikTok</a>
         <a href="https://www.instagram.com/newsociety1142" class="btn btn-ghost" target="_blank" rel="noopener">Instagram</a>
         <a href="https://x.com/newsociety1142" class="btn btn-ghost" target="_blank" rel="noopener">X (Twitter)</a>
