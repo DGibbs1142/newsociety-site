@@ -144,7 +144,26 @@ async function searchCurrentEvents(query){
   }catch{ return []; }
 }
 
+// NewSociety's own newsletter stories, from the list build-stories.py
+// writes. Every word of the query has to appear in the story's tag,
+// headline or text (case and accents ignored), newest stories first.
+const fold = s => (s || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+async function searchNewsletter(query){
+  try{
+    const res = await fetch('/stories/stories.json');
+    if(!res.ok) return [];
+    const stories = await res.json();
+    const words = fold(query).split(/\s+/).filter(Boolean);
+    if(!words.length) return [];
+    return stories
+      .filter(s => { const hay = fold(`${s.tag} ${s.head} ${s.body}`); return words.every(w => hay.includes(w)); })
+      .slice(0, 6)
+      .map(s => ({ title: s.head, status: `${s.tag} · ${s.issue.split(' · ')[0]}`, imageUrl: s.image || '', href: `/stories/${s.slug}.html` }));
+  }catch{ return []; }
+}
+
 const SECTIONS = [
+  { id: 'newsletter', label: 'Newsletter', more: 'newsletter.html', moreLabel: 'All issues →', fetcher: searchNewsletter },
   { id: 'sports', label: 'Sports', more: 'sports.html', fetcher: searchSports },
   { id: 'anime', label: 'Anime', more: 'anime.html', fetcher: searchAnime },
   { id: 'pop-culture', label: 'Pop Culture', more: 'pop-culture.html', fetcher: searchPopCulture },
@@ -198,7 +217,7 @@ async function runGlobalSearch(query){
     const more = document.createElement('a');
     more.className = 'search-section-more mono';
     more.href = section.more;
-    more.textContent = `All ${section.label} →`;
+    more.textContent = section.moreLabel || `All ${section.label} →`;
     head.appendChild(more);
 
     const grid = document.createElement('div');
@@ -211,7 +230,7 @@ async function runGlobalSearch(query){
 
   if(status){
     status.textContent = totalCount
-      ? `Found ${totalCount} result${totalCount === 1 ? '' : 's'} across ${SECTIONS.filter((_, i) => results[i].length).length} pillars.`
+      ? (() => { const n = SECTIONS.filter((_, i) => results[i].length).length; return `Found ${totalCount} result${totalCount === 1 ? '' : 's'} across ${n} section${n === 1 ? '' : 's'}.`; })()
       : `No results anywhere for "${query}" — try a different keyword.`;
   }
 }
