@@ -5,57 +5,12 @@
 import html, io, re, sys
 from datetime import datetime, timezone
 from email.utils import format_datetime
-from html.parser import HTMLParser
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from newsletter_lib import parse_archive
 
 REPO = sys.argv[1] if len(sys.argv) > 1 else '.'
 SITE = 'https://newsociety.netlify.app/'
-
-
-class Archive(HTMLParser):
-    """Collects each <article class="issue"> and its .nl-block sections."""
-    def __init__(self):
-        super().__init__(convert_charrefs=True)
-        self.issues, self.issue, self.block, self.field = [], None, None, None
-
-    def handle_starttag(self, tag, attrs):
-        a = dict(attrs)
-        cls = (a.get('class') or '').split()
-        if tag == 'article' and 'issue' in cls:
-            self.issue = {'id': a.get('id', ''), 'no': '', 'date': '', 'subject': '', 'intro': '', 'blocks': []}
-        elif self.issue is None:
-            return
-        elif tag == 'section' and 'nl-block' in cls:
-            self.block = {'tag': '', 'page': '', 'head': '', 'body': ''}
-        elif self.block is not None and tag == 'a' and 'nl-tag' in cls:
-            self.block['page'] = a.get('href', '')
-            self.field = (self.block, 'tag')
-        elif self.block is not None and 'nl-head' in cls:
-            self.field = (self.block, 'head')
-        elif self.block is not None and 'nl-body' in cls:
-            self.field = (self.block, 'body')
-        elif 'issue-no' in cls:
-            self.field = (self.issue, 'no')
-        elif 'issue-date' in cls:
-            self.field = (self.issue, 'date')
-        elif 'issue-subject' in cls:
-            self.field = (self.issue, 'subject')
-        elif 'issue-intro' in cls:
-            self.field = (self.issue, 'intro')
-
-    def handle_endtag(self, tag):
-        if tag in ('a', 'span', 'h2', 'h3', 'p'):
-            self.field = None
-        if tag == 'section' and self.block is not None:
-            self.issue['blocks'].append(self.block)
-            self.block = None
-        elif tag == 'article' and self.issue is not None:
-            self.issues.append(self.issue)
-            self.issue = None
-
-    def handle_data(self, data):
-        if self.field:
-            obj, key = self.field
-            obj[key] += data
 
 
 def pub_date(dateline):
@@ -69,9 +24,7 @@ def x(s):
 
 
 page = io.open(REPO + '/newsletter.html', encoding='utf-8').read()
-parser = Archive()
-parser.feed(page)
-issues = [i for i in parser.issues if i['id'] and i['date']]
+issues = parse_archive(page)
 
 items = []
 for i in issues:
