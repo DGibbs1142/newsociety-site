@@ -1889,3 +1889,10 @@ body:has(.cta-signup) .footer-signup{ display:none; }
 .links-latest:not([hidden]) + .links-list{ margin-top:28px; }
 .links-latest-title{ font-size:12px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-dim); text-align:center; }
 .links-item-story .links-item-label{ font-size:15px; line-height:1.35; text-align:center; text-wrap:balance; }
+
+/* Placeholder cards while a feed loads (initPlaceholders in site.js) */
+.skeleton-card{ display:grid; gap:12px; align-content:start; pointer-events:none; }
+.skeleton-line{ display:block; height:12px; border-radius:2px; background:linear-gradient(90deg, var(--line) 0%, var(--line-soft) 50%, var(--line) 100%); background-size:200% 100%; animation:skeleton-shimmer 1.4s ease-in-out infinite; }
+.skeleton-line.short{ width:35%; height:10px; }
+.skeleton-line.mid{ width:70%; }
+@keyframes skeleton-shimmer{ from{ background-position:100% 0; } to{ background-position:-100% 0; } }
