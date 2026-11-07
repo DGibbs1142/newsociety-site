@@ -6,19 +6,16 @@
 // Live API calls (cross-origin sources, and our own /api/* functions) are
 // never intercepted — they always go straight to the network.
 
-const CACHE_VERSION = 'newsociety-v14';
+const CACHE_VERSION = 'newsociety-v15';
+// Only what the first paint of any page needs. Every page and script a
+// visitor actually opens is cached by the fetch handler below as they go,
+// so there is no need to download the whole site on the first visit (this
+// list used to hold ~40 files, re-fetched by every visitor after each
+// deploy bumped CACHE_VERSION).
 const APP_SHELL = [
-  '/', '/index.html', '/sports.html', '/anime.html', '/pop-culture.html',
-  '/fashion.html', '/music.html', '/current-events.html', '/detail.html',
-  '/search.html', '/saved.html', '/about.html', '/faq.html',
-  '/live.html', '/production.html', '/host.html', '/get-involved.html', '/press.html',
-  '/links.html', '/careers.html', '/thanks.html',
-  '/styles.css',
+  '/', '/styles.css', '/theme-init.js', '/site.js',
   '/fonts/inter-latin.woff2', '/fonts/anton-latin.woff2', '/fonts/jetbrains-mono-latin.woff2',
-  '/site.js', '/detail-link.js', '/search-widget.js', '/get-involved.js',
-  '/sports.js', '/anime.js', '/pop-culture.js', '/fashion.js', '/music.js', '/news.js',
-  '/detail.js', '/global-search.js', '/pillar-newsletter.js', '/story.js', '/saved.js', '/homepage-live.js', '/engagement.js',
-  '/icons/icon-192.png', '/icons/icon-512.png', '/icons/icon-512-maskable.png'
+  '/icons/icon-192.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -43,12 +40,19 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin || url.pathname.startsWith('/api/')) return;
+  // Videos are streamed in byte ranges (206 responses), which the Cache API
+  // refuses, and they are too big to keep offline anyway.
+  if (url.pathname.startsWith('/social/') || request.headers.has('range')) return;
 
   event.respondWith(
     fetch(request)
       .then(response => {
-        const copy = response.clone();
-        caches.open(CACHE_VERSION).then(cache => cache.put(request, copy));
+        // Keep only complete, successful same-origin responses, so an offline
+        // visitor is never handed a cached 404 or error page.
+        if (response.ok && response.status === 200 && response.type === 'basic') {
+          const copy = response.clone();
+          caches.open(CACHE_VERSION).then(cache => cache.put(request, copy)).catch(() => {});
+        }
         return response;
       })
       .catch(() => caches.match(request))
