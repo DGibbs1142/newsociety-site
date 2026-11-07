@@ -1820,3 +1820,11 @@ body:has(.cta-signup) .footer-signup{ display:none; }
   :root:not([data-theme="dark"]) .story-tag{ color:color-mix(in srgb, var(--tag, var(--accent-text)) 55%, #000); }
 }
 :root[data-theme="light"] .story-tag{ color:color-mix(in srgb, var(--tag, var(--accent-text)) 55%, #000); }
+
+/* Story pages: more from the newsletter */
+.story-more{ margin-top:48px; padding-top:28px; border-top:1px solid var(--line); width:100%; display:grid; gap:16px; }
+.story-more-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:12px; }
+.story-more-card{ display:grid; gap:8px; align-content:start; padding:16px 18px; background:var(--bg-card); border:1px solid var(--line); border-left:3px solid var(--tag, var(--accent)); border-radius:var(--radius); transition:border-color 0.2s ease, transform 0.2s ease; }
+.story-more-card:hover{ border-color:var(--text-muted); border-left-color:var(--tag, var(--accent)); transform:translateY(-1px); }
+.story-more-meta{ font-size:11.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-dim); }
+.story-more-head{ font-size:16px; line-height:1.35; font-weight:600; }
