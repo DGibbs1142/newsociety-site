@@ -510,13 +510,55 @@ function sendMissingWelcomes() {
   }
 }
 
+// The newest archived issue, read from the site's RSS feed (feed.xml, built
+// from newsletter.html), so a welcome email can hand new subscribers last
+// Sunday's stories straight away. Cached for 6 hours so a burst of signups
+// makes one request. Returns null if the feed can't be read, and the welcome
+// then goes out without it rather than not at all.
+// Uses UrlFetchApp: the first run after pasting this asks you to re-authorize
+// the script, and the web app needs a new deployment version.
+const FEED_URL = 'https://newsociety.netlify.app/feed.xml';
+
+function esc_(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function latestIssue_() {
+  const cache = CacheService.getScriptCache();
+  const hit = cache.get('latest-issue');
+  if (hit) return JSON.parse(hit);
+  try {
+    const res = UrlFetchApp.fetch(FEED_URL, { muteHttpExceptions: true });
+    if (res.getResponseCode() !== 200) return null;
+    const item = XmlService.parse(res.getContentText()).getRootElement()
+      .getChild('channel').getChild('item');
+    if (!item) return null;
+    const desc = item.getChildText('description') || '';
+    const heads = [];
+    desc.replace(/<h3>([\s\S]*?)<\/h3>/g, function (_, h) {
+      heads.push(h.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#x27;|&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim());
+    });
+    const issue = { title: item.getChildText('title'), link: item.getChildText('link'), heads: heads.slice(0, 5) };
+    cache.put('latest-issue', JSON.stringify(issue), 6 * 60 * 60);
+    return issue;
+  } catch (err) {
+    console.error('latestIssue_ failed', err);
+    return null;
+  }
+}
+
 function welcomeMessage_(email) {
   const site = 'https://newsociety.netlify.app';
+  const latest = latestIssue_();
   const lines = [
     "You're on the list.",
     '',
     'Once a week we send the culture that actually mattered: sports, music, anime, pop culture, fashion and the news cycle, with an actual opinion. No filler, no daily inbox spam.',
     '',
+    latest ? 'Start with the latest issue, ' + latest.title + ':' : '',
+    latest ? latest.heads.map(function (h) { return '- ' + h; }).join('\n') : '',
+    latest ? 'Read it: ' + latest.link : '',
+    latest ? '' : '',
     'Follow along in between:',
     SOCIALS.map(function (s) { return s[0] + ' ' + s[1] + ': ' + s[2]; }).join('\n'),
     '',
@@ -540,6 +582,14 @@ function welcomeMessage_(email) {
     '<p style="font:12px/1.4 Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;color:#8470ff;margin:0 0 16px;">NewSociety</p>' +
     '<h1 style="font-size:28px;line-height:1.1;text-transform:uppercase;margin:0 0 20px;">You\'re on the list.</h1>' +
     p('Once a week we send the culture that actually mattered: sports, music, anime, pop culture, fashion and the news cycle, with an actual opinion. No filler, no daily inbox spam.') +
+    (latest ?
+      '<div style="border-left:3px solid #6e56ff;background:#131316;padding:16px 18px;margin:6px 0 22px;">' +
+      '<p style="font:12px/1.4 Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:#8470ff;margin:0 0 8px;">Start with the latest issue</p>' +
+      '<p style="font-size:17px;line-height:1.35;font-weight:bold;color:#f4f3ef;margin:0 0 10px;">' + esc_(latest.title) + '</p>' +
+      '<ul style="margin:0 0 12px;padding-left:18px;color:#c9c9cf;font-size:14.5px;line-height:1.55;">' +
+      latest.heads.map(function (h) { return '<li style="margin:0 0 4px;">' + esc_(h) + '</li>'; }).join('') + '</ul>' +
+      '<a href="' + latest.link + '" style="color:#8470ff;font:13px Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;">Read the issue →</a>' +
+      '</div>' : '') +
     p('<strong style="color:#f4f3ef;">Follow along in between:</strong>', 'margin-bottom:6px;') +
     '<table role="presentation" style="border-collapse:collapse;margin:0 0 22px;">' + SOCIALS.map(social).join('') + '</table>' +
     '<p style="margin:0 0 28px;"><a href="' + site + '" style="display:inline-block;background:#6e56ff;color:#fff;text-decoration:none;font:13px Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;padding:13px 22px;border-radius:2px;">Watch the Feed →</a></p>' +
