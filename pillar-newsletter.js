@@ -31,7 +31,8 @@
       const date = issue.querySelector('.issue-date')?.textContent.trim() || '';
       const tag = (block.getAttribute('style') || '').match(/--tag:\s*(#[0-9a-fA-F]{3,8})/);
 
-      card.href = 'newsletter.html#' + issue.id;
+      // Link to the story's own page when the archive has one, else the issue.
+      card.href = block.querySelector('.nl-share')?.getAttribute('href') || ('newsletter.html#' + issue.id);
       if(tag) card.style.setProperty('--tag', tag[1]);
       card.querySelector('.nl-latest-meta').textContent = date ? `${issueNo} · ${date}` : issueNo;
       card.querySelector('.nl-latest-head').textContent = head;

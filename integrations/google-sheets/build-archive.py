@@ -1,6 +1,9 @@
 # Renders newsletter.html from the issues recovered out of Code.gs history.
 # Re-run after writing a new issue; it is the whole page, not a patch.
-import json, html, io, re, sys
+import json, html, io, os, re, sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from newsletter_lib import story_slugs
 
 SP, REPO = sys.argv[1], sys.argv[2]
 issues = json.load(open(SP + '/issues.json'))
@@ -106,6 +109,8 @@ for i in issues:
 
 parts.append('  </nav>\n\n')
 
+SLUGS = story_slugs([(i['number'], blk['head']) for i in issues for blk in i['blocks']])
+
 for i in issues:
     n = num(i['number'])
     parts.append('''  <article class="issue" id="issue-%s">
@@ -121,13 +126,15 @@ for i in issues:
     for b in i['blocks']:
         # --tag goes on the block, not the tag link: the coloured left rule is
         # drawn by the parent, and a custom property set on a child does not
-        # travel back up to it.
+        # travel back up to it. The share link points at the story's own page,
+        # written by build-stories.py with the same slug.
         parts.append('''      <section class="nl-block" style="--tag:%s">
         <a class="nl-tag mono" href="%s">%s</a>
         <h3 class="nl-head">%s</h3>
         <p class="nl-body">%s</p>
+        <a class="nl-share mono" href="stories/%s.html">Share this story &rarr;</a>
       </section>
-''' % (esc(b['color']), esc(b['page']), esc(b['tag']), esc(b['head']), esc(b['body'])))
+''' % (esc(b['color']), esc(b['page']), esc(b['tag']), esc(b['head']), esc(b['body']), SLUGS.pop(0)))
 
     parts.append('    </div>\n  </article>\n\n')
 
@@ -142,6 +149,7 @@ io.open(REPO + '/newsletter.html', 'w', encoding='utf-8').write(''.join(parts))
 print('wrote newsletter.html — %d issues, %d blocks'
       % (len(issues), sum(len(i['blocks']) for i in issues)))
 
-# Rebuild the RSS feed from the page just written.
-import os, subprocess
-subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'build-feed.py'), REPO], check=True)
+# Rebuild the RSS feed and the story pages from the page just written.
+import subprocess
+for script in ('build-feed.py', 'build-stories.py'):
+    subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), script), REPO], check=True)

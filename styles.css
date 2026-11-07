@@ -1803,3 +1803,20 @@ body:has(.cta-signup) .footer-signup{ display:none; }
 /* "Follow by RSS" under the newsletter archive label */
 .nl-feed{ margin-top:8px; font-size:12.5px; letter-spacing:0.06em; text-transform:uppercase; }
 .nl-feed a{ color:var(--accent-text); text-decoration:underline; text-underline-offset:3px; }
+
+/* ---------- NEWSLETTER: per-story share link ---------- */
+.nl-share{ display:inline-block; margin-top:12px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent-text); }
+.nl-share:hover{ text-decoration:underline; }
+
+/* ---------- STORY PAGES (stories/*.html) ---------- */
+.story{ padding:56px 0 96px; }
+.story-wrap{ max-width:760px; display:grid; gap:18px; justify-items:start; }
+.story-tag{ color:var(--tag, var(--accent-text)); }
+.story-title{ font-family:'Inter',sans-serif; font-size:clamp(28px,5vw,44px); line-height:1.15; font-weight:700; letter-spacing:-0.01em; text-wrap:balance; border-left:3px solid var(--tag, var(--accent)); padding-left:18px; }
+.story-body{ color:var(--text-muted); font-size:18px; line-height:1.75; max-width:64ch; }
+.story-actions{ display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; }
+.story-status{ font-size:12.5px; color:var(--text-dim); min-height:1em; }
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]) .story-tag{ color:color-mix(in srgb, var(--tag, var(--accent-text)) 55%, #000); }
+}
+:root[data-theme="light"] .story-tag{ color:color-mix(in srgb, var(--tag, var(--accent-text)) 55%, #000); }
