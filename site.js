@@ -180,17 +180,78 @@ function initOnboardingTip(){
     if(e.target.closest && e.target.closest('.save-btn')) dismissOnboardingTip();
   });
 
+  // A one-line hint rather than a card with a button: it used to cover the
+  // bottom of the screen on phones until tapped. It now counts as seen the
+  // moment it appears, closes itself after 8 seconds (unless the visitor is
+  // pointing at or focused on it), and has a small close button.
   setTimeout(() => {
-    if(document.querySelector('.nav-search input')){
-      const tip = document.createElement('div');
-      tip.className = 'onboarding-tip';
-      tip.setAttribute('role', 'status');
-      tip.innerHTML = '<p>Search anything up top, and tap <span class="onboarding-star">☆</span> on any card to save it for later.</p><button type="button" class="btn btn-ghost onboarding-tip-dismiss">Got it</button>';
-      document.body.appendChild(tip);
-      tip.querySelector('.onboarding-tip-dismiss').addEventListener('click', dismissOnboardingTip);
-      requestAnimationFrame(() => tip.classList.add('in'));
-    }
+    if(!document.querySelector('.nav-search input')) return;
+    const tip = document.createElement('div');
+    tip.className = 'onboarding-tip';
+    tip.setAttribute('role', 'status');
+    tip.innerHTML = '<p>Tip: search up top, or tap <span class="onboarding-star" aria-hidden="true">☆</span><span class="visually-hidden">the star</span> on a card to save it.</p><button type="button" class="onboarding-tip-dismiss" aria-label="Dismiss tip">×</button>';
+    document.body.appendChild(tip);
+    markOnboardingSeen();
+    tip.querySelector('.onboarding-tip-dismiss').addEventListener('click', dismissOnboardingTip);
+    requestAnimationFrame(() => tip.classList.add('in'));
+    let held = false;
+    tip.addEventListener('pointerenter', () => { held = true; });
+    tip.addEventListener('pointerleave', () => { held = false; });
+    tip.addEventListener('focusin', () => { held = true; });
+    tip.addEventListener('focusout', () => { held = false; });
+    const close = () => { if(held) setTimeout(close, 2000); else dismissOnboardingTip(); };
+    setTimeout(close, 8000);
   }, 1500);
+}
+
+// Newsletter archive: the page grows by a full issue every week, so on the
+// archive only the newest issue is shown in full. Older issues show their
+// subject and story headlines with a button to open the rest. Jumping to an
+// issue (the index, a shared #issue-NN link) opens it. A back-to-top button
+// appears once the reader is well down the page. Done here, not in the
+// generated markup, so newsletter.html and build-archive.py are untouched.
+function initArchive(){
+  if(document.body.getAttribute('data-page') !== 'newsletter.html') return;
+  const issues = [...document.querySelectorAll('article.issue')];
+  if(issues.length < 2) return;
+
+  const open = (issue) => {
+    if(!issue || !issue.classList.contains('issue-collapsed')) return;
+    issue.classList.remove('issue-collapsed');
+    const btn = issue.querySelector('.issue-expand');
+    if(btn) btn.remove();
+  };
+
+  issues.slice(1).forEach(issue => {
+    issue.classList.add('issue-collapsed');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-ghost issue-expand';
+    btn.textContent = 'Read the full issue';
+    btn.addEventListener('click', () => open(issue));
+    issue.appendChild(btn);
+  });
+
+  const openFromHash = () => {
+    const target = location.hash && document.getElementById(location.hash.slice(1));
+    const issue = target && target.closest('article.issue');
+    if(issue && issue.classList.contains('issue-collapsed')){
+      open(issue);
+      issue.scrollIntoView();
+    }
+  };
+  openFromHash();
+  window.addEventListener('hashchange', openFromHash);
+
+  const top = document.createElement('a');
+  top.href = '#main';
+  top.className = 'back-to-top mono';
+  top.textContent = '↑ Top';
+  top.hidden = true;
+  (document.getElementById('main') || document.body).appendChild(top);
+  const onScroll = () => { top.hidden = window.scrollY < window.innerHeight * 1.5; };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 }
 
 buildTicker();
@@ -198,6 +259,7 @@ initMenu();
 initThemeToggle();
 initSiteNotice();
 initOnboardingTip();
+initArchive();
 document.addEventListener('DOMContentLoaded', initReveal);
 
 if('serviceWorker' in navigator){
