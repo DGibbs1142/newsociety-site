@@ -22,6 +22,10 @@ issues = parse_archive(page)
 head = page[page.index('<head>') + len('<head>'):page.index('</head>')]
 nav = page[page.index('<header class="nav">'):page.index('</header>') + len('</header>')]
 foot = page[page.index('<footer>'):page.index('</footer>') + len('</footer>')]
+# Cloudflare Web Analytics, copied from the newsletter page so story-page
+# visits are counted like every other page's.
+_cf = page.find('<!-- Cloudflare Web Analytics -->')
+analytics = page[_cf:page.index('<!-- End Cloudflare Web Analytics -->', _cf) + len('<!-- End Cloudflare Web Analytics -->')] + '\n' if _cf != -1 else ''
 
 
 def rooted(fragment):
@@ -143,12 +147,12 @@ for idx, ((issue, b), slug) in enumerate(zip(stories, slugs)):
 %s
 <script src="/story.js" defer></script>
 <script src="/site.js" defer></script>
-</body>
+%s</body>
 </html>
 ''' % (rooted(nav), a(b['color'] or '#6e56ff'), issue['id'], t(issue['no']), t(issue['date']),
        a(b['page'].lstrip('/')), t(b['tag']), t(b['head']), t(b['body']),
        a(' '.join(b['head'].split())), url, issue['id'], a(b['page'].lstrip('/')), t(b['tag'].lower()),
-       related_html(idx), rooted(foot))
+       related_html(idx), rooted(foot), analytics)
 
     out = '<!DOCTYPE html>\n<html lang="en">\n<head>%s</head>\n%s' % (rooted(h), body)
     io.open(os.path.join(REPO, 'stories', slug + '.html'), 'w', encoding='utf-8').write(out)
