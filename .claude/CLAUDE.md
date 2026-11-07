@@ -53,6 +53,14 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
   in Netlify, run `integrations/retarget-domain.py <domain> --apply`, also
   update `build-story-images.mjs` (.mjs is not in that script's file list),
   and regenerate the story cards and Reels (the old domain is printed on them).
+- Member accounts (discussed Nov 7, not wanted yet): there are none; "Saved"
+  lives in one browser's localStorage. When Daniel wants them, the agreed
+  first version is email magic-link sign-in (no passwords) through a hosted
+  auth service (Supabase, Clerk or Auth0 free tier; confirm Netlify's own
+  options are still supported before using them), syncing saved stories and
+  pillar preferences. Needs a privacy policy and account deletion; keys go in
+  through request_credential, never chat. Comments would add moderation work.
+  Advice given: wait until there are regular readers.
 - Lighthouse (Nov 7): every page scored 97-100 performance, 100 accessibility
   and 100 SEO (search and 404 are noindex on purpose).
 - Facts in posts and the newsletter must come from checked sources; the notes
