@@ -155,7 +155,16 @@ for idx, ((issue, b), slug) in enumerate(zip(stories, slugs)):
     written.add(slug + '.html')
 
 # Manifest the image script reads (it can't parse the archive itself).
+# Also read by global-search.js, which matches queries against head + body.
+def story_image(slug, b):
+    if os.path.exists(os.path.join(REPO, 'icons', 'stories', slug + '.jpg')):
+        return '/icons/stories/%s.jpg' % slug
+    pillar = b['page'].replace('.html', '').strip('/')
+    return '/icons/og-%s.png' % (pillar if pillar in PILLAR_IMAGES else 'newsletter')
+
+
 manifest = [{'slug': slug, 'tag': b['tag'].strip(), 'head': ' '.join(b['head'].split()),
+             'body': ' '.join(b['body'].split()), 'image': story_image(slug, b),
              'color': b['color'] or '#6e56ff', 'issue': '%s · %s' % (i['no'].strip(), i['date'].strip())}
             for (i, b), slug in zip(stories, slugs)]
 io.open(os.path.join(REPO, 'stories', 'stories.json'), 'w', encoding='utf-8').write(
