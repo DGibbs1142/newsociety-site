@@ -286,6 +286,83 @@ function initArchive(){
   onScroll();
 }
 
+// Follow pillars. Stored in this browser only (like Saved), so no account
+// is needed: a Follow button on each pillar page, and on the homepage the
+// followed pillars move to the front of the pillar grid (marked
+// "Following") and their cards lead the live strip (homepage-live.js reads
+// getFollowedPillars()).
+const FOLLOW_KEY = 'newsociety_following';
+const PILLAR_PAGES = {
+  'sports.html': 'Sports', 'anime.html': 'Anime', 'pop-culture.html': 'Pop Culture',
+  'fashion.html': 'Fashion', 'music.html': 'Music', 'current-events.html': 'Current Events'
+};
+
+function getFollowedPillars(){
+  try{
+    const list = JSON.parse(localStorage.getItem(FOLLOW_KEY) || '[]');
+    return Array.isArray(list) ? list.filter(p => p in PILLAR_PAGES) : [];
+  }catch(e){ return []; }
+}
+
+function setFollowedPillars(list){
+  try{ localStorage.setItem(FOLLOW_KEY, JSON.stringify(list)); }catch(e){}
+}
+
+function initFollow(){
+  const page = document.body.getAttribute('data-page') || '';
+
+  if(PILLAR_PAGES[page]){
+    const hero = document.querySelector('.page-hero .wrap');
+    if(!hero) return;
+    const name = PILLAR_PAGES[page];
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-ghost follow-btn';
+    const paint = () => {
+      const on = getFollowedPillars().includes(page);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      btn.textContent = on ? 'Following ' + name + ' ✓' : 'Follow ' + name;
+    };
+    btn.addEventListener('click', () => {
+      const list = getFollowedPillars();
+      const on = list.includes(page);
+      setFollowedPillars(on ? list.filter(p => p !== page) : list.concat(page));
+      paint();
+    });
+    paint();
+    const note = document.createElement('p');
+    note.className = 'follow-note mono';
+    note.textContent = 'Followed pillars show up first on the homepage. Saved in this browser.';
+    hero.append(btn, note);
+    return;
+  }
+
+  if(page === 'index.html'){
+    const grid = document.querySelector('.pillars-grid');
+    if(!grid) return;
+    const followed = getFollowedPillars();
+    const cards = [...grid.querySelectorAll('a.pillar')];
+    followed.slice().reverse().forEach(p => {
+      const card = cards.find(c => c.getAttribute('href') === p);
+      if(!card) return;
+      grid.prepend(card);
+      const tag = card.querySelector('.pillar-tag');
+      if(tag && !card.querySelector('.pillar-following')){
+        const badge = document.createElement('span');
+        badge.className = 'pillar-following mono';
+        badge.textContent = 'Following';
+        tag.after(badge);
+      }
+    });
+    if(!followed.length){
+      const hint = document.createElement('p');
+      hint.className = 'follow-note mono pillars-hint';
+      hint.textContent = 'Tip: follow a pillar from its page and it shows up first here.';
+      grid.after(hint);
+    }
+  }
+}
+
 // Feed grids start with one "Loading" card and then fill with up to six,
 // so the page jumped as content arrived. While a grid still holds only its
 // loading card, add grey placeholder cards so it already has roughly its
@@ -318,6 +395,7 @@ initThemeToggle();
 initSiteNotice();
 initOnboardingTip();
 initArchive();
+initFollow();
 initPlaceholders();
 document.addEventListener('DOMContentLoaded', initReveal);
 
