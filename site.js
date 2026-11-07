@@ -286,12 +286,39 @@ function initArchive(){
   onScroll();
 }
 
+// Feed grids start with one "Loading" card and then fill with up to six,
+// so the page jumped as content arrived. While a grid still holds only its
+// loading card, add grey placeholder cards so it already has roughly its
+// final size. Each page's renderer clears the grid before filling it, so
+// the placeholders go with the loading card.
+function initPlaceholders(){
+  document.querySelectorAll('.drops-grid').forEach(grid => {
+    const cards = grid.children;
+    if(cards.length !== 1 || !cards[0].classList.contains('drop-card')) return;
+    const status = cards[0].querySelector('.drop-status');
+    if(!status || status.textContent.trim().toLowerCase() !== 'loading') return;
+    grid.setAttribute('aria-busy', 'true');
+    for(let i = 0; i < 5; i++){
+      const card = document.createElement('div');
+      card.className = 'drop-card skeleton-card';
+      card.setAttribute('aria-hidden', 'true');
+      card.innerHTML = '<span class="skeleton-line short"></span><span class="skeleton-line"></span><span class="skeleton-line"></span><span class="skeleton-line mid"></span>';
+      grid.appendChild(card);
+    }
+    // Clear the busy flag once the real content replaces the loading card.
+    new MutationObserver((_, obs) => {
+      if(!grid.querySelector('.skeleton-card')){ grid.removeAttribute('aria-busy'); obs.disconnect(); }
+    }).observe(grid, { childList: true });
+  });
+}
+
 buildTicker();
 initMenu();
 initThemeToggle();
 initSiteNotice();
 initOnboardingTip();
 initArchive();
+initPlaceholders();
 document.addEventListener('DOMContentLoaded', initReveal);
 
 if('serviceWorker' in navigator){

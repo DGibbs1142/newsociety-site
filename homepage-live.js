@@ -150,6 +150,7 @@ async function loadHomepageLive(){
   const results = (await Promise.all(fetchers.map(fn => fn()))).filter(Boolean);
 
   if(!results.length){
+    grid.innerHTML = '';
     if(section) section.style.display = 'none';
     return;
   }
