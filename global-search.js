@@ -246,4 +246,33 @@ else{
   const status = document.getElementById('searchStatus');
   if(heading) heading.textContent = 'Search NewSociety';
   if(status) status.textContent = 'Type something in the search bar above to look across every pillar at once.';
+  showSearchStart();
+}
+
+// With no query, the page used to be an empty block. Show the newest
+// newsletter stories instead, so there is something to read or tap.
+async function showSearchStart(){
+  const container = document.getElementById('searchSections');
+  if(!container) return;
+  try{
+    const res = await fetch('/stories/stories.json');
+    if(!res.ok) return;
+    const stories = (await res.json()).slice(0, 6);
+    if(!stories.length) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'search-section';
+    const head = document.createElement('div');
+    head.className = 'section-head';
+    head.innerHTML = '<div><h2 class="section-label">// the latest from the newsletter</h2></div>';
+    const more = document.createElement('a');
+    more.className = 'search-section-more mono';
+    more.href = 'newsletter.html';
+    more.textContent = 'All issues →';
+    head.appendChild(more);
+    const grid = document.createElement('div');
+    grid.className = 'drops-grid';
+    stories.forEach(s => renderResultCard(grid, { title: s.head, status: `${s.tag} · ${s.issue.split(' · ')[0]}`, imageUrl: s.image || '', href: `/stories/${s.slug}.html` }, 'Newsletter'));
+    wrap.append(head, grid);
+    container.appendChild(wrap);
+  }catch(e){ /* leave the start state as it was */ }
 }
