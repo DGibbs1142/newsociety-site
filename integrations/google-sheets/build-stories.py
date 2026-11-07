@@ -55,7 +55,12 @@ written = set()
 
 for (issue, b), slug in zip(stories, slugs):
     pillar = b['page'].replace('.html', '').strip('/')
-    image = SITE + 'icons/og-%s.png' % (pillar if pillar in PILLAR_IMAGES else 'newsletter')
+    # A per-story card (headline on it) when build-story-images.mjs has made
+    # one, otherwise the pillar's card.
+    if os.path.exists(os.path.join(REPO, 'icons', 'stories', slug + '.jpg')):
+        image = SITE + 'icons/stories/%s.jpg' % slug
+    else:
+        image = SITE + 'icons/og-%s.png' % (pillar if pillar in PILLAR_IMAGES else 'newsletter')
     url = SITE + 'stories/%s.html' % slug
     title = '%s — NewSociety' % ' '.join(b['head'].split())
     desc = summary(b['body'], 160)
@@ -120,6 +125,13 @@ for (issue, b), slug in zip(stories, slugs):
     out = '<!DOCTYPE html>\n<html lang="en">\n<head>%s</head>\n%s' % (rooted(h), body)
     io.open(os.path.join(REPO, 'stories', slug + '.html'), 'w', encoding='utf-8').write(out)
     written.add(slug + '.html')
+
+# Manifest the image script reads (it can't parse the archive itself).
+manifest = [{'slug': slug, 'tag': b['tag'].strip(), 'head': ' '.join(b['head'].split()),
+             'color': b['color'] or '#6e56ff', 'issue': '%s · %s' % (i['no'].strip(), i['date'].strip())}
+            for (i, b), slug in zip(stories, slugs)]
+io.open(os.path.join(REPO, 'stories', 'stories.json'), 'w', encoding='utf-8').write(
+    json.dumps(manifest, ensure_ascii=False, indent=1) + '\n')
 
 for old in glob.glob(os.path.join(REPO, 'stories', '*.html')):
     if os.path.basename(old) not in written:
