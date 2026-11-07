@@ -53,7 +53,35 @@ slugs = story_slugs([(re.sub(r'\D', '', i['no']) or 0, b['head']) for i, b in st
 os.makedirs(os.path.join(REPO, 'stories'), exist_ok=True)
 written = set()
 
-for (issue, b), slug in zip(stories, slugs):
+
+def related(idx, n=3):
+    # Other stories from the same pillar, newest first (the archive is
+    # already newest first); topped up from the same issue if there are
+    # fewer than n.
+    issue, b = stories[idx]
+    same = [k for k, (_, ob) in enumerate(stories) if k != idx and ob['page'] == b['page']]
+    issue_mates = [k for k, (oi, _) in enumerate(stories) if k != idx and oi is issue and k not in same]
+    return (same + issue_mates)[:n]
+
+
+def related_html(idx):
+    items = related(idx)
+    if not items:
+        return ''
+    cards = ''.join('''      <a class="story-more-card" href="/stories/%s.html" style="--tag:%s">
+        <span class="story-more-meta mono">%s &middot; %s</span>
+        <span class="story-more-head">%s</span>
+      </a>
+''' % (slugs[k], a(stories[k][1]['color'] or '#6e56ff'), t(stories[k][1]['tag']), t(stories[k][0]['no']),
+       t(stories[k][1]['head'])) for k in items)
+    return '''    <section class="story-more" aria-labelledby="storyMoreTitle">
+      <h2 class="section-label" id="storyMoreTitle">// more from the newsletter</h2>
+      <div class="story-more-grid">
+%s      </div>
+    </section>
+''' % cards
+
+for idx, ((issue, b), slug) in enumerate(zip(stories, slugs)):
     pillar = b['page'].replace('.html', '').strip('/')
     # A per-story card (headline on it) when build-story-images.mjs has made
     # one, otherwise the pillar's card.
@@ -108,7 +136,7 @@ for (issue, b), slug in zip(stories, slugs):
       <a class="btn btn-ghost" href="/%s">More %s</a>
     </div>
     <p class="story-status mono" id="storyShareStatus" aria-live="polite"></p>
-  </div>
+%s  </div>
 </article>
 </main>
 
@@ -120,7 +148,7 @@ for (issue, b), slug in zip(stories, slugs):
 ''' % (rooted(nav), a(b['color'] or '#6e56ff'), issue['id'], t(issue['no']), t(issue['date']),
        a(b['page'].lstrip('/')), t(b['tag']), t(b['head']), t(b['body']),
        a(' '.join(b['head'].split())), url, issue['id'], a(b['page'].lstrip('/')), t(b['tag'].lower()),
-       rooted(foot))
+       related_html(idx), rooted(foot))
 
     out = '<!DOCTYPE html>\n<html lang="en">\n<head>%s</head>\n%s' % (rooted(h), body)
     io.open(os.path.join(REPO, 'stories', slug + '.html'), 'w', encoding='utf-8').write(out)
