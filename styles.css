@@ -1930,3 +1930,14 @@ body:has(.cta-signup) .footer-signup{ display:none; }
 /* Share button in each newsletter issue's header (initArchive) */
 .issue-share{ margin-left:auto; padding:8px 12px; font-size:11.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent-text); background:transparent; border:1px solid var(--line); border-radius:var(--radius); cursor:pointer; }
 .issue-share:hover{ border-color:var(--accent-text); }
+
+/* Phones: the desktop spacing (100px above and below every section, 120px
+   on the hero and join-the-feed block) left most of a phone screen blank
+   between sections. Same rhythm, scaled to the screen. */
+@media (max-width:600px){
+  section{ padding:56px 0; }
+  .hero{ padding:72px 0 60px; }
+  .page-hero{ padding:48px 0 40px; }
+  .cta{ padding:72px 0; }
+  .search-section{ margin-bottom:40px; }
+}
