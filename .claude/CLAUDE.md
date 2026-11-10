@@ -35,13 +35,15 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
   Daniel has to paste `Code.gs` into Apps Script, re-authorize and publish a
   new deployment version for that to take effect.
 
-## Open items (as of Nov 7, 2026)
-- Issue 07 sends Sun Nov 8. When Daniel says "archive Issue 07", run
-  `add-issue.py` on a fresh branch from main and open a new PR, then close
-  PR #25 (an older Issue 07 build whose story pages lack analytics; do not
-  merge it).
-- Four Instagram Reels were scheduled for 7:30 PM ET, Nov 7-10, by scheduled
-  tasks in the original session; the Sports Reel posted Nov 6.
+## Open items (as of Nov 10, 2026)
+- Issue 07 sent Nov 8 and is archived and live (#36). Next issue: write it in
+  `Code.gs`, send it, then run `add-issue.py` (see the newsletter section).
+- Instagram Reels from the Nov 6 cards: Sports, Pop culture and Music are
+  posted. Anime is scheduled for Nov 10 and Fashion for Nov 11 (7:30 PM ET).
+  Windsor's cached Instagram data lags on the free plan; if a post call times
+  out, ask Daniel to check Instagram rather than retrying.
+- Daniel chose to keep the homepage as the front page and point social bios at
+  `/links` (TikTok and X now; Instagram needs a custom domain first).
 
 ## Things to know
 - Analytics: the Cloudflare Web Analytics beacon is on every page. Private

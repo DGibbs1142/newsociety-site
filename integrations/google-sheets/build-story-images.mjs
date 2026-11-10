@@ -1,3 +1,5 @@
+// The NewSociety mark sits bottom-right, not top-right, because the site
+// overlays its Save and Share buttons on a card's top-right corner.
 // Renders a 1200x630 share card for each newsletter story that doesn't have
 // one yet, into icons/stories/<slug>.jpg, from stories/stories.json (written
 // by build-stories.py). Optional: story pages use the pillar card until an
@@ -30,16 +32,17 @@ body{width:1200px;height:630px;background:#0a0a0c;color:#f4f3ef;position:relativ
 .in{position:absolute;inset:70px 90px 64px 104px;display:flex;flex-direction:column}
 .top{display:flex;justify-content:space-between;align-items:center;font-family:JBM,monospace;font-size:22px;letter-spacing:.14em;text-transform:uppercase}
 .tag{color:var(--c);border:2px solid var(--c);padding:7px 14px}
-.brand{display:flex;align-items:center;gap:14px;color:#d9d9e0}
-.brand svg{width:44px;height:44px}
+.brand{display:flex;align-items:center;gap:12px;color:#d9d9e0;font-family:JBM,monospace;font-size:20px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.brand svg{width:36px;height:36px}
 h1{margin-top:auto;font-weight:700;line-height:1.12;letter-spacing:-.01em;text-wrap:balance}
-.meta{margin-top:26px;font-family:JBM,monospace;font-size:21px;letter-spacing:.06em;text-transform:uppercase;color:#9a9aa6}`;
+.foot{margin-top:26px;display:flex;justify-content:space-between;align-items:center;gap:24px}
+.meta{font-family:JBM,monospace;font-size:21px;letter-spacing:.06em;text-transform:uppercase;color:#9a9aa6}`;
 
 const page = s => `<!doctype html><html><head><meta charset="utf-8"><style>${css}</style></head>
 <body style="--c:${s.color}"><div class="bar"></div><div class="glow"></div><div class="in">
-<div class="top"><span class="tag">${esc(s.tag)}</span><span class="brand"><svg viewBox="0 0 100 100"><path d="M20 84V22l60 62V44" fill="none" stroke="#f4f3ef" stroke-width="13" stroke-linejoin="round" stroke-linecap="round"/><circle cx="80" cy="21" r="9" fill="${s.color}"/></svg>NewSociety</span></div>
+<div class="top"><span class="tag">${esc(s.tag)}</span></div>
 <h1 id="h">${esc(s.head)}</h1>
-<div class="meta">${esc(s.issue)} · newsociety.netlify.app</div></div></body></html>`;
+<div class="foot"><span class="meta">${esc(s.issue)}</span><span class="brand"><svg viewBox="0 0 100 100"><path d="M20 84V22l60 62V44" fill="none" stroke="#f4f3ef" stroke-width="13" stroke-linejoin="round" stroke-linecap="round"/><circle cx="80" cy="21" r="9" fill="${s.color}"/></svg>NewSociety</span></div></div></body></html>`;
 
 const browser = await chromium.launch();
 const tab = await (await browser.newContext({ viewport: { width: 1200, height: 630 } })).newPage();
