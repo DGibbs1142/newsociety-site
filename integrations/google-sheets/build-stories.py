@@ -4,7 +4,7 @@
 # stories no longer in the archive are removed. build-archive.py runs this
 # after it rewrites newsletter.html; it can also be run on its own:
 #   python3 integrations/google-sheets/build-stories.py <repo dir>
-import glob, html, io, json, os, re, sys
+import glob, hashlib, html, io, json, os, re, sys
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -45,6 +45,15 @@ def t(s):
 def summary(body, n=200):
     body = ' '.join(body.split())
     return body if len(body) <= n else body[:body.rfind(' ', 0, n)] + '…'
+
+
+def card_version(slug):
+    # Short fingerprint of a story card's bytes, added to its address
+    # (?v=...). Browsers cache /icons/* for a week, so a redrawn card would
+    # otherwise keep showing the old picture; a new fingerprint means a new
+    # address, while unchanged cards keep theirs and stay cached.
+    with open(os.path.join(REPO, 'icons', 'stories', slug + '.jpg'), 'rb') as f:
+        return hashlib.sha256(f.read()).hexdigest()[:8]
 
 
 def set_meta(h, attr, key, value):
@@ -90,7 +99,7 @@ for idx, ((issue, b), slug) in enumerate(zip(stories, slugs)):
     # A per-story card (headline on it) when build-story-images.mjs has made
     # one, otherwise the pillar's card.
     if os.path.exists(os.path.join(REPO, 'icons', 'stories', slug + '.jpg')):
-        image = SITE + 'icons/stories/%s.jpg' % slug
+        image = SITE + 'icons/stories/%s.jpg?v=%s' % (slug, card_version(slug))
     else:
         image = SITE + 'icons/og-%s.png' % (pillar if pillar in PILLAR_IMAGES else 'newsletter')
     url = SITE + 'stories/%s.html' % slug
@@ -162,7 +171,7 @@ for idx, ((issue, b), slug) in enumerate(zip(stories, slugs)):
 # Also read by global-search.js, which matches queries against head + body.
 def story_image(slug, b):
     if os.path.exists(os.path.join(REPO, 'icons', 'stories', slug + '.jpg')):
-        return '/icons/stories/%s.jpg' % slug
+        return '/icons/stories/%s.jpg?v=%s' % (slug, card_version(slug))
     pillar = b['page'].replace('.html', '').strip('/')
     return '/icons/og-%s.png' % (pillar if pillar in PILLAR_IMAGES else 'newsletter')
 
