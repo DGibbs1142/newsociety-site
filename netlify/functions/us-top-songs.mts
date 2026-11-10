@@ -35,19 +35,22 @@ type Entry = {
 };
 
 export default async (req: Request, context: Context) => {
-  const [appleRes, deezerRes] = await Promise.allSettled([
-    // A source that hangs would otherwise hold the whole chart for up to
-    // 30s (seen in production); give up on it after 8s and blend the other.
-    fetch(APPLE_FEED, { signal: AbortSignal.timeout(8000) }),
-    fetch(DEEZER_CHART, { signal: AbortSignal.timeout(8000) })
-  ]);
+  // Each source gets 8s for the whole request, body included, then the chart
+  // is blended from whatever arrived. Reading the body is inside the same
+  // guard: a source that starts answering and then stalls used to throw a
+  // TimeoutError out of .json() and crash the function (seen in production).
+  const readJson = async (url: string): Promise<any> => {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      return res.ok ? await res.json() : null;
+    } catch {
+      return null;
+    }
+  };
+  const [apple, deezer] = await Promise.all([readJson(APPLE_FEED), readJson(DEEZER_CHART)]);
 
-  const appleResults = appleRes.status === "fulfilled" && appleRes.value.ok
-    ? (await appleRes.value.json())?.feed?.results || []
-    : [];
-  const deezerResults = deezerRes.status === "fulfilled" && deezerRes.value.ok
-    ? (await deezerRes.value.json())?.data || []
-    : [];
+  const appleResults = apple?.feed?.results || [];
+  const deezerResults = deezer?.data || [];
 
   if (!appleResults.length && !deezerResults.length) {
     return new Response(JSON.stringify({ error: "Both chart sources unavailable" }), {
