@@ -1861,6 +1861,8 @@ a.issue-no:hover, a.issue-no:focus-visible{ text-decoration:underline; text-unde
 
 /* Inline email signup inside the pillar pages' "join the feed" block.
    Those pages then skip the identical footer signup a screen below. */
+.thanks-latest{ max-width:520px; margin:0 auto 32px; text-align:left; }
+.cta .story-status{ margin-top:14px; text-align:center; }
 .cta .cta-signup{ margin:28px auto 18px; }
 body:has(.cta-signup) .footer-signup{ display:none; }
 
