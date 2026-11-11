@@ -53,14 +53,25 @@ export default async (req: Request, context: Context) => {
   const store = getStore("gnews-last-good");
   let res: Response | null = null;
   let data: any = null;
-  try{
-    res = await fetch(target, { signal: AbortSignal.timeout(8000) });
-    data = await res.json();
-  }catch{
-    res = null;
+  const call = async (ms: number) => {
+    try{
+      const r = await fetch(target, { signal: AbortSignal.timeout(ms) });
+      return { r, d: await r.json().catch(() => null) };
+    }catch{
+      return { r: null, d: null };
+    }
+  };
+  ({ r: res, d: data } = await call(8000));
+  // The free plan also allows only about one request per second. Site search
+  // and the homepage ask for two searches at once, so the second is often
+  // refused with a 429 that has nothing to do with the daily quota. A 429
+  // comes back fast, so wait a moment and try once more before falling back.
+  if (res && res.status === 429) {
+    await new Promise(done => setTimeout(done, 1200));
+    ({ r: res, d: data } = await call(5000));
   }
 
-  if (res && res.ok) {
+  if (res && res.ok && data) {
     try{ await store.setJSON(cacheKey, { at: Date.now(), data }); }catch{}
     return new Response(JSON.stringify(data), {
       status: 200,
