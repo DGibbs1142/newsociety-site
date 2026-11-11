@@ -218,7 +218,7 @@ ISSUE_BODY = """<body data-page="newsletter.html">
       <a class="btn btn-ghost" href="/newsletter.html">All issues</a>
     </div>
     <p class="story-status mono" id="storyShareStatus" aria-live="polite"></p>
-  </div>
+%s  </div>
 </article>
 </main>
 
@@ -228,7 +228,28 @@ ISSUE_BODY = """<body data-page="newsletter.html">
 %s</body>
 </html>
 """
-for issue in issues:
+ISSUE_STEP = """      <a class="issue-step issue-step-%s" href="/issues/%s.html" rel="%s">
+        <span class="story-more-meta mono">%s</span>
+        <span class="story-more-head">%s</span>
+      </a>
+"""
+
+
+def issue_steps(k):
+    """Older and newer issue links for issues[k] (issues run newest first)."""
+    out = ''
+    for j, side, rel, label in ((k + 1, 'older', 'prev', '&larr; Older'), (k - 1, 'newer', 'next', 'Newer &rarr;')):
+        if 0 <= j < len(issues):
+            o = issues[j]
+            subj = ' '.join(o['subject'].split())
+            no = t(o['no'].strip())
+            meta = '%s &middot; %s' % (label, no) if side == 'older' else '%s &middot; %s' % (no, label)
+            out += ISSUE_STEP % (side, o['id'], rel, meta,
+                                 t(subj[:1].upper() + subj[1:]))
+    return '    <nav class="issue-steps" aria-label="More issues">\n%s    </nav>\n' % out if out else ''
+
+
+for k, issue in enumerate(issues):
     iid = issue['id']
     subject = ' '.join(issue['subject'].split())
     nice = subject[:1].upper() + subject[1:]
@@ -261,7 +282,7 @@ for issue in issues:
     cards = ''.join(ISSUE_CARD % (slug_of[id(b)], a(b['color'] or '#6e56ff'), t(b['tag']), t(b['head']))
                     for b in issue['blocks'])
     body = ISSUE_BODY % (rooted(nav), t(issue['no']), t(issue['date']), t(nice), t(issue['intro']), cards,
-                         a(title.replace(' — NewSociety', '')), url, rooted(foot), analytics)
+                         a(title.replace(' — NewSociety', '')), url, issue_steps(k), rooted(foot), analytics)
     out = '<!DOCTYPE html>\n<html lang="en">\n<head>%s</head>\n%s' % (rooted(h), body)
     io.open(os.path.join(REPO, 'issues', iid + '.html'), 'w', encoding='utf-8').write(out)
     issue_written.add(iid + '.html')
