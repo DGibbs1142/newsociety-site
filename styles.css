@@ -188,6 +188,12 @@ header.nav{
   display:inline-block;
   background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M20 84V22l60 62V44' fill='none' stroke='%23f4f3ef' stroke-width='13' stroke-linejoin='round' stroke-linecap='round'/><circle cx='80' cy='21' r='9' fill='%236e56ff'/></svg>") center/contain no-repeat;
 }
+/* The mark's N is off-white for the dark theme; on the light theme it needs
+   to be near-black or it disappears into the white nav. */
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]) .logo-dot{ background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M20 84V22l60 62V44' fill='none' stroke='%230a0a0c' stroke-width='13' stroke-linejoin='round' stroke-linecap='round'/><circle cx='80' cy='21' r='9' fill='%236e56ff'/></svg>"); }
+}
+:root[data-theme="light"] .logo-dot{ background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M20 84V22l60 62V44' fill='none' stroke='%230a0a0c' stroke-width='13' stroke-linejoin='round' stroke-linecap='round'/><circle cx='80' cy='21' r='9' fill='%236e56ff'/></svg>"); }
 nav.links{
   display:flex;
   gap:36px;

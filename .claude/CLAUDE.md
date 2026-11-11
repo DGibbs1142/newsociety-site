@@ -40,10 +40,10 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
   `Code.gs`, send it, then run `add-issue.py` (see the newsletter section).
 - Instagram Reels from the Nov 6 cards: Sports, Pop culture, Music and Anime
   (Nov 10, 8:59 PM ET) are posted. Fashion is scheduled for Nov 11 (7:30 PM ET).
-- Issue pages (issues/<id>.html, #40-#44) have their own share cards, older/
-  newer links, and are linked from the archive, RSS, /links and the 404 rescue.
   Windsor's cached Instagram data lags on the free plan; if a post call times
   out, ask Daniel to check Instagram rather than retrying.
+- Issue pages (issues/<id>.html, #40-#44) have their own share cards, older/
+  newer links, and are linked from the archive, RSS, /links and the 404 rescue.
 - Daniel chose to keep the homepage as the front page and point social bios at
   `/links` (TikTok and X now; Instagram needs a custom domain first).
 

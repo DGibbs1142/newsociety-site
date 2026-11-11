@@ -3,3 +3,4 @@ config.local.js
 .netlify
 node_modules
 __pycache__/
+.claude/shots/
