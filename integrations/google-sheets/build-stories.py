@@ -47,12 +47,12 @@ def summary(body, n=200):
     return body if len(body) <= n else body[:body.rfind(' ', 0, n)] + '…'
 
 
-def card_version(slug):
-    # Short fingerprint of a story card's bytes, added to its address
+def card_version(slug, folder='stories'):
+    # Short fingerprint of a share card's bytes, added to its address
     # (?v=...). Browsers cache /icons/* for a week, so a redrawn card would
     # otherwise keep showing the old picture; a new fingerprint means a new
     # address, while unchanged cards keep theirs and stay cached.
-    with open(os.path.join(REPO, 'icons', 'stories', slug + '.jpg'), 'rb') as f:
+    with open(os.path.join(REPO, 'icons', folder, slug + '.jpg'), 'rb') as f:
         return hashlib.sha256(f.read()).hexdigest()[:8]
 
 
@@ -126,7 +126,7 @@ for idx, ((issue, b), slug) in enumerate(zip(stories, slugs)):
         'headline': ' '.join(b['head'].split()), 'description': desc,
         'datePublished': published, 'image': image, 'url': url,
         'isPartOf': {'@type': 'PublicationIssue', 'issueNumber': re.sub(r'\D', '', issue['no']),
-                     'url': SITE + 'newsletter.html#' + issue['id']},
+                     'url': SITE + 'issues/%s.html' % issue['id']},
         'publisher': {'@type': 'NewsMediaOrganization', 'name': 'NewSociety', 'url': SITE,
                       'logo': SITE + 'icons/icon-512.png'},
     }
@@ -139,13 +139,13 @@ for idx, ((issue, b), slug) in enumerate(zip(stories, slugs)):
 <main id="main">
 <article class="story" style="--tag:%s">
   <div class="wrap story-wrap">
-    <a href="/newsletter.html#%s" class="breadcrumb">&larr; %s &middot; %s</a>
+    <a href="/issues/%s.html" class="breadcrumb">&larr; %s &middot; %s</a>
     <a class="nl-tag mono story-tag" href="/%s">%s</a>
     <h1 class="story-title">%s</h1>
     <p class="story-body">%s</p>
     <div class="story-actions">
       <button type="button" class="btn btn-primary" id="storyShare" data-title="%s" data-url="%s">Share this story</button>
-      <a class="btn btn-ghost" href="/newsletter.html#%s">Read the full issue</a>
+      <a class="btn btn-ghost" href="/issues/%s.html">Read the full issue</a>
       <a class="btn btn-ghost" href="/%s">More %s</a>
     </div>
     <p class="story-status mono" id="storyShareStatus" aria-live="polite"></p>
@@ -187,6 +187,93 @@ for old in glob.glob(os.path.join(REPO, 'stories', '*.html')):
     if os.path.basename(old) not in written:
         os.remove(old)
 
+# ---- One page per issue (issues/<issue-id>.html) ----
+# A shareable home for a whole issue: its subject, intro and stories (each
+# linking to its story page), with its own share card (icons/issues/, made by
+# build-story-images.mjs from issues/issues.json).
+os.makedirs(os.path.join(REPO, 'issues'), exist_ok=True)
+issue_manifest = []
+issue_written = set()
+slug_of = {id(b): slug for (i, b), slug in zip(stories, slugs)}
+ISSUE_CARD = """      <a class="story-more-card" href="/stories/%s.html" style="--tag:%s">
+        <span class="story-more-meta mono">%s</span>
+        <span class="story-more-head">%s</span>
+      </a>
+"""
+ISSUE_BODY = """<body data-page="newsletter.html">
+<a class="skip-link" href="#main">Skip to content</a>
+%s
+
+<main id="main">
+<article class="story issue-page">
+  <div class="wrap story-wrap">
+    <a href="/newsletter.html" class="breadcrumb">&larr; The Week in Culture</a>
+    <span class="nl-tag mono story-tag">%s &middot; %s</span>
+    <h1 class="story-title">%s</h1>
+    <p class="story-body">%s</p>
+    <div class="story-more-grid issue-stories">
+%s    </div>
+    <div class="story-actions">
+      <button type="button" class="btn btn-primary" id="storyShare" data-title="%s" data-url="%s">Share this issue</button>
+      <a class="btn btn-ghost" href="/newsletter.html">All issues</a>
+    </div>
+    <p class="story-status mono" id="storyShareStatus" aria-live="polite"></p>
+  </div>
+</article>
+</main>
+
+%s
+<script src="/story.js" defer></script>
+<script src="/site.js" defer></script>
+%s</body>
+</html>
+"""
+for issue in issues:
+    iid = issue['id']
+    subject = ' '.join(issue['subject'].split())
+    nice = subject[:1].upper() + subject[1:]
+    url = SITE + 'issues/%s.html' % iid
+    title = 'The Week in Culture, %s: %s — NewSociety' % (issue['no'].strip(), nice)
+    desc = summary(issue['intro'], 160)
+    published = datetime.strptime(issue['date'].strip(), '%A, %B %d, %Y').strftime('%Y-%m-%d')
+    if os.path.exists(os.path.join(REPO, 'icons', 'issues', iid + '.jpg')):
+        image = SITE + 'icons/issues/%s.jpg?v=%s' % (iid, card_version(iid, 'issues'))
+    else:
+        image = SITE + 'icons/og-newsletter.png'
+    alt = 'The Week in Culture, %s' % issue['no'].strip()
+    h = head
+    h = re.sub(r'<title>.*?</title>', '<title>%s</title>' % t(title), h, flags=re.S)
+    for attr, key, val in (('name', 'description', a(desc)), ('property', 'og:type', 'article'),
+                           ('property', 'og:url', url), ('property', 'og:title', a(title)),
+                           ('property', 'og:description', a(desc)), ('property', 'og:image', image),
+                           ('property', 'og:image:alt', a(alt)), ('name', 'twitter:title', a(title)),
+                           ('name', 'twitter:description', a(desc)), ('name', 'twitter:image', image),
+                           ('name', 'twitter:image:alt', a(alt))):
+        h = set_meta(h, attr, key, val)
+    h = re.sub(r'(<link rel="canonical" href=")[^"]*', lambda m: m.group(1) + url, h)
+    ld = {'@context': 'https://schema.org', '@type': 'PublicationIssue',
+          'issueNumber': re.sub(r'\D', '', issue['no']), 'name': title, 'description': desc,
+          'datePublished': published, 'image': image, 'url': url,
+          'isPartOf': {'@type': 'Periodical', 'name': 'The Week in Culture', 'url': SITE + 'newsletter.html'},
+          'publisher': {'@type': 'NewsMediaOrganization', 'name': 'NewSociety', 'url': SITE,
+                        'logo': SITE + 'icons/icon-512.png'}}
+    h = h.rstrip() + '\n<script type="application/ld+json">%s</script>\n' % json.dumps(ld, ensure_ascii=False)
+    cards = ''.join(ISSUE_CARD % (slug_of[id(b)], a(b['color'] or '#6e56ff'), t(b['tag']), t(b['head']))
+                    for b in issue['blocks'])
+    body = ISSUE_BODY % (rooted(nav), t(issue['no']), t(issue['date']), t(nice), t(issue['intro']), cards,
+                         a(title.replace(' — NewSociety', '')), url, rooted(foot), analytics)
+    out = '<!DOCTYPE html>\n<html lang="en">\n<head>%s</head>\n%s' % (rooted(h), body)
+    io.open(os.path.join(REPO, 'issues', iid + '.html'), 'w', encoding='utf-8').write(out)
+    issue_written.add(iid + '.html')
+    issue_manifest.append({'slug': iid, 'tag': 'The Week in Culture', 'head': nice, 'color': '#6e56ff',
+                           'issue': '%s · %s' % (issue['no'].strip(), issue['date'].strip())})
+
+io.open(os.path.join(REPO, 'issues', 'issues.json'), 'w', encoding='utf-8').write(
+    json.dumps(issue_manifest, ensure_ascii=False, indent=1) + '\n')
+for old in glob.glob(os.path.join(REPO, 'issues', '*.html')):
+    if os.path.basename(old) not in issue_written:
+        os.remove(old)
+
 # Sitemap: replace the generated block, or add it before </urlset>.
 sm_path = os.path.join(REPO, 'sitemap.xml')
 sm = io.open(sm_path, encoding='utf-8').read()
@@ -198,11 +285,13 @@ entries = ''.join('''  <url>
   </url>
 ''' % (SITE, slug, datetime.strptime(i['date'].strip(), '%A, %B %d, %Y').strftime('%Y-%m-%d'))
     for (i, _), slug in zip(stories, slugs))
-block = '  <!-- stories:start (generated by build-stories.py) -->\n%s  <!-- stories:end -->\n' % entries
+issue_entries = ''.join('  <url>\n    <loc>%sissues/%s.html</loc>\n    <lastmod>%s</lastmod>\n    <changefreq>yearly</changefreq>\n    <priority>0.7</priority>\n  </url>\n'
+                        % (SITE, i['id'], datetime.strptime(i['date'].strip(), '%A, %B %d, %Y').strftime('%Y-%m-%d')) for i in issues)
+block = '  <!-- stories:start (generated by build-stories.py) -->\n%s%s  <!-- stories:end -->\n' % (issue_entries, entries)
 if '<!-- stories:start' in sm:
     sm = re.sub(r'  <!-- stories:start.*?<!-- stories:end -->\n', lambda m: block, sm, flags=re.S)
 else:
     sm = sm.replace('</urlset>', block + '</urlset>')
 io.open(sm_path, 'w', encoding='utf-8').write(sm)
 
-print('wrote %d story pages' % len(written))
+print('wrote %d story pages and %d issue pages' % (len(written), len(issue_written)))

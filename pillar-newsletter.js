@@ -22,7 +22,7 @@ async function readArchive(){
     const date = issue.querySelector('.issue-date')?.textContent.trim() || '';
     const subject = issue.querySelector('.issue-subject')?.textContent.trim() || '';
     if(!subject) return;
-    document.getElementById('homeIssueLead').href = 'newsletter.html#' + issue.id;
+    document.getElementById('homeIssueLead').href = '/issues/' + issue.id + '.html';
     document.getElementById('homeIssueMeta').textContent = [no, date].filter(Boolean).join(' · ');
     document.getElementById('homeIssueSubject').textContent = subject;
     const list = document.getElementById('homeIssueStories');

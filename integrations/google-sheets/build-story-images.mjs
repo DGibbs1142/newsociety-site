@@ -15,9 +15,12 @@ import { createRequire } from 'node:module';
 const { chromium } = createRequire(import.meta.url)('playwright');
 
 const repo = path.resolve(process.argv[2] || '.');
-const stories = JSON.parse(fs.readFileSync(path.join(repo, 'stories', 'stories.json'), 'utf8'));
-const outDir = path.join(repo, 'icons', 'stories');
-fs.mkdirSync(outDir, { recursive: true });
+// Story cards from stories/stories.json, and issue cards (one per issue,
+// same layout) from issues/issues.json. Both written by build-stories.py.
+const jobs = [['stories', 'stories.json', 'stories'], ['issues', 'issues.json', 'issues']]
+  .filter(([dir, file]) => fs.existsSync(path.join(repo, dir, file)))
+  .map(([dir, file, out]) => ({ items: JSON.parse(fs.readFileSync(path.join(repo, dir, file), 'utf8')), outDir: path.join(repo, 'icons', out) }));
+jobs.forEach(j => fs.mkdirSync(j.outDir, { recursive: true }));
 
 const font = f => fs.readFileSync(path.join(repo, 'fonts', f)).toString('base64');
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -47,7 +50,9 @@ const page = s => `<!doctype html><html><head><meta charset="utf-8"><style>${css
 const browser = await chromium.launch();
 const tab = await (await browser.newContext({ viewport: { width: 1200, height: 630 } })).newPage();
 let made = 0;
-for (const s of stories) {
+let total = 0;
+for (const { items, outDir } of jobs) for (const s of items) {
+  total++;
   const file = path.join(outDir, s.slug + '.jpg');
   if (fs.existsSync(file)) continue;
   await tab.setContent(page(s), { waitUntil: 'load' });
@@ -64,4 +69,4 @@ for (const s of stories) {
   made++;
 }
 await browser.close();
-console.log(`made ${made} story images (${stories.length - made} already existed)`);
+console.log(`made ${made} share cards (${total - made} already existed)`);
