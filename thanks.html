@@ -65,7 +65,7 @@
 
 <section class="page-hero">
   <div class="wrap">
-    <div class="eyebrow"><span class="live-dot"></span>NewSociety Live</div>
+    <div class="eyebrow"><span class="live-dot"></span>You're in</div>
     <h1 class="page-title display">Got it.</h1>
     <p class="page-sub">Your submission came through. If you joined the list, the next issue lands Sunday.</p>
     <div class="cta-actions" style="justify-content:flex-start; margin-top:36px;">
@@ -78,22 +78,20 @@
 <section class="cta" id="follow">
   <div class="wrap">
     <div class="reveal in">
-      <div class="section-label" style="margin-bottom:20px;">// join the feed</div>
-      <h2 class="display">Don't watch the news.<br>Watch the feed.</h2>
-      <p>One email every Sunday — the handful of stories that actually mattered, written like someone watched them happen. Plus new drops daily across sports, anime, pop culture, fashion and music.</p>
-      <form class="signup-form cta-signup" name="newsletter" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
-        <input type="hidden" name="form-name" value="newsletter">
-        <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
-        <label for="cta-signup-email" class="visually-hidden">Email address</label>
-        <input id="cta-signup-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
-        <button type="submit" class="btn btn-primary">Get Sunday’s issue →</button>
-      </form>
+      <div class="section-label" style="margin-bottom:20px;">// while you wait for sunday</div>
+      <h2 class="display">Catch up on<br>this week.</h2>
+      <a class="story-more-card thanks-latest" id="thanksLatest" href="/newsletter.html">
+        <span class="story-more-meta mono" id="thanksLatestMeta">The Week in Culture</span>
+        <span class="story-more-head" id="thanksLatestHead">Read every past issue</span>
+      </a>
+      <p>Know someone who'd want this? One link gets them the feed, the newsletter and our socials.</p>
       <div class="cta-actions">
-        <a href="newsletter.html" class="btn btn-ghost">Read past issues</a>
+        <button type="button" class="btn btn-primary" id="thanksShare" data-url="https://newsociety.netlify.app/links">Tell a friend</button>
         <a href="https://www.tiktok.com/@newsociety22" class="btn btn-ghost" target="_blank" rel="noopener">TikTok</a>
         <a href="https://www.instagram.com/newsociety1142" class="btn btn-ghost" target="_blank" rel="noopener">Instagram</a>
         <a href="https://x.com/newsociety1142" class="btn btn-ghost" target="_blank" rel="noopener">X (Twitter)</a>
       </div>
+      <p class="story-status mono" id="thanksShareStatus" aria-live="polite"></p>
     </div>
   </div>
 </section>
@@ -132,6 +130,7 @@
   </div>
 </footer>
 
+<script src="thanks.js" defer></script>
 <script src="site.js" defer></script>
 
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "07674b847fc94b21a8946d015b3c1fc9"}'></script><!-- End Cloudflare Web Analytics -->
