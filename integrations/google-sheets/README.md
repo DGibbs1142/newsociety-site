@@ -36,8 +36,8 @@ read the archive, so they update by themselves.
 | `add-issue.py` | `newsletter.html`, `Code.gs` | everything below, via the other scripts |
 | `build-archive.py` | an `issues.json` of every issue | `newsletter.html`, then runs the next two |
 | `build-feed.py` | `newsletter.html` | `feed.xml` |
-| `build-stories.py` | `newsletter.html` | `stories/*.html`, `stories/stories.json`, the stories block in `sitemap.xml` |
-| `build-story-images.mjs` | `stories/stories.json` | `icons/stories/<slug>.jpg` for stories without one |
+| `build-stories.py` | `newsletter.html` | `stories/*.html`, `stories/stories.json`, `issues/*.html`, `issues/issues.json`, the generated block in `sitemap.xml` |
+| `build-story-images.mjs` | `stories/stories.json`, `issues/issues.json` | share cards in `icons/stories/` and `icons/issues/` that don't exist yet |
 | `newsletter_lib.py` | — | shared parser and story-slug rules |
 
 `build-archive.py` copies the page `<head>` from the current

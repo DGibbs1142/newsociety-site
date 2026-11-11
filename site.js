@@ -252,7 +252,8 @@ function initArchive(){
     const no = issue.querySelector('.issue-no')?.textContent.trim() || 'this issue';
     btn.setAttribute('aria-label', 'Share ' + no);
     btn.addEventListener('click', async () => {
-      const url = location.origin + location.pathname + '#' + issue.id;
+      // Each issue has its own page (issues/<id>.html) with its own preview card.
+      const url = location.origin + '/issues/' + issue.id + '.html';
       const title = 'The Week in Culture, ' + no;
       if(navigator.share){
         try{ await navigator.share({ title, url }); return; }catch(e){ if(e && e.name === 'AbortError') return; }
