@@ -115,13 +115,13 @@ for i in issues:
     n = num(i['number'])
     parts.append('''  <article class="issue" id="issue-%s">
     <header class="issue-head">
-      <span class="mono issue-no">Issue %s</span>
+      <a class="mono issue-no" href="issues/issue-%s.html">Issue %s</a>
       <span class="mono issue-date">%s</span>
     </header>
     <h2 class="display issue-subject">%s</h2>
     <p class="issue-intro">%s</p>
     <div class="issue-blocks">
-''' % (n, n, esc(i['dateline']), esc(headline(i['subject'])), esc(i['intro'])))
+''' % (n, n, n, esc(i['dateline']), esc(headline(i['subject'])), esc(i['intro'])))
 
     for b in i['blocks']:
         # --tag goes on the block, not the tag link: the coloured left rule is
