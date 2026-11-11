@@ -72,6 +72,15 @@ async function readArchive(){
       a.append(label, meta);
       list.appendChild(a);
     });
+    // The whole issue, on its own page (the list above shows only three).
+    const total = issue.querySelectorAll('.nl-block').length;
+    if(list.children.length && issue.id){
+      const all = document.createElement('a');
+      all.className = 'mono links-latest-all';
+      all.href = '/issues/' + issue.id + '.html';
+      all.textContent = `Read all ${total} stories in ${no || 'this issue'} →`;
+      list.after(all);
+    }
     if(list.children.length) section.hidden = false;
   }catch(e){ /* leave the section hidden */ }
 })();

@@ -6,7 +6,7 @@
 // Live API calls (cross-origin sources, and our own /api/* functions) are
 // never intercepted — they always go straight to the network.
 
-const CACHE_VERSION = 'newsociety-v27';
+const CACHE_VERSION = 'newsociety-v28';
 // Only what the first paint of any page needs. Every page and script a
 // visitor actually opens is cached by the fetch handler below as they go,
 // so there is no need to download the whole site on the first visit (this

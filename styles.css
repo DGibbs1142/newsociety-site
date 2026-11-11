@@ -1543,6 +1543,9 @@ footer{
   color:var(--text-muted);
 }
 .links-sub span{ color:var(--accent-text); }
+.links-pillars span{ white-space:nowrap; }
+.links-latest-all{ justify-self:center; margin-top:2px; padding:8px 4px; font-size:13px; letter-spacing:0.06em; color:var(--accent-text); }
+.links-latest-all:hover{ text-decoration:underline; text-underline-offset:3px; }
 .links-pillars{
   margin-top:10px;
   font-size:11px;

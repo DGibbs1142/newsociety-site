@@ -38,8 +38,10 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
 ## Open items (as of Nov 10, 2026)
 - Issue 07 sent Nov 8 and is archived and live (#36). Next issue: write it in
   `Code.gs`, send it, then run `add-issue.py` (see the newsletter section).
-- Instagram Reels from the Nov 6 cards: Sports, Pop culture and Music are
-  posted. Anime is scheduled for Nov 10 and Fashion for Nov 11 (7:30 PM ET).
+- Instagram Reels from the Nov 6 cards: Sports, Pop culture, Music and Anime
+  (Nov 10, 8:59 PM ET) are posted. Fashion is scheduled for Nov 11 (7:30 PM ET).
+- Issue pages (issues/<id>.html, #40-#44) have their own share cards, older/
+  newer links, and are linked from the archive, RSS, /links and the 404 rescue.
   Windsor's cached Instagram data lags on the free plan; if a post call times
   out, ask Daniel to check Instagram rather than retrying.
 - Daniel chose to keep the homepage as the front page and point social bios at
