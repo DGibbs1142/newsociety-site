@@ -28,7 +28,10 @@ issues = parse_archive(page)
 
 items = []
 for i in issues:
-    link = SITE + 'newsletter.html#' + i['id']
+    # <link> opens the issue's own page; the guid keeps its original value so
+    # feed readers don't show every past issue again as new.
+    link = SITE + 'issues/%s.html' % i['id']
+    guid = SITE + 'newsletter.html#' + i['id']
     body = '<p>%s</p>' % x(i['intro']) + ''.join(
         '<h3>%s: %s</h3><p>%s</p>' % (x(b['tag']), x(b['head']), x(b['body'])) for b in i['blocks'])
     items.append('''    <item>
@@ -38,7 +41,7 @@ for i in issues:
       <pubDate>%s</pubDate>
       <description>%s</description>
     </item>
-''' % (x(i['no']), x(i['subject']), link, link, pub_date(i['date']), html.escape(body, quote=False)))
+''' % (x(i['no']), x(i['subject']), link, guid, pub_date(i['date']), html.escape(body, quote=False)))
 
 latest = pub_date(issues[0]['date']) if issues else format_datetime(datetime.now(timezone.utc))
 feed = '''<?xml version="1.0" encoding="UTF-8"?>

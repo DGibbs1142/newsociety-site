@@ -1667,7 +1667,8 @@ footer{
   letter-spacing:0.1em;
   text-transform:uppercase;
 }
-.issue-no{ color:var(--accent-text); }
+.issue-no{ color:var(--accent-text); text-decoration:none; }
+a.issue-no:hover, a.issue-no:focus-visible{ text-decoration:underline; text-underline-offset:3px; }
 .issue-date{ color:var(--text-dim); }
 .issue-subject{
   max-width:19ch;
