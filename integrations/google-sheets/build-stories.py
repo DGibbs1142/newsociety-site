@@ -149,6 +149,16 @@ for idx, ((issue, b), slug) in enumerate(zip(stories, slugs)):
       <a class="btn btn-ghost" href="/%s">More %s</a>
     </div>
     <p class="story-status mono" id="storyShareStatus" aria-live="polite"></p>
+    <div class="story-signup">
+      <p class="story-signup-copy"><strong>Get stories like this every Sunday.</strong> The Week in Culture is one email with the handful of stories that actually mattered.</p>
+      <form class="signup-form" name="newsletter" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="newsletter">
+        <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+        <label for="story-signup-email" class="visually-hidden">Email address</label>
+        <input id="story-signup-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
+        <button type="submit" class="btn btn-primary">Get Sunday’s issue →</button>
+      </form>
+    </div>
 %s  </div>
 </article>
 </main>
@@ -218,6 +228,16 @@ ISSUE_BODY = """<body data-page="newsletter.html">
       <a class="btn btn-ghost" href="/newsletter.html">All issues</a>
     </div>
     <p class="story-status mono" id="storyShareStatus" aria-live="polite"></p>
+    <div class="story-signup">
+      <p class="story-signup-copy"><strong>Get stories like this every Sunday.</strong> The Week in Culture is one email with the handful of stories that actually mattered.</p>
+      <form class="signup-form" name="newsletter" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="newsletter">
+        <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+        <label for="story-signup-email" class="visually-hidden">Email address</label>
+        <input id="story-signup-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
+        <button type="submit" class="btn btn-primary">Get Sunday’s issue →</button>
+      </form>
+    </div>
 %s  </div>
 </article>
 </main>
