@@ -102,3 +102,12 @@
   [headers.values]
     Cache-Control = "public, max-age=604800"
 
+
+# Lets Chrome's private prefetch proxy preload pages a visitor is likely to
+# open from Google results, so those pages appear faster. Chrome asks for this
+# file on its own; without it, every check was a 404.
+[[headers]]
+  for = "/.well-known/traffic-advice"
+  [headers.values]
+    Content-Type = "application/trafficadvice+json"
+    Cache-Control = "public, max-age=86400"
