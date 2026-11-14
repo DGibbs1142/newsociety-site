@@ -20,7 +20,10 @@ async function readArchive(){
     if(!issue) return;
     const no = issue.querySelector('.issue-no')?.textContent.trim() || '';
     const date = issue.querySelector('.issue-date')?.textContent.trim() || '';
-    const subject = issue.querySelector('.issue-subject')?.textContent.trim() || '';
+    const raw = issue.querySelector('.issue-subject')?.textContent.trim() || '';
+    // Subjects are written as email subject lines ("a number going to..."); as a
+    // headline they need a capital, the same as the issue pages give them.
+    const subject = raw.charAt(0).toUpperCase() + raw.slice(1);
     if(!subject) return;
     document.getElementById('homeIssueLead').href = '/issues/' + issue.id + '.html';
     document.getElementById('homeIssueMeta').textContent = [no, date].filter(Boolean).join(' · ');
