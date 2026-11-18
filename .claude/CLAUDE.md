@@ -35,11 +35,14 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
   Daniel has to paste `Code.gs` into Apps Script, re-authorize and publish a
   new deployment version for that to take effect.
 
-## Open items (as of Nov 10, 2026)
-- Issue 07 sent Nov 8 and is archived and live (#36). Next issue: write it in
-  `Code.gs`, send it, then run `add-issue.py` (see the newsletter section).
-- Instagram Reels from the Nov 6 cards: Sports, Pop culture, Music and Anime
-  (Nov 10, 8:59 PM ET) are posted. Fashion is scheduled for Nov 11 (7:30 PM ET).
+## Open items (as of Nov 18, 2026)
+- Issue 08 (Wed Nov 18) was drafted (#51), archived (#52) and deployed the same
+  day at Daniel's request, before he confirmed it had sent. Facts and sources:
+  `integrations/google-sheets/issue-08-notes.md`. If he changes it before sending,
+  the site needs re-archiving. No issue went out Nov 15. Next issue: write it in
+  `Code.gs`, send it, then run `add-issue.py`.
+- Instagram Reels from the Nov 6 cards: all five are posted (Fashion went up
+  Nov 11, 10:31 PM ET, after a session restart delayed it).
   Windsor's cached Instagram data lags on the free plan; if a post call times
   out, ask Daniel to check Instagram rather than retrying.
 - Issue pages (issues/<id>.html, #40-#44) have their own share cards, older/

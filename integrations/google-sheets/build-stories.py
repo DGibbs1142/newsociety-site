@@ -20,6 +20,9 @@ issues = parse_archive(page)
 # Shell pieces come from the live newsletter page so fonts, scripts and
 # security settings always match the rest of the site.
 head = page[page.index('<head>') + len('<head>'):page.index('</head>')]
+# The archive's own structured data (added at the end of this script) belongs
+# to newsletter.html only, so keep it out of the head the other pages copy.
+head = re.sub(r'\s*<!-- archive-ld:start -->.*?<!-- archive-ld:end -->', '', head, flags=re.S)
 nav = page[page.index('<header class="nav">'):page.index('</header>') + len('</header>')]
 foot = page[page.index('<footer>'):page.index('</footer>') + len('</footer>')]
 # Cloudflare Web Analytics, copied from the newsletter page so story-page
@@ -334,5 +337,28 @@ if '<!-- stories:start' in sm:
 else:
     sm = sm.replace('</urlset>', block + '</urlset>')
 io.open(sm_path, 'w', encoding='utf-8').write(sm)
+
+# Structured data for the archive itself: a collection page listing every
+# issue, so search engines read newsletter.html as a periodical with issues.
+archive_ld = {
+    '@context': 'https://schema.org', '@type': 'CollectionPage',
+    'name': 'The Week in Culture', 'url': SITE + 'newsletter.html',
+    'description': 'Every issue of The Week in Culture, the NewSociety newsletter.',
+    'isPartOf': {'@type': 'WebSite', 'name': 'NewSociety', 'url': SITE},
+    'about': {'@type': 'Periodical', 'name': 'The Week in Culture', 'url': SITE + 'newsletter.html',
+              'publisher': {'@type': 'NewsMediaOrganization', 'name': 'NewSociety', 'url': SITE,
+                            'logo': SITE + 'icons/icon-512.png'}},
+    'mainEntity': {'@type': 'ItemList', 'numberOfItems': len(issues), 'itemListElement': [
+        {'@type': 'ListItem', 'position': n + 1, 'url': SITE + 'issues/%s.html' % i['id'],
+         'name': 'The Week in Culture, %s' % i['no'].strip()}
+        for n, i in enumerate(issues)]}}
+ld_block = '<!-- archive-ld:start -->\n<script type="application/ld+json">%s</script>\n<!-- archive-ld:end -->' % json.dumps(archive_ld, ensure_ascii=False)
+nl_path = os.path.join(REPO, 'newsletter.html')
+nl = io.open(nl_path, encoding='utf-8').read()
+if '<!-- archive-ld:start -->' in nl:
+    nl = re.sub(r'<!-- archive-ld:start -->.*?<!-- archive-ld:end -->', lambda m: ld_block, nl, flags=re.S)
+else:
+    nl = nl.replace('</head>', ld_block + '\n</head>', 1)
+io.open(nl_path, 'w', encoding='utf-8').write(nl)
 
 print('wrote %d story pages and %d issue pages' % (len(written), len(issue_written)))
