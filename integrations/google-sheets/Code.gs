@@ -612,39 +612,39 @@ function welcomeMessage_(email) {
 // second run only reaches people who joined since, and nobody is sent the
 // same issue twice.
 const NEWSLETTER_ISSUE = {
-  number: 7,
-  dateline: 'Sunday, November 8, 2026',
-  subject: 'The Week in Culture \u2014 a number going to the rafters, Dune\u2019s last chapter, and anime\u2019s move to the big screen',
-  intro: 'A lot of long runs reached their final stretch this week. One of them is getting a banner, and one of them is finally getting an ending people spent decades calling unfilmable.',
+  number: 8,
+  dateline: 'Wednesday, November 18, 2026',
+  subject: 'The Week in Culture — Giannis in a Heat jersey, Johnny Depp’s Christmas Carol, and country’s biggest night',
+  intro: 'Big names in new places this week: Giannis in Miami, Martine Rose at Balenciaga, Johnny Depp back at No. 1. And tonight, country music counts up its year.',
   blocks: [
     {
       tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'Oklahoma City is putting Russell Westbrook\u2019s number in the rafters.',
-      body: 'The Thunder set February 7 as the date for No. 0. Eleven seasons, the 2017 MVP, eight All-NBA teams \u2014 and he still leads the franchise in points, rebounds, assists, steals, games played and minutes. All six at once, years after he last wore the jersey. Players usually get honoured for winning. He is being honoured for carrying, which is a harder thing to fit on a banner, and it is most of why that number means what it does in that building.'
+      head: 'Giannis Antetokounmpo is putting up Milwaukee numbers in a Miami jersey.',
+      body: 'Thirteen seasons and 895 games as a Buck, then a summer trade to the Heat. Last week he averaged 33.7 points, 11.3 rebounds and 4.7 assists on 69 percent shooting, Miami went 3-0, and the nights included 37 against Cleveland and 34 and 14 against Detroit. The league named him Eastern Conference Player of the Week for the 29th time in his career, and Victor Wembanyama took the West. Same award as always. Very different jersey.'
     },
     {
       tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
-      head: 'Dune is heading for its last chapter, and the first two go back to IMAX first.',
-      body: 'The final trailer for Dune: Part Three landed this week, and it puts Chani at the centre of a story that no longer lines up with the book it came from. Before the finale arrives on December 18, Parts One and Two return to IMAX for one week starting November 13, with a sneak peek of Part Three attached. Three films to close out a story people spent decades calling unfilmable.'
+      head: 'Johnny Depp’s Christmas Carol opened at No. 1.',
+      body: 'Ebenezer, Paramount’s take on A Christmas Carol with Depp in the title role, won the weekend with about $19 million in the U.S. and Canada and $42 million worldwide, on a reported $38 million budget. That is a little under what it was tracking for, and under the $30 million Robert Zemeckis’ animated version opened to in 2009. It is also mid-November, which tells you how early the Christmas movie season starts now.'
     },
     {
       tag: 'Music', page: 'music.html', color: '#5aa0e8',
-      head: 'Ella Langley is up for Entertainer of the Year, and the CMAs are ten days out.',
-      body: 'We opened this newsletter in September with her racing herself up the chart. She goes to Nashville on November 18 sharing the lead in nominations with Taylor Swift, up for Entertainer of the Year against Luke Combs, Cody Johnson, Chris Stapleton and Lainey Wilson \u2014 who is also hosting. \u201CDandelion\u201D is up for Album of the Year, and both \u201CBe Her\u201D and \u201CChoosin\u2019 Texas\u201D are up for Single and Song. Last week country held the entire top five of the Hot 100. This is the room where that gets counted.'
+      head: 'Country’s biggest night is tonight, and Ella Langley walks in holding a record.',
+      body: 'The CMA Awards go live from Bridgestone Arena in Nashville on ABC, with Lainey Wilson hosting for the third year in a row and up for Entertainer of the Year herself. So is Langley, who arrives with “Choosin’ Texas” at No. 1 on the Hot 100 for a 27th week on the latest chart. No song has ever led longer. She is performing, along with Miranda Lambert, Kacey Musgraves, Luke Combs and Mumford & Sons, and there is a tribute to Dolly Parton. The winners land after this does.'
     },
     {
       tag: 'Anime', page: 'anime.html', color: '#e0679a',
-      head: 'Anime keeps buying tickets to the cinema.',
-      body: 'Solo Leveling: Beyond the System is officially in production as a theatrical feature. The Rascal Does Not Dream series gets its conclusion in theatres for three nights in February. And Kojima Productions released a first trailer for Death Stranding Isolations, an anime series set inside the game\u2019s world. The jump from streaming to the big screen has stopped being a one-off.'
+      head: 'The Days of Diamond, a baseball manga about playing for fun, is getting an anime.',
+      body: 'Ohashi Hirai’s manga follows Jiro Ayasegawa, a kid who stumbles onto the Bambies, an underdog youth team built around one idea: having fun. Then his talent starts casting a shadow over everyone around him. It topped the list for male readers in Kono Manga ga Sugoi! and has more than 2 million copies in print across ten volumes. Lapin Track is animating it, with character designs by Atsushi Saito. No premiere date or cast yet.'
     },
     {
       tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
-      head: 'Diotima won American womenswear again, in a room full of dinosaurs.',
-      body: 'The CFDA Awards were at the American Museum of Natural History on Monday, Keke Palmer hosting, and Rachel Scott took Womenswear Designer of the Year \u2014 her second in three years, for a label whose crochet is all made in Jamaica. Ralph Lauren took menswear, a year after winning womenswear, which is a strange sentence about a label that started in 1967. And lifetime achievement went to Inez van Lamsweerde and Vinoodh Matadin for thirty years of photographing this industry \u2014 the rarer kind of award, because fashion is much better at celebrating the people in front of the camera.'
+      head: 'Martine Rose is running Balenciaga, the first woman to do it.',
+      body: 'Kering named the British designer creative director on November 6, about a day after Pierpaolo Piccioli’s exit was announced. She is not new to the house: Demna brought her in as a menswear consultant in 2015. Her own label, started in 2007, made its name on off-kilter silhouettes and London subculture, which is a very different starting point from couture. Her first collection there will show what Balenciaga sounds like in her voice.'
     }
   ],
   live: 'Launch party incoming. The date and venue are almost locked, and this list hears first.',
-  liveRsvp: 'You\u2019re on the launch party list. The date and venue are almost locked, and you\u2019ll hear first.',
+  liveRsvp: 'You’re on the launch party list. The date and venue are almost locked, and you’ll hear first.',
   closer: 'What do you want more of? Hit reply. We read every one.'
 };
 
