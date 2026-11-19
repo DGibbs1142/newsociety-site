@@ -6,7 +6,7 @@
 // Live API calls (cross-origin sources, and our own /api/* functions) are
 // never intercepted — they always go straight to the network.
 
-const CACHE_VERSION = 'newsociety-v34';
+const CACHE_VERSION = 'newsociety-v35';
 // Only what the first paint of any page needs. Every page and script a
 // visitor actually opens is cached by the fetch handler below as they go,
 // so there is no need to download the whole site on the first visit (this
@@ -15,7 +15,7 @@ const CACHE_VERSION = 'newsociety-v34';
 const APP_SHELL = [
   '/', '/styles.css', '/theme-init.js', '/site.js',
   '/fonts/inter-latin.woff2', '/fonts/anton-latin.woff2', '/fonts/jetbrains-mono-latin.woff2',
-  '/icons/icon-192.png'
+  '/icons/icon-192.png', '/offline.html'
 ];
 
 self.addEventListener('install', (event) => {
@@ -44,6 +44,12 @@ self.addEventListener('fetch', (event) => {
   // refuses, and they are too big to keep offline anyway.
   if (url.pathname.startsWith('/social/') || request.headers.has('range')) return;
 
+  // When the network can't give us the page, use the copy saved last time;
+  // failing that, a page someone navigated to gets the "back soon" page.
+  const fallback = (response) => caches.match(request)
+    .then(cached => cached || (request.mode === 'navigate' ? caches.match('/offline.html') : undefined))
+    .then(found => found || response || Response.error());
+
   event.respondWith(
     fetch(request)
       .then(response => {
@@ -52,10 +58,15 @@ self.addEventListener('fetch', (event) => {
         if (response.ok && response.status === 200 && response.type === 'basic') {
           const copy = response.clone();
           caches.open(CACHE_VERSION).then(cache => cache.put(request, copy)).catch(() => {});
+          return response;
         }
+        // A server error (5xx) is the host failing, not the page being gone:
+        // during an outage, show what we saved rather than the error text.
+        // 404s still pass through, so the real "not found" page works.
+        if (response.status >= 500) return fallback(response);
         return response;
       })
-      .catch(() => caches.match(request))
+      .catch(() => fallback())
   );
 });
 
