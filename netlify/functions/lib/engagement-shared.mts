@@ -10,11 +10,13 @@ import { getStore } from "@netlify/blobs";
 
 type Store = ReturnType<typeof getStore>;
 
-export function json(data: unknown, status = 200, cache = "no-store") {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "Content-Type": "application/json", "Cache-Control": cache }
-  });
+// cdn, when given, becomes Netlify-CDN-Cache-Control: Netlify's edge then
+// answers repeat requests itself instead of running the function each time,
+// and every function run costs account credits.
+export function json(data: unknown, status = 200, cache = "no-store", cdn?: string) {
+  const headers: Record<string, string> = { "Content-Type": "application/json", "Cache-Control": cache };
+  if (cdn) headers["Netlify-CDN-Cache-Control"] = cdn;
+  return new Response(JSON.stringify(data), { status, headers });
 }
 
 export async function sha256(text: string): Promise<string> {

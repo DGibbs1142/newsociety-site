@@ -25,7 +25,7 @@ export default async (req: Request) => {
     .slice(0, limit)
     .map(({ title, pillar, href, imageUrl, heat }) => ({ title, pillar, href, imageUrl, heat: Math.round(heat * 10) / 10 }));
 
-  return json({ items }, 200, "public, max-age=60");
+  return json({ items }, 200, "public, max-age=60", "public, durable, s-maxage=120, stale-while-revalidate=60");
 };
 
 export const config: Config = {
