@@ -14,6 +14,9 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
   `NODE_USE_ENV_PROXY=1 NODE_EXTRA_CA_CERTS=/root/.ccr/ca-bundle.crt`.
   Each deploy costs Netlify credits (they ran out once on Nov 6 and Daniel
   upgraded the plan), so batch changes into one deploy where possible.
+- Before EVERY deploy, run `python3 integrations/check-site.py .` from main
+  (links, script syntax, JSON, netlify.toml, page basics, sw.js version bump).
+  Deploy only if it says "All good". A broken deploy costs credits twice.
 - The cloud environment "newsociety-site" allows `netlify-mcp.netlify.app`
   and `newsociety.netlify.app`; the Default environment does not.
 - Another Claude session also works on this site and on social posting.
