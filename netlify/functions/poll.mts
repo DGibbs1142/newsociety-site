@@ -24,7 +24,7 @@ export default async (req: Request, context: Context) => {
     const poll = POLLS[page];
     if(!poll) return json({ error: "No poll for this page" }, 404, "public, max-age=300");
     const counts = await store.get(poll.id, { type: "json" }).catch(() => null) as Tally | null;
-    return json(shape(poll, counts || []), 200, "public, max-age=15");
+    return json(shape(poll, counts || []), 200, "public, max-age=15", "public, durable, s-maxage=30, stale-while-revalidate=30");
   }
 
   if(req.method !== "POST") return json({ error: "Method not allowed" }, 405);

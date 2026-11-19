@@ -1,4 +1,4 @@
-// Scheduled every 5 minutes. Polls the same public ESPN scoreboard endpoint
+// Scheduled every 15 minutes, 11am to 1am Eastern (see config below). Polls the same public ESPN scoreboard endpoint
 // sports.js already uses client-side, and pushes one generic "it's live"
 // alert the first time any NFL/NBA/MLB/NHL game transitions into progress.
 // Not personalized — every subscriber gets the same alert — so this stays
@@ -48,6 +48,16 @@ async function fetchLiveGames(league: { path: string; label: string }) {
 }
 
 export default async (req: Request) => {
+  // Cheapest checks first: with push not set up, or nobody subscribed, there
+  // is no one to alert, so skip the four scoreboard fetches entirely.
+  if (!configureWebPush()) {
+    return new Response("Push is not configured", { status: 200 });
+  }
+  const { blobs: subscribers } = await getStore("push-subscriptions").list().catch(() => ({ blobs: [] as unknown[] }));
+  if (!subscribers.length) {
+    return new Response("No subscribers", { status: 200 });
+  }
+
   const store = getStore("push-state");
   const state = await loadState(store);
 
@@ -66,10 +76,6 @@ export default async (req: Request) => {
     return new Response("No new live games", { status: 200 });
   }
 
-  if (!configureWebPush()) {
-    return new Response("Push is not configured", { status: 200 });
-  }
-
   await broadcastPush({
     title: `🔴 Live now: ${candidate.league}`,
     body: candidate.name,
@@ -83,6 +89,10 @@ export default async (req: Request) => {
   return new Response(`Notified: ${candidate.name}`, { status: 200 });
 };
 
+// Every 15 minutes from 16:00 to 05:59 UTC (about 11am to 1am Eastern), when
+// US games actually start, instead of every 5 minutes around the clock: 56 runs
+// a day instead of 288. Each scheduled run costs Netlify credits, traffic or
+// not. A game can now be noticed up to 15 minutes after tip-off.
 export const config: Config = {
-  schedule: "*/5 * * * *"
+  schedule: "*/15 0-5,16-23 * * *"
 };

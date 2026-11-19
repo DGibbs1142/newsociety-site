@@ -54,7 +54,7 @@ export default async (req: Request, context: Context) => {
       const story = await stories.get(id, { type: "json" }).catch(() => null) as Story | null;
       counts[id] = story?.counts || emptyCounts();
     }));
-    return json({ counts }, 200, "public, max-age=15");
+    return json({ counts }, 200, "public, max-age=15", "public, durable, s-maxage=30, stale-while-revalidate=30");
   }
 
   if(req.method !== "POST") return json({ error: "Method not allowed" }, 405);
