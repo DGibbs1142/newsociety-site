@@ -35,7 +35,15 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
   Daniel has to paste `Code.gs` into Apps Script, re-authorize and publish a
   new deployment version for that to take effect.
 
-## Open items (as of Nov 18, 2026)
+## Open items (as of Nov 19, 2026)
+- SITE OFFLINE since Nov 19: Netlify credits ran out again (every page returns
+  503 "usage_exceeded", and deploys fail with "404 Not Found"). Daniel will add
+  credits when he's back. Until then DO NOT deploy. Merged and waiting to go out:
+  #54 (Save button on story pages). After credits are added: one deploy, then
+  check that https://newsociety.netlify.app/ returns 200.
+- DEPLOY IN BATCHES from now on: about one deploy a day at most, unless
+  something on the live site is broken. Both Claude sessions burned the credits
+  with a deploy per PR (team plan: Personal).
 - Issue 08 (Wed Nov 18) was drafted (#51), archived (#52) and deployed the same
   day at Daniel's request, before he confirmed it had sent. Facts and sources:
   `integrations/google-sheets/issue-08-notes.md`. If he changes it before sending,
