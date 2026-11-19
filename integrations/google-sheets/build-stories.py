@@ -70,6 +70,19 @@ os.makedirs(os.path.join(REPO, 'stories'), exist_ok=True)
 written = set()
 
 
+# Dated notes added to a story page after the issue went out (results that
+# came in later, a correction), from story-updates.json beside this script:
+#   { "<story slug>": [ { "date": "November 19, 2026", "text": "..." } ] }
+# The email is never changed; only the story page carries the note.
+_upd_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'story-updates.json')
+UPDATES = json.load(io.open(_upd_path, encoding='utf-8')) if os.path.exists(_upd_path) else {}
+
+
+def updates_html(slug):
+    return ''.join('\n    <p class="story-update"><strong>Update, %s:</strong> %s</p>' % (t(u['date']), t(u['text']))
+                   for u in UPDATES.get(slug, []))
+
+
 def related(idx, n=3):
     # Other stories from the same pillar, newest first (the archive is
     # already newest first); topped up from the same issue if there are
@@ -145,7 +158,7 @@ for idx, ((issue, b), slug) in enumerate(zip(stories, slugs)):
     <a href="/issues/%s.html" class="breadcrumb">&larr; %s &middot; %s</a>
     <a class="nl-tag mono story-tag" href="/%s">%s</a>
     <h1 class="story-title">%s</h1>
-    <p class="story-body">%s</p>
+    <p class="story-body">%s</p>%s
     <div class="story-actions">
       <button type="button" class="btn btn-primary" id="storyShare" data-title="%s" data-url="%s">Share this story</button>
       <a class="btn btn-ghost" href="/issues/%s.html">Read the full issue</a>
@@ -172,7 +185,7 @@ for idx, ((issue, b), slug) in enumerate(zip(stories, slugs)):
 %s</body>
 </html>
 ''' % (rooted(nav), a(b['color'] or '#6e56ff'), issue['id'], t(issue['no']), t(issue['date']),
-       a(b['page'].lstrip('/')), t(b['tag']), t(b['head']), t(b['body']),
+       a(b['page'].lstrip('/')), t(b['tag']), t(b['head']), t(b['body']), updates_html(slug),
        a(' '.join(b['head'].split())), url, issue['id'], a(b['page'].lstrip('/')), t(b['tag'].lower()),
        related_html(idx), rooted(foot), analytics)
 

@@ -40,3 +40,11 @@ from the cloud session, so these are search-result checks, not page reads.
   announced; Demna brought her in as a menswear consultant in 2015; own label
   since 2007; first woman to lead the house's creative direction.
   (Wallpaper, FashionNetwork, Complex, PurseBlog, The Zoe Report)
+
+## Story-page update (Nov 19), story-updates.json
+- "Choosin' Texas" won Single of the Year (first award of the telecast) and
+  Music Video of the Year (presented before the show). (Variety, E! Online,
+  Rolling Stone, Parade, Yahoo)
+- NOT added: Entertainer of the Year, Album and Song of the Year. On Nov 19
+  morning the winners lists were still marked "updating", and only Variety's
+  bolding hinted at an Entertainer winner. Add them once two sources state them.
