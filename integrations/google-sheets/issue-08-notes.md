@@ -48,3 +48,8 @@ from the cloud session, so these are search-result checks, not page reads.
 - NOT added: Entertainer of the Year, Album and Song of the Year. On Nov 19
   morning the winners lists were still marked "updating", and only Variety's
   bolding hinted at an Entertainer winner. Add them once two sources state them.
+
+## Update replaced Nov 20 with the full CMA result
+- Langley won Entertainer of the Year (her first) and six awards total:
+  Entertainer, Female Vocalist, Album ("Dandelion"), Single, Song and Music
+  Video ("Choosin' Texas"). (Billboard EOTY story, ABC7, Rolling Stone, ACountry)
