@@ -1,6 +1,6 @@
 # Adds the issue currently in Code.gs (NEWSLETTER_ISSUE) to the archive and
 # rebuilds everything that comes from it, in one step:
-#   python3 integrations/google-sheets/add-issue.py [repo dir]
+#   python3 integrations/google-sheets/add-issue.py [repo dir] [--from <draft.js>]
 #
 # 1. Reads the issues already archived back out of newsletter.html.
 # 2. Reads NEWSLETTER_ISSUE from Code.gs (evaluated with Node, since it is a
@@ -19,7 +19,19 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from newsletter_lib import parse_archive
 
-REPO = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else '.')
+# Usage: add-issue.py [repo dir] [--from <draft.js>]
+# --from reads the issue from a staging draft (like issue-09-draft.js) instead
+# of Code.gs, and afterwards copies it into Code.gs so the repo matches what
+# was sent. Use it when the issue was pasted into Apps Script from the draft.
+args = sys.argv[1:]
+SOURCE = None
+if '--from' in args:
+    i = args.index('--from')
+    if i + 1 >= len(args):
+        sys.exit('--from needs a file, e.g. --from integrations/google-sheets/issue-09-draft.js')
+    SOURCE = os.path.abspath(args[i + 1])
+    del args[i:i + 2]
+REPO = os.path.abspath(args[0] if args else '.')
 CODE = os.path.join(HERE, 'Code.gs')
 
 page = io.open(os.path.join(REPO, 'newsletter.html'), encoding='utf-8').read()
@@ -34,7 +46,7 @@ const m = src.match(/const NEWSLETTER_ISSUE = (\{[\s\S]*?\n\});/);
 if (!m) { console.error('NEWSLETTER_ISSUE not found in Code.gs'); process.exit(1); }
 process.stdout.write(JSON.stringify(Function('return (' + m[1] + ')')()));
 """
-current = json.loads(subprocess.run(['node', '-e', js, CODE], check=True, capture_output=True, text=True).stdout)
+current = json.loads(subprocess.run(['node', '-e', js, SOURCE or CODE], check=True, capture_output=True, text=True).stdout)
 if current['number'] in [i['number'] for i in archived]:
     sys.exit('Issue %02d is already in the archive; nothing to do.' % current['number'])
 if not current.get('blocks'):
@@ -57,5 +69,12 @@ try:
     subprocess.run([sys.executable, os.path.join(HERE, 'build-stories.py'), REPO], check=True)
 except (subprocess.CalledProcessError, FileNotFoundError):
     print('Share cards not made (needs Node + Playwright); the new story pages use the pillar card.')
+
+if SOURCE:
+    pat = re.compile(r'const NEWSLETTER_ISSUE = \{[\s\S]*?\n\};')
+    draft = io.open(SOURCE, encoding='utf-8').read()
+    code = io.open(CODE, encoding='utf-8').read()
+    io.open(CODE, 'w', encoding='utf-8').write(pat.sub(lambda _: pat.search(draft).group(0), code, count=1))
+    print('Copied Issue %02d from %s into Code.gs.' % (new['number'], os.path.basename(SOURCE)))
 
 print('Added Issue %02d. Review the changes, commit them, then deploy.' % new['number'])

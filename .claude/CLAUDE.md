@@ -41,12 +41,17 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
 ## Open items (as of Nov 19, 2026)
 - SITE OFFLINE since Nov 19: Netlify credits ran out again (every page returns
   503 "usage_exceeded", and deploys fail with "404 Not Found"). Daniel will add
-  credits when he's back. Until then DO NOT deploy. Merged and waiting to go out:
-  #54 (Save button on story pages). After credits are added: one deploy, then
-  check that https://newsociety.netlify.app/ returns 200.
+  credits when he's back. Until then DO NOT deploy. Merged and waiting to go out
+  in ONE deploy: #54 Save button, #56 fewer function runs, #57/#60 CMA update
+  note, #58 outage fallback (sw v35), #59 check-site.py. After credits are
+  added: run check-site.py, one deploy, then check the homepage returns 200.
 - DEPLOY IN BATCHES from now on: about one deploy a day at most, unless
   something on the live site is broken. Both Claude sessions burned the credits
   with a deploy per PR (team plan: Personal).
+- Issue 09 (Sun Nov 22) is drafted in `integrations/google-sheets/issue-09-draft.js`
+  (#61). Code.gs still holds Issue 08 so it can't be lost before it sends. After
+  09 SENDS: `add-issue.py . --from integrations/google-sheets/issue-09-draft.js`
+  archives it and copies it into Code.gs (tested on a copy Nov 21).
 - Issue 08 (Wed Nov 18) was drafted (#51), archived (#52) and deployed the same
   day at Daniel's request, before he confirmed it had sent. Facts and sources:
   `integrations/google-sheets/issue-08-notes.md`. If he changes it before sending,

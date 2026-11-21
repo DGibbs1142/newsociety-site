@@ -26,6 +26,16 @@ read the archive, so they update by themselves.
    Playwright; without them the pages use the pillar card), and refreshes the
    "More from the newsletter" lists on older story pages. It refuses to add an
    issue number that is already archived.
+
+   If the issue was sent from a staging draft (for example `issue-09-draft.js`)
+   rather than from the repo's `Code.gs`, add `--from` with that file. The script
+   archives the draft's issue and then copies it into `Code.gs`:
+
+   ```bash
+   python3 integrations/google-sheets/add-issue.py . --from integrations/google-sheets/issue-09-draft.js
+   ```
+
+   Run `python3 integrations/check-site.py .` before deploying.
 4. **Commit, merge and deploy** in one go. Each Netlify deploy uses credits, so
    batch other changes into the same deploy where you can.
 
