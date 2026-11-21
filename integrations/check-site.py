@@ -10,7 +10,9 @@
 #   3. The data files the pages read (stories, issues, manifest...) are valid JSON.
 #   4. netlify.toml parses.
 #   5. Every page has a <title>, exactly one <h1>, and the analytics beacon.
-#   6. sw.js has a CACHE_VERSION, and it was bumped if CSS/JS changed since the
+#   6. Share-card images (og:image / twitter:image on this site) exist, and every
+#      sitemap.xml and feed.xml address on this site is a real page.
+#   7. sw.js has a CACHE_VERSION, and it was bumped if CSS/JS changed since the
 #      last commit on origin/main (only checked when git can tell).
 #
 # Exits 1 and lists the problems if anything fails, 0 if all is well.
@@ -79,7 +81,26 @@ for p in pages:
     if 'cloudflareinsights.com/beacon' not in s:
         problems.append('%s: missing the analytics beacon' % p)
 
-# 6. Service worker cache version
+# 6. Share cards, sitemap and feed point at files that exist
+SITE = 'https://newsociety.netlify.app/'
+def local(url):
+    path = urllib.parse.urlparse(url).path.lstrip('/')
+    return path or 'index.html'
+def exists(path):
+    return os.path.exists(path) or os.path.exists(path + '.html') or os.path.exists(os.path.join(path, 'index.html'))
+for p in pages:
+    s = open(p, encoding='utf-8').read()
+    for url in re.findall(r'<meta (?:property|name)="(?:og:image|twitter:image)" content="([^"]+)"', s):
+        if url.startswith(SITE) and not exists(local(url)):
+            problems.append('%s: share image %s is missing' % (p, local(url)))
+for f, rx in (('sitemap.xml', r'<loc>([^<]+)</loc>'), ('feed.xml', r'<link>([^<]+)</link>')):
+    if os.path.exists(f):
+        for url in re.findall(rx, open(f, encoding='utf-8').read()):
+            url = url.split('#')[0]
+            if url.startswith(SITE) and not exists(local(url)):
+                problems.append('%s: %s is not a page' % (f, local(url)))
+
+# 7. Service worker cache version
 sw = open('sw.js', encoding='utf-8').read()
 m = re.search(r"CACHE_VERSION\s*=\s*'([^']+)'", sw)
 if not m:
