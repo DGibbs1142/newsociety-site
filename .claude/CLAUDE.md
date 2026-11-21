@@ -52,6 +52,11 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
   (#61). Code.gs still holds Issue 08 so it can't be lost before it sends. After
   09 SENDS: `add-issue.py . --from integrations/google-sheets/issue-09-draft.js`
   archives it and copies it into Code.gs (tested on a copy Nov 21).
+- Issue 09 social kit (#64): cards + Reels in `social/issue-09/`, captions in
+  `integrations/social/issue-09-captions.md`. Post only AFTER Issue 09 sends,
+  one a day: Music, Sports, Pop culture, Anime, Fashion. Instagram posting by
+  URL works from raw.githubusercontent.com (main). Check recent media first so
+  nothing posts twice.
 - Issue 08 (Wed Nov 18) was drafted (#51), archived (#52) and deployed the same
   day at Daniel's request, before he confirmed it had sent. Facts and sources:
   `integrations/google-sheets/issue-08-notes.md`. If he changes it before sending,
