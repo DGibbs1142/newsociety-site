@@ -38,16 +38,16 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
   Daniel has to paste `Code.gs` into Apps Script, re-authorize and publish a
   new deployment version for that to take effect.
 
-## Open items (as of Nov 19, 2026)
-- SITE OFFLINE since Nov 19: Netlify credits ran out again (every page returns
-  503 "usage_exceeded", and deploys fail with "404 Not Found"). Daniel will add
-  credits when he's back. Until then DO NOT deploy. Merged and waiting to go out
-  in ONE deploy: #54 Save button, #56 fewer function runs, #57/#60 CMA update
-  note, #58 outage fallback (sw v35), #59 check-site.py. After credits are
-  added: run check-site.py, one deploy, then check the homepage returns 200.
+## Open items (as of Nov 27, 2026)
+- Site was offline Nov 19-27 (Netlify credits ran out). Daniel bought credits
+  Nov 27 (auto recharge: Usage & billing > Configure auto recharge, 500 credits
+  for $5 on Personal). The batch (#54-#60, #62-#66) went out in one deploy on
+  Nov 27 and the site returns 200 again.
 - DEPLOY IN BATCHES from now on: about one deploy a day at most, unless
   something on the live site is broken. Both Claude sessions burned the credits
   with a deploy per PR (team plan: Personal).
+- Issue 10 (Sun Nov 29) is drafted in `integrations/google-sheets/issue-10-draft.js`
+  (#66). Same routine as 09; it refers back to Issue 09.
 - Issue 09 (Sun Nov 22) is drafted in `integrations/google-sheets/issue-09-draft.js`
   (#61). Code.gs still holds Issue 08 so it can't be lost before it sends. After
   09 SENDS: `add-issue.py . --from integrations/google-sheets/issue-09-draft.js`
