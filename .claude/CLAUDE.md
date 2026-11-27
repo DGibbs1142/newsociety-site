@@ -49,8 +49,9 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
 - Issue 09 (Sun Nov 29) MERGED Nov 27: Issues 08, the old 09 and 10 never sent
   (subscribers' last email was Issue 07, Nov 8). One standalone Issue 09 is in
   `integrations/google-sheets/issue-09-draft.js`; the Issue 10 draft was removed.
-  Issue 08 stays on the site as web-only. After 09 SENDS:
-  `add-issue.py . --from integrations/google-sheets/issue-09-draft.js`.
+  Issue 08 stays on the site as web-only. Since Nov 27 Code.gs itself holds
+  Issue 09 (Daniel pastes the whole file into Apps Script). After 09 SENDS:
+  `python3 integrations/google-sheets/add-issue.py .`
 - Issue 09 social kit (#64): cards + Reels in `social/issue-09/`, captions in
   `integrations/social/issue-09-captions.md`. Post only AFTER Issue 09 sends.
   Sports and Fashion were remade Nov 27 (Bears, Fashion Awards); skip Pop culture.
