@@ -389,9 +389,10 @@ function announcementMessage_(email, data) {
 // guests who RSVP'd after the last send.
 const FOLLOW_HEADER = 'Follow email sent';
 const SOCIALS = [
-  ['Instagram', '@newsociety1142', 'https://www.instagram.com/newsociety1142/'],
-  ['TikTok', '@newsociety22', 'https://www.tiktok.com/@newsociety22'],
-  ['X', '@NewSociety1142', 'https://x.com/NewSociety1142']
+  ['Instagram', '@TheNewSocietyHQ', 'https://www.instagram.com/thenewsocietyhq'],
+  ['TikTok', '@TheNewSocietyHQ', 'https://www.tiktok.com/@thenewsocietyhq'],
+  ['X', '@TheNewSocietyHQ', 'https://x.com/TheNewSocietyHQ'],
+  ['YouTube', '@TheNewSocietyHQ', 'https://www.youtube.com/@TheNewSocietyHQ']
 ];
 
 function previewFollowEmail() {

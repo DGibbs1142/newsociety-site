@@ -94,3 +94,15 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
   and 100 SEO (search and 404 are noindex on purpose).
 - Facts in posts and the newsletter must come from checked sources; the notes
   in `integrations/google-sheets/issue-07-draft.js` record what was verified.
+
+## Home base (Nov 27, 2026)
+- Handles are now @TheNewSocietyHQ on TikTok, Instagram, X and YouTube (old
+  @newsociety22 / @newsociety1142 / @NewSociety11 are gone). YouTube links sit
+  next to X everywhere; Code.gs SOCIALS has YouTube too (Daniel re-pastes it).
+- "Tonight's debate" block on the homepage and /links (`debate.js`, styles at
+  the end of styles.css). It reads `debates.json` from the `debates` branch on
+  raw.githubusercontent.com (CSP connect-src allows it), falling back to the
+  deployed /debates.json. The posting routine updates only that branch, so a
+  new nightly debate or results never needs a deploy or a merge to main.
+  Schema: {updated, latest:{series, pillar, title, question, vote, posted,
+  links:{tiktok, instagram, youtube, x}}, results:[{series, title, summary}]}.
