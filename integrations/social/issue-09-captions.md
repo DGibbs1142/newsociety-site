@@ -1,5 +1,12 @@
 # Issue 09 social posts (cards + Reels)
 
+UPDATED Nov 27: Issue 09 was merged with the old Issue 10 and now goes out
+Sun Nov 29. Only the MUSIC and ANIME posts still match it. Sports (Giannis vs.
+the Bucks, Nov 18) and Fashion (Nike) are no longer in the issue, and Pop culture
+uses the $21M previews when the opening was ~$120M (another session already
+posted the opening on Nov 23). Skip those three; new Bears / Fashion Awards cards
+can be made if wanted.
+
 Post AFTER Issue 09 sends (Sunday Nov 22). Every fact below is from the
 checked list at the top of `integrations/google-sheets/issue-09-draft.js`.
 Files are in `social/issue-09/` (1080x1350 cards, 1080x1920 8-second Reels with
