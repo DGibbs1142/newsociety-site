@@ -53,7 +53,9 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
   `add-issue.py . --from integrations/google-sheets/issue-09-draft.js`.
 - Issue 09 social kit (#64): cards + Reels in `social/issue-09/`, captions in
   `integrations/social/issue-09-captions.md`. Post only AFTER Issue 09 sends.
-  After the merge only Music and Anime still match the issue; skip the rest. Instagram posting by
+  Sports and Fashion were remade Nov 27 (Bears, Fashion Awards); skip Pop culture.
+  Post Fashion by MONDAY MORNING Nov 30 (the awards are that night); plan is in
+  the captions file. Instagram posting by
   URL works from raw.githubusercontent.com (main). Check recent media first so
   nothing posts twice.
 - Issue 08 (Wed Nov 18) was drafted (#51), archived (#52) and deployed the same
