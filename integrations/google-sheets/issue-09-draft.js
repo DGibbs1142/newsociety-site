@@ -6,10 +6,10 @@
 // last email was Issue 07 (Nov 8), so this one stands alone and catches them up.
 // Issue 08 stays on the website as a web-only issue (archived Nov 18).
 //
-// To send: paste this object over NEWSLETTER_ISSUE in Code.gs (it replaces the
-// unsent Issue 08), previewNewsletter(), then sendNewsletter() and
+// Since Nov 27 this issue is also in Code.gs itself, so paste the WHOLE Code.gs
+// into Apps Script, then previewNewsletter(), sendNewsletter() and
 // sendNewsletterToRsvps(). After it sends:
-//   python3 integrations/google-sheets/add-issue.py . --from integrations/google-sheets/issue-09-draft.js
+//   python3 integrations/google-sheets/add-issue.py .
 //
 // Before sending Sunday: if the studios' Thanksgiving five-day totals are out,
 // swap them in for the Hexed / Focker In-Law Wednesday numbers (two sources).

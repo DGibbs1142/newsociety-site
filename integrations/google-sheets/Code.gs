@@ -612,35 +612,35 @@ function welcomeMessage_(email) {
 // second run only reaches people who joined since, and nobody is sent the
 // same issue twice.
 const NEWSLETTER_ISSUE = {
-  number: 8,
-  dateline: 'Wednesday, November 18, 2026',
-  subject: 'The Week in Culture — Giannis in a Heat jersey, Johnny Depp’s Christmas Carol, and country’s biggest night',
-  intro: 'Big names in new places this week: Giannis in Miami, Martine Rose at Balenciaga, Johnny Depp back at No. 1. And tonight, country music counts up its year.',
+  number: 9,
+  dateline: 'Sunday, November 29, 2026',
+  subject: 'The Week in Culture — Haymitch’s $120 million weekend, Ella Langley’s six CMAs, and the Bears steal Thanksgiving',
+  intro: 'We missed a couple of Sundays, so this one catches you up: the biggest weekend of the year at the movies, the biggest night of the year in country, and a Thanksgiving comeback in Detroit.',
   blocks: [
     {
-      tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
-      head: 'Giannis Antetokounmpo is putting up Milwaukee numbers in a Miami jersey.',
-      body: 'Thirteen seasons and 895 games as a Buck, then a summer trade to the Heat. Last week he averaged 33.7 points, 11.3 rebounds and 4.7 assists on 69 percent shooting, Miami went 3-0, and the nights included 37 against Cleveland and 34 and 14 against Detroit. The league named him Eastern Conference Player of the Week for the 29th time in his career, and Victor Wembanyama took the West. Same award as always. Very different jersey.'
-    },
-    {
       tag: 'Pop culture', page: 'pop-culture.html', color: '#e3a34b',
-      head: 'Johnny Depp’s Christmas Carol opened at No. 1.',
-      body: 'Ebenezer, Paramount’s take on A Christmas Carol with Depp in the title role, won the weekend with about $19 million in the U.S. and Canada and $42 million worldwide, on a reported $38 million budget. That is a little under what it was tracking for, and under the $30 million Robert Zemeckis’ animated version opened to in 2009. It is also mid-November, which tells you how early the Christmas movie season starts now.'
+      head: 'Haymitch’s Games opened to $120 million.',
+      body: 'The Hunger Games: Sunrise on the Reaping, with Joseph Zada as a teenage Haymitch Abernathy, made about $120 million in the U.S. and Canada and $225 million worldwide in its first weekend, after $21 million in Thursday previews alone. It was still leading on Thanksgiving eve, ahead of two newcomers: Disney’s original Hexed, which opened to $7.6 million and an A- CinemaScore, and Universal’s Focker In-Law at $5.3 million.'
     },
     {
       tag: 'Music', page: 'music.html', color: '#5aa0e8',
-      head: 'Country’s biggest night is tonight, and Ella Langley walks in holding a record.',
-      body: 'The CMA Awards go live from Bridgestone Arena in Nashville on ABC, with Lainey Wilson hosting for the third year in a row and up for Entertainer of the Year herself. So is Langley, who arrives with “Choosin’ Texas” at No. 1 on the Hot 100 for a 27th week on the latest chart. No song has ever led longer. She is performing, along with Miranda Lambert, Kacey Musgraves, Luke Combs and Mumford & Sons, and there is a tribute to Dolly Parton. The winners land after this does.'
+      head: 'Ella Langley won six CMAs, and Christmas still can’t knock her off No. 1.',
+      body: 'At the CMA Awards, Langley won her first Entertainer of the Year and left with six awards: Entertainer, Female Vocalist, Album of the Year for “Dandelion”, and Single, Song and Music Video for “Choosin’ Texas”. A week later the Christmas songs arrived on the Hot 100, Wham!’s “Last Christmas” straight into the top five, and “Choosin’ Texas” held No. 1 anyway, for a 29th week. Mariah Carey, whose record it broke, usually climbs all December. The rematch is coming.'
+    },
+    {
+      tag: 'Sports', page: 'sports.html', color: '#4fb3a9',
+      head: 'The Bears stole Thanksgiving in Detroit.',
+      body: 'Down 11 in the fourth quarter at Ford Field, Chicago came back to win 39-35. Caleb Williams hit Rome Odunze for a long touchdown to get close, then drove 13 plays in the final 2:14 and found Odunze again from six yards out with three seconds left. Jahmyr Gibbs ran for three touchdowns and still lost. The Bears are 9-2 and alone in first in the NFC North, and they took it from the team that was chasing them.'
     },
     {
       tag: 'Anime', page: 'anime.html', color: '#e0679a',
-      head: 'The Days of Diamond, a baseball manga about playing for fun, is getting an anime.',
-      body: 'Ohashi Hirai’s manga follows Jiro Ayasegawa, a kid who stumbles onto the Bambies, an underdog youth team built around one idea: having fun. Then his talent starts casting a shadow over everyone around him. It topped the list for male readers in Kono Manga ga Sugoi! and has more than 2 million copies in print across ten volumes. Lapin Track is animating it, with character designs by Atsushi Saito. No premiere date or cast yet.'
+      head: 'Witch on the Holy Night made it to the big screen, and a sequel is already coming.',
+      body: 'The film of TYPE-MOON’s visual novel, animated by ufotable, the studio behind Demon Slayer’s anime, opened in Japan on November 20. Days later a post-credits scene confirmed a second film, and the official account says it is in production, with no date yet. TYPE-MOON also made Fate, so this is a fan-favourite studio adapting a fan-favourite story. The U.S. and Canada get the first film on January 29.'
     },
     {
       tag: 'Fashion', page: 'fashion.html', color: '#b58cff',
-      head: 'Martine Rose is running Balenciaga, the first woman to do it.',
-      body: 'Kering named the British designer creative director on November 6, about a day after Pierpaolo Piccioli’s exit was announced. She is not new to the house: Demna brought her in as a menswear consultant in 2015. Her own label, started in 2007, made its name on off-kilter silhouettes and London subculture, which is a very different starting point from couture. Her first collection there will show what Balenciaga sounds like in her voice.'
+      head: 'The Fashion Awards are Monday in London.',
+      body: 'The British Fashion Council’s Fashion Awards take over the Royal Albert Hall on Monday, November 30, with Ncuti Gatwa hosting. The night doubles as the big fundraiser for the BFC Foundation. It closes an autumn of designer moves, including Martine Rose becoming the first woman to lead Balenciaga, so expect the speeches to be about what comes next. The winners land after this does.'
     }
   ],
   live: 'Launch party incoming. The date and venue are almost locked, and this list hears first.',
