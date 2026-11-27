@@ -46,22 +46,20 @@ Owner: Daniel. Live site: https://newsociety.netlify.app (Netlify site id
 - DEPLOY IN BATCHES from now on: about one deploy a day at most, unless
   something on the live site is broken. Both Claude sessions burned the credits
   with a deploy per PR (team plan: Personal).
-- Issue 10 (Sun Nov 29) is drafted in `integrations/google-sheets/issue-10-draft.js`
-  (#66). Same routine as 09; it refers back to Issue 09.
-- Issue 09 (Sun Nov 22) is drafted in `integrations/google-sheets/issue-09-draft.js`
-  (#61). Code.gs still holds Issue 08 so it can't be lost before it sends. After
-  09 SENDS: `add-issue.py . --from integrations/google-sheets/issue-09-draft.js`
-  archives it and copies it into Code.gs (tested on a copy Nov 21).
+- Issue 09 (Sun Nov 29) MERGED Nov 27: Issues 08, the old 09 and 10 never sent
+  (subscribers' last email was Issue 07, Nov 8). One standalone Issue 09 is in
+  `integrations/google-sheets/issue-09-draft.js`; the Issue 10 draft was removed.
+  Issue 08 stays on the site as web-only. After 09 SENDS:
+  `add-issue.py . --from integrations/google-sheets/issue-09-draft.js`.
 - Issue 09 social kit (#64): cards + Reels in `social/issue-09/`, captions in
-  `integrations/social/issue-09-captions.md`. Post only AFTER Issue 09 sends,
-  one a day: Music, Sports, Pop culture, Anime, Fashion. Instagram posting by
+  `integrations/social/issue-09-captions.md`. Post only AFTER Issue 09 sends.
+  After the merge only Music and Anime still match the issue; skip the rest. Instagram posting by
   URL works from raw.githubusercontent.com (main). Check recent media first so
   nothing posts twice.
 - Issue 08 (Wed Nov 18) was drafted (#51), archived (#52) and deployed the same
-  day at Daniel's request, before he confirmed it had sent. Facts and sources:
-  `integrations/google-sheets/issue-08-notes.md`. If he changes it before sending,
-  the site needs re-archiving. No issue went out Nov 15. Next issue: write it in
-  `Code.gs`, send it, then run `add-issue.py`.
+  day at Daniel's request, but it NEVER SENT (confirmed Nov 27), so it is a
+  web-only issue. Facts and sources: `integrations/google-sheets/issue-08-notes.md`.
+  No emails went out Nov 15 or Nov 22.
 - Instagram Reels from the Nov 6 cards: all five are posted (Fashion went up
   Nov 11, 10:31 PM ET, after a session restart delayed it).
   Windsor's cached Instagram data lags on the free plan; if a post call times
